@@ -2,29 +2,45 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف 1448هـ</title>
 
-    <!-- المكتبات والتنسيقات الأساسية -->
+    <!-- المكتبات الخطية والتنسيقية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <style>
+        :root {
+            --paper: #EEF3F2;
+            --surface: #FFFFFF;
+            --surface2: #F6F9F8;
+            --ink: #13302E;
+            --muted: #5A6F6C;
+            --line: #D3DEDB;
+            --brand: #0C6A64;
+            --brand-ink: #FFFFFF;
+            --open: #17804A;
+            --soon: #9C6200;
+            --ended: #8C9896;
+            --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+        }
+
         body {
-            font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+            font-family: var(--font);
             background-color: #f8fafc;
-            color: #0f172a;
+            color: var(--ink);
             direction: rtl;
             text-align: right;
+            padding: 15px;
         }
 
         /* ترويسة الصفحة */
         .page-header-card {
             background: #fff;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--line);
             border-radius: 16px;
             padding: 16px 22px;
             box-shadow: 0 1px 2px rgba(15,23,42,.04);
@@ -37,103 +53,200 @@
         }
 
         .header-icon-box {
-            width: 42px;
-            height: 42px;
-            border-radius: 11px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, #0ea371, #0891b2);
+            background: linear-gradient(135deg, var(--brand), #0891b2);
             color: #fff;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 18px -6px rgba(14,163,113,.45);
+            font-size: 1.2rem;
+            box-shadow: 0 6px 18px -6px rgba(12,106,100,.45);
         }
 
-        /* قسم التقويم واختيار الأسابيع والأيام */
-        .calendar-picker-card {
+        /* شريط اختيار التقويم العائم */
+        .cal-nav-bar {
             background: #111827;
             color: #fff;
             border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            padding: 12px 20px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
         }
 
-        .term-tab-btn {
-            background: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
-            padding: 6px 16px;
+        .btn-open-cal {
+            background: linear-gradient(135deg, var(--brand), #0891b2);
+            color: #fff;
+            border: none;
             border-radius: 10px;
-            font-size: 0.85rem;
+            padding: 8px 18px;
             font-weight: 700;
+            font-size: 0.9rem;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.2s;
         }
-        .term-tab-btn.active {
-            background: #0ea371;
-            color: #fff;
-            border-color: #0ea371;
+        .btn-open-cal:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .selected-date-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
         }
 
-        .days-nav-container {
+        /* نافذة التقويم المودال (الأساسية) */
+        .modal-cal {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,26,26,.6);
+            z-index: 1050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-cal.show { display: flex; }
+
+        .mbox-cal {
+            background: #152322;
+            color: #E2ECEA;
+            width: min(580px, 95%);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            border: 1px solid #2A3D3B;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .mhead-cal {
+            padding: 16px 20px 10px;
+            border-bottom: 1px solid #2A3D3B;
+        }
+        .mhead-cal h3 { margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff; }
+        .mhead-cal p { margin: 4px 0 0; color: #9AB0AC; font-size: 0.82rem; }
+
+        .mtabs-cal {
             display: flex;
             gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
             margin-top: 12px;
         }
-
-        .day-tab-btn {
+        .mtab-btn {
             flex: 1;
-            min-width: 120px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 12px;
+            background: #1A2B2A;
+            border: 1px solid #2A3D3B;
+            color: #9AB0AC;
             padding: 8px;
-            text-align: center;
-            color: #d1d5db;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
             cursor: pointer;
+            text-align: center;
             transition: all 0.2s;
         }
-        .day-tab-btn:hover { background: #374151; }
-        .day-tab-btn.active {
-            background: linear-gradient(135deg, #0ea371, #0891b2);
-            color: #fff;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(14,163,113,0.3);
+        .mtab-btn.active {
+            background: #3AAFA5;
+            color: #06201E;
+            border-color: #3AAFA5;
         }
 
-        .day-name { font-size: 0.9rem; font-weight: 800; display: block; }
-        .day-date { font-size: 0.72rem; opacity: 0.85; margin-top: 2px; display: block; }
+        .mbody-cal {
+            overflow-y: auto;
+            padding: 14px 16px;
+            max-height: 60vh;
+        }
 
-        .vacation-alert-banner {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            color: #92400e;
+        .wk-item {
+            border: 1px solid #2A3D3B;
             border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
+            margin-bottom: 8px;
+            overflow: hidden;
+            background: #1A2B2A;
+        }
+        .wk-head-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: #1A2B2A;
+            border: 0;
+            padding: 10px 14px;
+            cursor: pointer;
+            text-align: start;
+            color: #E2ECEA;
+            transition: background 0.2s;
+        }
+        .wk-head-btn:hover { background: #253A38; }
+        .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
+        .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
+
+        .etag-badge {
+            font-size: 0.7rem;
             font-weight: 700;
-            display: none;
-            margin-top: 12px;
+            color: #E0A43A;
+            border: 1px solid #E0A43A;
+            border-radius: 4px;
+            padding: 1px 6px;
+            margin-inline-start: 6px;
         }
 
-        /* حاوية أزرار التحكم والفرز */
+        .days-list {
+            display: none;
+            gap: 6px;
+            padding: 8px 10px 12px;
+            background: #121E1D;
+            border-top: 1px solid #2A3D3B;
+        }
+        .wk-item.open .days-list { display: grid; }
+
+        .day-card-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #2A3D3B;
+            background: #152322;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            text-align: start;
+            color: #E2ECEA;
+            transition: all 0.15s;
+        }
+        .day-card-item:hover {
+            border-color: #3AAFA5;
+            background: rgba(58,175,165,0.15);
+        }
+        .day-card-item b { font-size: 0.88rem; font-weight: 700; }
+        .day-card-item em { font-style: normal; font-size: 0.78rem; color: #9AB0AC; }
+
+        .mfoot-cal {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid #2A3D3B;
+            background: #152322;
+        }
+
+        /* حاوية أزرار التحكم والجدول الرئيسي */
         .control-btns-container {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--line);
             background: #fff;
             border-radius: 16px;
             padding: 16px 20px !important;
             box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
             margin-bottom: 20px;
-        }
-
-        .action-bar-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            justify-content: space-between;
         }
 
         .btn-act {
@@ -146,21 +259,14 @@
             align-items: center;
             gap: 6px;
         }
-
-        .btn-act-outline-green { border: 1px solid #0ea371; color: #0ea371; background: #fff; }
-        .btn-act-outline-green:hover { background: #0ea371; color: #fff; }
-
-        .btn-act-gray { border: 1px solid #e2e8f0; color: #475569; background: #f8fafc; }
+        .btn-act-outline-green { border: 1px solid var(--brand); color: var(--brand); background: #fff; }
+        .btn-act-outline-green:hover { background: var(--brand); color: #fff; }
+        .btn-act-gray { border: 1px solid var(--line); color: #475569; background: #f8fafc; }
         .btn-act-gray:hover { background: #e2e8f0; }
-
-        .btn-act-green { background: linear-gradient(135deg, #0ea371, #0891b2); color: #fff; border: none; }
+        .btn-act-green { background: linear-gradient(135deg, var(--brand), #0891b2); color: #fff; border: none; }
         .btn-act-green:hover { filter: brightness(1.07); color: #fff; }
-
         .btn-act-orange { background: #f59e0b; color: #fff; border: none; }
-        .btn-act-orange:hover { filter: brightness(1.07); color: #fff; }
-
         .btn-act-red { background: #ef4444; color: #fff; border: none; }
-        .btn-act-red:hover { filter: brightness(1.07); color: #fff; }
 
         /* الجدول الرئيسي */
         .wc-main-table {
@@ -177,7 +283,7 @@
             font-size: 0.8rem;
             font-weight: 700;
             color: #64748b;
-            border-bottom: 2px solid #e2e8f0 !important;
+            border-bottom: 2px solid var(--line) !important;
             padding: 12px 8px !important;
             vertical-align: middle !important;
         }
@@ -191,26 +297,26 @@
 
         .course-cell-box {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--line);
             border-radius: 10px;
             padding: 8px;
             text-align: center;
             transition: all 0.2s;
         }
         .course-cell-box:hover {
-            border-color: #0ea371;
-            box-shadow: 0 2px 8px rgba(14,163,113,0.15);
+            border-color: var(--brand);
+            box-shadow: 0 2px 8px rgba(12,106,100,0.15);
         }
 
         .course-name-large {
-            font-size: 1rem;
+            font-size: 0.98rem;
             font-weight: 800;
             color: #0f172a;
             margin-bottom: 4px;
         }
 
         .teacher-name-badge {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #047857;
             background: #ecfdf5;
@@ -223,10 +329,10 @@
         .activity-card {
             border-radius: 10px;
             background: #fff;
-            border: 2px dashed #0ea371;
+            border: 2px dashed var(--brand);
             padding: 8px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(14,163,113,0.1);
+            box-shadow: 0 2px 6px rgba(12,106,100,0.1);
         }
 
         .activity-header {
@@ -271,21 +377,21 @@
             font-size: 0.75rem;
             color: #64748b;
         }
-        .cell-actions i:hover { color: #0ea371; }
+        .cell-actions i:hover { color: var(--brand); }
         .cell-actions i.del:hover { color: #ef4444; }
     </style>
 </head>
-<body class="p-3">
+<body>
 
     <!-- Header Section -->
     <div class="page-header-card">
         <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
-                <i class="fas fa-calendar-alt"></i>
+                <i class="fas fa-calendar-check"></i>
             </div>
             <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وتقويم مكة والمدينة والطائف</div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">إدارة الجدول المدرسي، فرز الأيام والأسابيع والإجازات الدراسية المعتمدة</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وتقويم المسابقات والأنشطة 1448هـ</div>
+                <div style="font-size: 0.8rem; color: #64748b;">مدارس مكة المكرمة والمدينة المنورة وجدة والطائف</div>
             </div>
         </div>
         <div>
@@ -293,35 +399,50 @@
         </div>
     </div>
 
-    <!-- قسم اختيار تقويم الأسابيع والأيام (المعتمد) -->
-    <div class="calendar-picker-card">
-        <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-2" style="border-bottom: 1px solid #374151; gap: 10px;">
-            <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-                <button class="term-tab-btn active" id="btnTerm1" onclick="selectTerm(1)">الفصل الدراسي الأول</button>
-                <button class="term-tab-btn" id="btnTerm2" onclick="selectTerm(2)">الفصل الدراسي الثاني</button>
-            </div>
-            <div class="d-flex align-items-center" style="gap: 10px;">
-                <label class="mb-0 font-weight-bold small text-gray-300"><i class="fas fa-list-ol ml-1 text-success"></i> اختر الأسبوع:</label>
-                <select id="weekSelect" class="form-control form-control-sm bg-dark text-white border-secondary" style="min-width: 260px;" onchange="renderDaysForWeek()">
-                    <!-- يتم تحميل الأسابيع تلقائياً -->
-                </select>
+    <!-- شريط اختيار اليوم والتقويم -->
+    <div class="cal-nav-bar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn-open-cal" onclick="openCalendarModal()">
+                <i class="fas fa-calendar-alt"></i> اختر التاريخ / الأسبوع
+            </button>
+            <div class="selected-date-badge" id="selectedDateDisplay">
+                <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">الأحد 7 جمادى الأولى 1448هـ</span> - <span id="currentWeekText">الأسبوع السادس</span>
             </div>
         </div>
-
-        <!-- أزرار الأيام للأسبوع المختار -->
-        <div class="days-nav-container" id="daysContainer">
-            <!-- يتم تحميل الأيام تلقائياً عبر JavaScript -->
-        </div>
-
-        <!-- شريط تنبيه الإجازات والفعاليات -->
-        <div class="vacation-alert-banner" id="vacationBanner">
-            <i class="fas fa-star ml-1"></i> <span id="vacationText">إجازة رسمية</span>
+        <div id="vacationNotice" style="display: none; font-size: 0.85rem; color: #fcd34d; font-weight: 700;">
+            <i class="fas fa-star ml-1"></i> <span id="vacationNoticeText"></span>
         </div>
     </div>
 
-    <!-- شريط الأزرار التفاعلي والتحكم -->
+    <!-- نافذة التقويم المودال (مطابقة للكود الأصلي للتقويم) -->
+    <div class="modal-cal" id="calendarModal">
+        <div class="mbox-cal">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>تقويم مكة المكرمة والمدينة المنورة وجدة والطائف</h3>
+                    <button type="button" class="close text-white" onclick="closeCalendarModal()">&times;</button>
+                </div>
+                <p>اختر الأسبوع ثم اليوم للانتقال المباشر إلى الجدول المدرسي</p>
+                <div class="mtabs-cal">
+                    <button class="mtab-btn active" id="tabTerm1" onclick="switchTerm(1)">الفصل الدراسي الأول</button>
+                    <button class="mtab-btn" id="tabTerm2" onclick="switchTerm(2)">الفصل الدراسي الثاني</button>
+                </div>
+            </div>
+
+            <div class="mbody-cal" id="weeksListContainer">
+                <!-- يتم توليد الأسابيع والأيام برمجياً -->
+            </div>
+
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-outline-light" onclick="resetToToday()">اليوم الحالي</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCalendarModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط التحكم والفرز -->
     <div class="control-btns-container">
-        <div class="action-bar-buttons mb-3 pb-3" style="border-bottom: 1px solid #e2e8f0;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
             <div class="d-flex flex-wrap" style="gap: 6px;">
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
@@ -332,13 +453,12 @@
             <div class="d-flex flex-wrap" style="gap: 6px;">
                 <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> التقرير اليومي</button>
                 <button class="btn-act btn-act-gray"><i class="fas fa-print"></i> تقارير الانتظار والنشاط</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-archive"></i> الأرشيف</button>
             </div>
         </div>
 
-        <!-- فلاتر البحث السريع -->
+        <!-- فلاتر البحث -->
         <div class="row align-items-center">
-            <div class="col-md-4 mb-2">
+            <div class="col-md-5 mb-2">
                 <div class="d-flex align-items-center">
                     <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-user-friends"></i> فرز حسب المعلم:</span>
                     <select id="filterTeacherSelect" class="form-control form-control-sm" onchange="filterByTeacher()">
@@ -351,7 +471,6 @@
                         <option value="خالد العوفي">خالد العوفي</option>
                         <option value="معتز دردير">معتز دردير</option>
                         <option value="رائد الصاعدي">رائد الصاعدي</option>
-                        <option value="عبدالهادي الصاعدي">عبدالهادي الصاعدي</option>
                     </select>
                 </div>
             </div>
@@ -365,8 +484,8 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-4 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة أو تعديل حصة/نشاط</button>
+            <div class="col-md-3 mb-2 text-left">
+                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> تعديل حصة/نشاط</button>
             </div>
         </div>
     </div>
@@ -627,7 +746,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 16px;">
                 <div class="modal-header bg-success text-white" style="border-radius: 16px 16px 0 0;">
-                    <h5 class="modal-title font-weight-bold"><i class="fas fa-edit"></i> تعديل أو تخصيص محتوى الحصة/النشاط</h5>
+                    <h5 class="modal-title font-weight-bold"><i class="fas fa-edit"></i> تعديل محتوى الحصة/النشاط</h5>
                     <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
@@ -639,24 +758,22 @@
                                 <option value="activity">برنامج / حصة نشاط</option>
                             </select>
                         </div>
-
                         <div id="courseFields">
                             <div class="form-group">
                                 <label class="font-weight-bold">اسم المقرر / المادة:</label>
-                                <input type="text" id="inputCourseName" class="form-control" placeholder="مثال: الرياضيات، العلوم...">
+                                <input type="text" id="inputCourseName" class="form-control" placeholder="مثال: الرياضيات">
                             </div>
                         </div>
-
                         <div id="activityFields" style="display: none;">
                             <div class="form-group">
                                 <label class="font-weight-bold">اسم برنامج النشاط:</label>
-                                <input type="text" id="inputActivityName" class="form-control" placeholder="مثال: نشاط الإبداع العلمي">
+                                <input type="text" id="inputActivityName" class="form-control" placeholder="مثال: مسابقة القرآن الكريم">
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold">طبيعة حصة النشاط:</label>
+                                <label class="font-weight-bold">طبيعة الحصة:</label>
                                 <select id="inputActivityType" class="form-control">
-                                    <option value="ثابتة">حصة نشاط ثابتة</option>
-                                    <option value="مرنة">حصة نشاط مرنة</option>
+                                    <option value="ثابتة">حصة ثابتة</option>
+                                    <option value="مرنة">حصة مرنة</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -668,10 +785,9 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label class="font-weight-bold">اسم المعلم:</label>
-                            <input type="text" id="inputTeacherName" class="form-control" placeholder="اكتب اسم المعلم المسؤول">
+                            <input type="text" id="inputTeacherName" class="form-control" placeholder="اكتب اسم المعلم">
                         </div>
                     </form>
                 </div>
@@ -683,97 +799,192 @@
         </div>
     </div>
 
-    <!-- Script Javascript -->
+    <!-- Script JavaScript -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
-        // بيانات التقويم الشاملة الخاصة بمكة والمدينة والطائف للعام 1448 هـ
-        const calendarData = {
+        // بيانات التقويم المعتمدة الشاملة للفصلين لمدارس مكة والمدينة وجدة والطائف 1448هـ
+        const fullCalendarData = {
             1: [
-                { id: 1, name: "الأسبوع الأول", dates: "03/17 - 03/21 هـ ، 3/9 - 3/13 م", startH: "03/17", startM: "09/03" },
-                { id: 2, name: "الأسبوع الثاني", dates: "03/28 - 04/02 هـ ، 9/10 - 9/14 م", startH: "03/28", startM: "09/10" },
-                { id: 3, name: "الأسبوع الثالث", dates: "04/02 - 04/06 هـ ، 9/17 - 9/21 م", startH: "04/02", startM: "09/17" },
-                { id: 4, name: "الأسبوع الرابع", dates: "04/09 - 04/13 هـ ، 9/24 - 9/28 م", startH: "04/09", startM: "09/24", event: "تتخلله إجازة اليوم الوطني (4/11 - 4/12 هـ)" },
-                { id: 5, name: "الأسبوع الخامس", dates: "04/16 - 04/20 هـ ، 10/1 - 10/5 م", startH: "04/16", startM: "10/01" },
-                { id: 6, name: "الأسبوع السادس", dates: "04/23 - 04/27 هـ ، 10/8 - 10/12 م", startH: "04/23", startM: "10/08" },
-                { id: 7, name: "الأسبوع السابع", dates: "04/30 - 05/04 هـ ، 10/15 - 10/19 م", startH: "04/30", startM: "10/15" },
-                { id: 8, name: "الأسبوع الثامن", dates: "05/07 - 05/11 هـ ، 10/22 - 10/26 م", startH: "05/07", startM: "10/22", event: "إجازة نهاية أسبوع مطولة (05/10 - 05/11 هـ)" },
-                { id: 9, name: "الأسبوع التاسع", dates: "05/14 - 05/18 هـ ، 10/29 - 11/02 م", startH: "05/14", startM: "10/29" },
-                { id: 10, name: "الأسبوع العاشر", dates: "05/21 - 05/25 هـ ، 11/05 - 11/09 م", startH: "05/21", startM: "11/05" },
-                { id: 11, name: "الأسبوع الحادي عشر", dates: "05/28 - 06/02 هـ ، 11/12 - 11/16 م", startH: "05/28", startM: "11/12" },
-                { id: 12, name: "الأسبوع الثاني عشر", dates: "06/05 - 06/09 هـ ، 11/19 - 11/23 م", startH: "06/05", startM: "11/19", event: "اختبارات الفصل الأول وبداية إجازة الخريف" }
+                {
+                    weekId: 1, name: "الأسبوع الأول", dateRange: "03/17 - 03/21هـ | 3/9 - 3/13م",
+                    days: [
+                        { name: "الأحد", hDate: "17 ربيع الأول 1448", mDate: "3 سبتمبر 2026" },
+                        { name: "الإثنين", hDate: "18 ربيع الأول 1448", mDate: "4 سبتمبر 2026" },
+                        { name: "الثلاثاء", hDate: "19 ربيع الأول 1448", mDate: "5 سبتمبر 2026" },
+                        { name: "الأربعاء", hDate: "20 ربيع الأول 1448", mDate: "6 سبتمبر 2026" },
+                        { name: "الخميس", hDate: "21 ربيع الأول 1448", mDate: "7 سبتمبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 2, name: "الأسبوع الثاني", dateRange: "03/24 - 03/28هـ | 6/9 - 10/9م",
+                    days: [
+                        { name: "الأحد", hDate: "24 ربيع الأول 1448", mDate: "10 سبتمبر 2026" },
+                        { name: "الإثنين", hDate: "25 ربيع الأول 1448", mDate: "11 سبتمبر 2026" },
+                        { name: "الثلاثاء", hDate: "26 ربيع الأول 1448", mDate: "12 سبتمبر 2026" },
+                        { name: "الأربعاء", hDate: "27 ربيع الأول 1448", mDate: "13 سبتمبر 2026" },
+                        { name: "الخميس", hDate: "28 ربيع الأول 1448", mDate: "14 سبتمبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 3, name: "الأسبوع الثالث", dateRange: "04/02 - 04/06هـ | 13/9 - 17/9م",
+                    days: [
+                        { name: "الأحد", hDate: "2 ربيع الثاني 1448", mDate: "17 سبتمبر 2026" },
+                        { name: "الإثنين", hDate: "3 ربيع الثاني 1448", mDate: "18 سبتمبر 2026" },
+                        { name: "الثلاثاء", hDate: "4 ربيع الثاني 1448", mDate: "19 سبتمبر 2026" },
+                        { name: "الأربعاء", hDate: "5 ربيع الثاني 1448", mDate: "20 سبتمبر 2026" },
+                        { name: "الخميس", hDate: "6 ربيع الثاني 1448", mDate: "21 سبتمبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 4, name: "الأسبوع الرابع", dateRange: "04/09 - 04/13هـ | 20/9 - 24/9م", eventTag: "تتخلله إجازة اليوم الوطني",
+                    days: [
+                        { name: "الأحد", hDate: "9 ربيع الثاني 1448", mDate: "24 سبتمبر 2026" },
+                        { name: "الإثنين", hDate: "10 ربيع الثاني 1448", mDate: "25 سبتمبر 2026" },
+                        { name: "الثلاثاء", hDate: "11 ربيع الثاني 1448", mDate: "26 سبتمبر 2026", note: "إجازة اليوم الوطني" },
+                        { name: "الأربعاء", hDate: "12 ربيع الثاني 1448", mDate: "27 سبتمبر 2026", note: "إجازة اليوم الوطني" },
+                        { name: "الخميس", hDate: "13 ربيع الثاني 1448", mDate: "28 سبتمبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 5, name: "الأسبوع الخامس", dateRange: "04/16 - 04/20هـ | 27/9 - 1/10م",
+                    days: [
+                        { name: "الأحد", hDate: "16 ربيع الثاني 1448", mDate: "1 أكتوبر 2026" },
+                        { name: "الإثنين", hDate: "17 ربيع الثاني 1448", mDate: "2 أكتوبر 2026" },
+                        { name: "الثلاثاء", hDate: "18 ربيع الثاني 1448", mDate: "3 أكتوبر 2026" },
+                        { name: "الأربعاء", hDate: "19 ربيع الثاني 1448", mDate: "4 أكتوبر 2026" },
+                        { name: "الخميس", hDate: "20 ربيع الثاني 1448", mDate: "5 أكتوبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 6, name: "الأسبوع السادس", dateRange: "04/23 - 04/27هـ | 4/10 - 8/10م",
+                    days: [
+                        { name: "الأحد", hDate: "23 ربيع الثاني 1448", mDate: "8 أكتوبر 2026" },
+                        { name: "الإثنين", hDate: "24 ربيع الثاني 1448", mDate: "9 أكتوبر 2026" },
+                        { name: "الثلاثاء", hDate: "25 ربيع الثاني 1448", mDate: "10 أكتوبر 2026" },
+                        { name: "الأربعاء", hDate: "26 ربيع الثاني 1448", mDate: "11 أكتوبر 2026" },
+                        { name: "الخميس", hDate: "27 ربيع الثاني 1448", mDate: "12 أكتوبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 7, name: "الأسبوع السابع", dateRange: "04/30 - 05/04هـ | 11/10 - 15/10م",
+                    days: [
+                        { name: "الأحد", hDate: "30 ربيع الثاني 1448", mDate: "15 أكتوبر 2026" },
+                        { name: "الإثنين", hDate: "1 جمادى الأولى 1448", mDate: "16 أكتوبر 2026" },
+                        { name: "الثلاثاء", hDate: "2 جمادى الأولى 1448", mDate: "17 أكتوبر 2026" },
+                        { name: "الأربعاء", hDate: "3 جمادى الأولى 1448", mDate: "18 أكتوبر 2026" },
+                        { name: "الخميس", hDate: "4 جمادى الأولى 1448", mDate: "19 أكتوبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 8, name: "الأسبوع الثامن", dateRange: "05/07 - 05/11هـ | 18/10 - 22/10م", eventTag: "نهاية أسبوع مطولة",
+                    days: [
+                        { name: "الأحد", hDate: "7 جمادى الأولى 1448", mDate: "22 أكتوبر 2026" },
+                        { name: "الإثنين", hDate: "8 جمادى الأولى 1448", mDate: "23 أكتوبر 2026" },
+                        { name: "الثلاثاء", hDate: "9 جمادى الأولى 1448", mDate: "24 أكتوبر 2026" },
+                        { name: "الأربعاء", hDate: "10 جمادى الأولى 1448", mDate: "25 أكتوبر 2026", note: "إجازة مطولة" },
+                        { name: "الخميس", hDate: "11 جمادى الأولى 1448", mDate: "26 أكتوبر 2026", note: "إجازة مطولة" }
+                    ]
+                }
             ],
             2: [
-                { id: 1, name: "الأسبوع الأول (ف2)", dates: "06/16 - 06/20 هـ", startH: "06/16", startM: "11/30" },
-                { id: 2, name: "الأسبوع الثاني (ف2)", dates: "06/23 - 06/27 هـ", startH: "06/23", startM: "12/07" },
-                { id: 3, name: "الأسبوع الثالث (ف2)", dates: "07/01 - 07/05 هـ", startH: "07/01", startM: "12/14" },
-                { id: 4, name: "الأسبوع الرابع (ف2)", dates: "07/08 - 07/12 هـ", startH: "07/08", startM: "12/21" },
-                { id: 5, name: "الأسبوع الخامس (ف2)", dates: "07/15 - 07/19 هـ", startH: "07/15", startM: "12/28" }
+                {
+                    weekId: 1, name: "الأسبوع الأول (ف2)", dateRange: "06/16 - 06/20هـ | 15/11 - 19/11م",
+                    days: [
+                        { name: "الأحد", hDate: "16 جمادى الآخرة 1448", mDate: "30 نوفمبر 2026" },
+                        { name: "الإثنين", hDate: "17 جمادى الآخرة 1448", mDate: "1 ديسمبر 2026" },
+                        { name: "الثلاثاء", hDate: "18 جمادى الآخرة 1448", mDate: "2 ديسمبر 2026" },
+                        { name: "الأربعاء", hDate: "19 جمادى الآخرة 1448", mDate: "3 ديسمبر 2026" },
+                        { name: "الخميس", hDate: "20 جمادى الآخرة 1448", mDate: "4 ديسمبر 2026" }
+                    ]
+                },
+                {
+                    weekId: 6, name: "الأسبوع السادس (ف2)", dateRange: "09/14 - 09/18هـ | 22/2 - 26/2م", eventTag: "إجازة يوم التأسيس",
+                    days: [
+                        { name: "الأحد", hDate: "14 رمضان 1448", mDate: "22 فبراير 2027", note: "إجازة يوم التأسيس" },
+                        { name: "الإثنين", hDate: "15 رمضان 1448", mDate: "23 فبراير 2027" },
+                        { name: "الثلاثاء", hDate: "16 رمضان 1448", mDate: "24 فبراير 2027" },
+                        { name: "الأربعاء", hDate: "17 رمضان 1448", mDate: "25 فبراير 2027" },
+                        { name: "الخميس", hDate: "18 رمضان 1448", mDate: "26 فبراير 2027" }
+                    ]
+                }
             ]
         };
 
-        let currentTerm = 1;
+        let currentActiveTerm = 1;
+        let selectedDayObj = fullCalendarData[1][5].days[0]; // افتراضي: الأحد الأسبوع السادس
         let activeCellTd = null;
 
-        // تهيئة واجهة التقويم
-        function initCalendar() {
-            selectTerm(1);
+        function openCalendarModal() {
+            renderWeeksForTerm(currentActiveTerm);
+            document.getElementById('calendarModal').classList.add('show');
         }
 
-        function selectTerm(termNum) {
-            currentTerm = termNum;
-            document.getElementById('btnTerm1').classList.toggle('active', termNum === 1);
-            document.getElementById('btnTerm2').classList.toggle('active', termNum === 2);
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('show');
+        }
 
-            let weekSelect = document.getElementById('weekSelect');
-            weekSelect.innerHTML = '';
-            
-            calendarData[termNum].forEach(week => {
-                let opt = document.createElement('option');
-                opt.value = week.id;
-                opt.textContent = `${week.name} (${week.dates})`;
-                weekSelect.appendChild(opt);
+        function switchTerm(termNum) {
+            currentActiveTerm = termNum;
+            document.getElementById('tabTerm1').classList.toggle('active', termNum === 1);
+            document.getElementById('tabTerm2').classList.toggle('active', termNum === 2);
+            renderWeeksForTerm(termNum);
+        }
+
+        function renderWeeksForTerm(termNum) {
+            const container = document.getElementById('weeksListContainer');
+            container.innerHTML = '';
+
+            fullCalendarData[termNum].forEach((week, wIdx) => {
+                const wkDiv = document.createElement('div');
+                wkDiv.className = `wk-item ${wIdx === 0 ? 'open' : ''}`;
+
+                let eventBadgeHtml = week.eventTag ? `<span class="etag-badge">${week.eventTag}</span>` : '';
+
+                wkDiv.innerHTML = `
+                    <button class="wk-head-btn" onclick="toggleWeekAccordion(this)">
+                        <div><b>${week.name}</b> ${eventBadgeHtml}</div>
+                        <span>${week.dateRange}</span>
+                    </button>
+                    <div class="days-list">
+                        ${week.days.map(d => `
+                            <div class="day-card-item" onclick="selectCalendarDay('${week.name}', '${d.name}', '${d.hDate}', '${d.note || ''}')">
+                                <b>${d.name}</b>
+                                <div><small style="color:#d1d5db;">${d.hDate}</small></div>
+                                <em>${d.note ? '<span style="color:#E0A43A;">' + d.note + '</span>' : d.mDate}</em>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(wkDiv);
             });
-
-            renderDaysForWeek();
         }
 
-        // عرض أيام الأسبوع المختار
-        function renderDaysForWeek() {
-            let weekId = parseInt(document.getElementById('weekSelect').value);
-            let weekInfo = calendarData[currentTerm].find(w => w.id === weekId);
-            let daysContainer = document.getElementById('daysContainer');
-            let vacationBanner = document.getElementById('vacationBanner');
+        function toggleWeekAccordion(btn) {
+            const wkItem = btn.closest('.wk-item');
+            wkItem.classList.toggle('open');
+        }
 
-            if (weekInfo.event) {
-                vacationBanner.style.display = 'block';
-                document.getElementById('vacationText').textContent = weekInfo.event;
+        function selectCalendarDay(weekName, dayName, hDate, note) {
+            document.getElementById('currentDayText').textContent = `${dayName} ${hDate}`;
+            document.getElementById('currentWeekText').textContent = weekName;
+
+            const noticeBanner = document.getElementById('vacationNotice');
+            if (note) {
+                noticeBanner.style.display = 'block';
+                document.getElementById('vacationNoticeText').textContent = note;
             } else {
-                vacationBanner.style.display = 'none';
+                noticeBanner.style.display = 'none';
             }
 
-            let daysNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-            let startH = parseInt(weekInfo.startH.split('/')[1]);
-            let monthH = weekInfo.startH.split('/')[0];
-
-            daysContainer.innerHTML = '';
-            daysNames.forEach((dayName, idx) => {
-                let hDay = startH + idx;
-                let dayBtn = document.createElement('div');
-                dayBtn.className = `day-tab-btn ${idx === 0 ? 'active' : ''}`;
-                dayBtn.onclick = function() {
-                    document.querySelectorAll('.day-tab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                };
-                dayBtn.innerHTML = `
-                    <span class="day-name">${dayName}</span>
-                    <span class="day-date">${hDay} جمادى الأولى 1448</span>
-                `;
-                daysContainer.appendChild(dayBtn);
-            });
+            closeCalendarModal();
         }
 
-        // وظائف إدارة وتصفية الجدول
+        function resetToToday() {
+            selectCalendarDay("الأسبوع السادس", "الأحد", "23 ربيع الثاني 1448", "");
+        }
+
+        // تفاعلات الجدول والفرز
         function filterByTeacher() {
             let selectedTeacher = document.getElementById('filterTeacherSelect').value;
             let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
@@ -827,7 +1038,7 @@
         }
 
         function openModalForAdd() {
-            alert("يرجى النقر على أيقونة التعديل (القلم) داخل الخلية في الجدول لتعديل أو تخصيص محتواها.");
+            alert("انقر على أيقونة القلم (التعديل) داخل أي خلية لتغيير مادتها أو معلمها.");
         }
 
         function clearCell(iconElement) {
@@ -882,9 +1093,6 @@
             }
             $('#editCellModal').modal('hide');
         }
-
-        // بدء التشغيل
-        window.onload = initCalendar;
     </script>
 </body>
 </html>
