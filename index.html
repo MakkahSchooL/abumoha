@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة حصص وبرامج النشاط الطلابي - الجدول الذكي</title>
+    <title>إدارة حصص وبرامج النشاط والجدول - الجدول الذكي</title>
 
     <!-- المكتبات والتنسيقات الأساسية المطابقة للموقع الأساسي -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,13 +15,13 @@
     <style>
         body {
             font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
-            background-color: #ffffff;
+            background-color: #f8fafc;
             color: #0f172a;
             direction: rtl;
             text-align: right;
         }
 
-        /* رأس الصفحة بطابع النظام الأصلي */
+        /* ترويسة الصفحة */
         .page-header-card {
             background: #fff;
             border: 1px solid #e2e8f0;
@@ -33,6 +33,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
+            margin-bottom: 20px;
         }
 
         .header-icon-box {
@@ -47,16 +48,16 @@
             box-shadow: 0 6px 18px -6px rgba(14,163,113,.45);
         }
 
-        /* حاوية أزرار الإجراءات والشريط العلوي */
+        /* حاوية أزرار التحكم العلوي */
         .control-btns-container {
             border: 1px solid #e2e8f0;
             background: #fff;
             border-radius: 16px;
             padding: 16px 20px !important;
             box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
+            margin-bottom: 20px;
         }
 
-        /* محاكاة شريط الأزرار العلوي (مطابق للصورة المرفقة) */
         .action-bar-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -67,9 +68,9 @@
 
         .btn-act {
             border-radius: 10px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            padding: 6px 14px;
+            padding: 6px 12px;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
@@ -85,482 +86,627 @@
         .btn-act-green { background: linear-gradient(135deg, #0ea371, #0891b2); color: #fff; border: none; }
         .btn-act-green:hover { filter: brightness(1.07); color: #fff; }
 
-        .btn-act-red { background: #ef4444; color: #fff; border: none; }
-        .btn-act-red:hover { filter: brightness(1.07); color: #fff; }
-
         .btn-act-orange { background: #f59e0b; color: #fff; border: none; }
         .btn-act-orange:hover { filter: brightness(1.07); color: #fff; }
 
-        /* شريط تنقل الأيام */
-        .container-change-day-box {
-            width: fit-content !important;
-            background: #fff !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 999px !important;
-            margin: auto !important;
-            padding: 4px 12px !important;
-            box-shadow: 0 4px 12px -4px rgba(15,23,42,.12) !important;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .btn-act-red { background: #ef4444; color: #fff; border: none; }
+        .btn-act-red:hover { filter: brightness(1.07); color: #fff; }
 
-        .day-btn {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: #0f172a;
-            padding: 4px 10px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-        }
-        .day-btn.active {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        /* الجدول والتصميم الخاص بالحقول */
+        /* الجدول الرئيسي وتوسيع الخلايا (اسم المقرر أكبر) */
         .wc-main-table {
             box-shadow: 0 4px 24px -4px rgba(15,23,42,.10);
             border-radius: 16px;
             overflow: hidden;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
+            background: #fff;
             border: none !important;
-            width: 100%;
         }
 
         .wc-main-table thead th {
             background: linear-gradient(180deg, #f8fafc, #f1f5f9);
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: #64748b;
             border-bottom: 2px solid #e2e8f0 !important;
-            padding: 10px 6px !important;
+            padding: 12px 8px !important;
             vertical-align: middle !important;
         }
 
         .wc-main-table td {
             border-color: #edf0f5 !important;
-            padding: 8px 6px !important;
+            padding: 10px 8px !important;
             vertical-align: middle !important;
+            min-width: 140px; /* ضمان مساحة كافية لعرض المقرر والمعلم بوضوح */
         }
 
-        /* كروت الأنشطة والحصص داخل الخلايا */
-        .activity-card {
-            border-radius: 8px;
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            padding: 6px;
-            margin-bottom: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: relative;
+        /* تصميم خلية المقرر والمعلم (اسم المقرر أكبر ومميز) */
+        .course-cell-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .course-cell-box:hover {
+            border-color: #0ea371;
+            box-shadow: 0 2px 8px rgba(14,163,113,0.15);
         }
 
-        .activity-program-header {
-            font-size: 0.75rem;
-            font-weight: 700;
+        .course-name-large {
+            font-size: 1rem;
+            font-weight: 800;
             color: #0f172a;
-            background-color: #f1f5f9;
-            padding: 2px 4px;
-            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .teacher-name-badge {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* تنسيق حصص وبرامج النشاط */
+        .activity-card {
+            border-radius: 10px;
+            background: #fff;
+            border: 2px dashed #0ea371;
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(14,163,113,0.1);
+        }
+
+        .activity-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e293b;
             margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .activity-type-badge {
+        .activity-type-tag {
             font-size: 0.65rem;
-            padding: 1px 5px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
         }
-        .type-fixed { background: #dbeafe; color: #1e40af; }
-        .type-flexible { background: #fef3c7; color: #92400e; }
-
-        .teacher-badge {
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            padding: 3px 6px;
-            color: #fff;
-            background: linear-gradient(135deg, #0ea371, #0891b2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .tag-fixed { background: #dbeafe; color: #1d4ed8; }
+        .tag-flexible { background: #fef3c7; color: #b45309; }
 
         .status-pill {
             font-size: 0.7rem;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
             display: inline-block;
-            margin-top: 4px;
+            margin-top: 5px;
         }
         .status-done { background: #dcfce7; color: #15803d; }
         .status-progress { background: #fef9c3; color: #a16207; }
         .status-pending { background: #fee2e2; color: #b91c1c; }
 
-        .action-icon-btn {
+        .cell-actions {
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .cell-actions i {
             cursor: pointer;
             font-size: 0.75rem;
-            margin: 0 2px;
             color: #64748b;
-            transition: color 0.15s;
         }
-        .action-icon-btn:hover { color: #0ea371; }
-        .action-icon-btn.delete:hover { color: #ef4444; }
+        .cell-actions i:hover { color: #0ea371; }
+        .cell-actions i.del:hover { color: #ef4444; }
     </style>
 </head>
 <body class="p-3">
 
     <!-- Header Section -->
-    <div class="page-header-card mb-3">
-        <div class="d-flex align-items-center gap-3" style="gap: 12px;">
+    <div class="page-header-card">
+        <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
-                <i class="fas fa-running"></i>
+                <i class="fas fa-calendar-alt"></i>
             </div>
             <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">إدارة برامج النشاط الطلابي وفرز حصص المعلمين</div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">إضافة وتعديل الأنشطة (ثابتة / مرنة)، فرز المعلمين، متابعة تنفيذ الأنشطة والتقارير</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وفرز المعلمين المطور</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;">إدارة الحصص، تخصيص برامج النشاط (ثابتة / مرنة)، وتعديل وحذف البيانات بكل مرونة</div>
             </div>
         </div>
-        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <span class="badge badge-light border p-2" style="font-size: 0.85rem;"><i class="fas fa-calendar-day text-success ml-1"></i> الفصل الدراسي الأول 1448 هـ</span>
+        <div>
+            <span class="badge badge-light border p-2" style="font-size: 0.85rem;"><i class="fas fa-school text-success ml-1"></i> مكة المكرمة - الفصل الأول 1448 هـ</span>
         </div>
     </div>
 
-    <!-- التحكم العالي والفلترة والفرز (محاكاة الشريط المرفق بالصورة) -->
-    <div class="control-btns-container mb-3">
-        <!-- شريط الأزرار العلوية المماثل للصورة -->
+    <!-- شريط الأزرار التفاعلي والتحكم (محاكاة الصورة والطلب) -->
+    <div class="control-btns-container">
         <div class="action-bar-buttons mb-3 pb-3" style="border-bottom: 1px solid #e2e8f0;">
-            <div class="d-flex flex-wrap gap-2" style="gap: 6px;">
-                <button class="btn-act btn-act-outline-green" onclick="filterTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
-                <button class="btn-act btn-act-gray" onclick="resetFilters()"><i class="fas fa-eraser"></i> مسح</button>
-                <button class="btn-act btn-act-green" onclick="setStatusForSelected('منفذ')"><i class="fas fa-check-circle"></i> تحديد كـ منفذ</button>
-                <button class="btn-act btn-act-orange" onclick="setStatusForSelected('جاري التنفيذ')"><i class="fas fa-spinner"></i> جاري التنفيذ</button>
-                <button class="btn-act btn-act-red" onclick="setStatusForSelected('غير منفذ')"><i class="fas fa-times-circle"></i> تحديد كـ غير منفذ</button>
+            <div class="d-flex flex-wrap" style="gap: 6px;">
+                <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
+                <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
+                <button class="btn-act btn-act-green" onclick="setGlobalStatus('منفذ')"><i class="fas fa-check-circle"></i> تحديد كـ منفذ</button>
+                <button class="btn-act btn-act-orange" onclick="setGlobalStatus('جاري التنفيذ')"><i class="fas fa-spinner"></i> جاري التنفيذ</button>
+                <button class="btn-act btn-act-red" onclick="setGlobalStatus('غير منفذ')"><i class="fas fa-times-circle"></i> غير منفذ</button>
             </div>
-
-            <div class="d-flex flex-wrap gap-2" style="gap: 6px;">
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> <i class="fas fa-calendar-day"></i> التقرير اليومي للنشاط</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> <i class="fas fa-print"></i> تقارير حصص النشاط</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> <i class="fas fa-table"></i> جدول الأنشطة</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> <i class="fas fa-archive"></i> الأرشيف</button>
+            <div class="d-flex flex-wrap" style="gap: 6px;">
+                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> التقرير اليومي</button>
+                <button class="btn-act btn-act-gray"><i class="fas fa-print"></i> تقارير الانتظار والنشاط</button>
+                <button class="btn-act btn-act-gray"><i class="fas fa-archive"></i> الأرشيف</button>
             </div>
         </div>
 
-        <!-- خيارات البحث والفرز والخيارات التفاعلية -->
+        <!-- فلاتر البحث السريع -->
         <div class="row align-items-center">
             <div class="col-md-4 mb-2">
                 <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold" style="white-space: nowrap;"><i class="fas fa-user-tie"></i> المعلم:</span>
-                    <select id="teacherSelect" class="form-control form-control-sm">
+                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-user-friends"></i> فرز حسب المعلم:</span>
+                    <select id="filterTeacherSelect" class="form-control form-control-sm" onchange="filterByTeacher()">
                         <option value="all">جميع المعلمين</option>
-                        <option value="عائض الجابري">عائض الجابري</option>
                         <option value="عصام الحازمي">عصام الحازمي</option>
-                        <option value="ناصر المزيني">ناصر المزيني</option>
-                        <option value="حسين الرحيلي">حسين الرحيلي</option>
                         <option value="محمد العمري">محمد العمري</option>
+                        <option value="حسين الرحيلي">حسين الرحيلي</option>
+                        <option value="ناصر المزيني">ناصر المزيني</option>
+                        <option value="عائض الجابري">عائض الجابري</option>
+                        <option value="خالد العوفي">خالد العوفي</option>
+                        <option value="معتز دردير">معتز دردير</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-4 mb-2">
                 <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold" style="white-space: nowrap;"><i class="fas fa-tasks"></i> برنامج النشاط:</span>
-                    <select id="activitySelect" class="form-control form-control-sm">
-                        <option value="all">جميع الأنشطة والبرامج</option>
-                        <option value="ثابتة">حصة نشاط ثابته</option>
-                        <option value="مرنة">حصة نشاط مرنة</option>
+                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-tasks"></i> نوع الحصة:</span>
+                    <select id="filterTypeSelect" class="form-control form-control-sm">
+                        <option value="all">جميع الحصص والأنشطة</option>
+                        <option value="درس">حصص المواد الدراسية</option>
+                        <option value="نشاط">برامج النشاط فقط</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-4 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3" onclick="openAddModal()"><i class="fas fa-plus-circle"></i> إضافة برنامج / حصة نشاط</button>
+                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة أو تعديل حصة/نشاط</button>
             </div>
         </div>
     </div>
 
-    <!-- زر تحديد اليوم -->
-    <div class="text-center mb-3">
-        <div class="container-change-day-box">
-            <button class="day-btn"><i class="fas fa-chevron-right"></i></button>
-            <button class="day-btn active" onclick="switchDay('الأحد')">الأحد</button>
-            <button class="day-btn" onclick="switchDay('الاثنين')">الاثنين</button>
-            <button class="day-btn" onclick="switchDay('الثلاثاء')">الثلاثاء</button>
-            <button class="day-btn" onclick="switchDay('الأربعاء')">الأربعاء</button>
-            <button class="day-btn" onclick="switchDay('الخميس')">الخميس</button>
-            <button class="day-btn"><i class="fas fa-chevron-left"></i></button>
-        </div>
-    </div>
-
-    <!-- جدول الحصص والأنشطة الرئيسي -->
+    <!-- الجدول الرئيسي المحدث بجميع بيانات الحصص والمعلمين المطلوبة -->
     <div class="table-responsive">
-        <table class="table wc-main-table bg-light table-bordered text-center" id="scheduleTable">
+        <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
                 <tr>
-                    <th style="width: 8%;">الفصل / الحصة</th>
-                    <th style="width: 13%;">الحصة 1</th>
-                    <th style="width: 13%;">الحصة 2</th>
-                    <th style="width: 13%;">الحصة 3</th>
-                    <th style="width: 13%;">الحصة 4</th>
-                    <th style="width: 13%;">الحصة 5 (حصة النشاط)</th>
-                    <th style="width: 13%;">الحصة 6</th>
-                    <th style="width: 13%;">الحصة 7</th>
+                    <th>الفصل / الحصة</th>
+                    <th>الحصة 1</th>
+                    <th>الحصة 2</th>
+                    <th>الحصة 3</th>
+                    <th>الحصة 4</th>
+                    <th>الحصة 5</th>
+                    <th>الحصة 6</th>
+                    <th>الحصة 7</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
-                <!-- الفصل 1/أ -->
-                <tr data-classroom="1/أ">
-                    <th class="bg-white font-weight-bold">1/أ</th>
+            <tbody>
+                <!-- الصف الأول: الفصل 1/أ -->
+                <tr data-row-class="1/أ">
+                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/أ</th>
                     <td>
-                        <div class="text-muted small">الرياضيات</div>
-                        <div class="teacher-badge"><span>عصام الحازمي</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">الإنجليزية</div>
-                        <div class="teacher-badge"><span>محمد العمري</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">العلوم</div>
-                        <div class="teacher-badge"><span>حسين الرحيلي</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">العربية</div>
-                        <div class="teacher-badge"><span>ناصر المزيني</span></div>
-                    </td>
-                    <!-- حصة النشاط الخاص بالفصل -->
-                    <td class="bg-white">
-                        <div class="activity-card" id="act-1">
-                            <div class="activity-program-header">
-                                <span>برنامج الإبداع العلمي</span>
-                                <span class="activity-type-badge type-fixed">ثابتة</span>
-                            </div>
-                            <div class="teacher-badge mb-1">
-                                <span>عائض الجابري</span>
-                                <div>
-                                    <i class="fas fa-edit action-icon-btn" onclick="editActivity('act-1')" title="تعديل"></i>
-                                    <i class="fas fa-trash action-icon-btn delete" onclick="deleteActivity('act-1')" title="حذف"></i>
-                                </div>
-                            </div>
-                            <span class="status-pill status-done"><i class="fas fa-check-circle"></i> منفذ</span>
+                        <div class="course-cell-box" data-teacher="عصام الحازمي">
+                            <div class="course-name-large">الرياضيات</div>
+                            <div class="teacher-name-badge">عصام الحازمي</div>
                         </div>
                     </td>
                     <td>
-                        <div class="text-muted small">البدنية</div>
-                        <div class="teacher-badge"><span>ناصر المزيني</span></div>
+                        <div class="course-cell-box" data-teacher="محمد العمري">
+                            <div class="course-name-large">الإنجليزية</div>
+                            <div class="teacher-name-badge">محمد العمري</div>
+                        </div>
                     </td>
                     <td>
-                        <div class="text-muted small">الحياتية</div>
-                        <div class="teacher-badge"><span>ناصر المزيني</span></div>
+                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
+                            <div class="course-name-large">العلوم</div>
+                            <div class="teacher-name-badge">حسين الرحيلي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="ناصر المزيني">
+                            <div class="course-name-large">العربية</div>
+                            <div class="teacher-name-badge">ناصر المزيني</div>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- برنامج نشاط ثابت -->
+                        <div class="activity-card" data-teacher="عائض الجابري">
+                            <div class="activity-header">
+                                <span>نشاط (الإبداع)</span>
+                                <span class="activity-type-tag tag-fixed">ثابتة</span>
+                            </div>
+                            <div class="teacher-name-badge">عائض الجابري</div>
+                            <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
+                            <div class="cell-actions">
+                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="ناصر المزيني">
+                            <div class="course-name-large">البدنية</div>
+                            <div class="teacher-name-badge">ناصر المزيني</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="ناصر المزيني">
+                            <div class="course-name-large">الحياتية</div>
+                            <div class="teacher-name-badge">ناصر المزيني</div>
+                        </div>
                     </td>
                 </tr>
 
-                <!-- الفصل 1/ب -->
-                <tr data-classroom="1/ب">
-                    <th class="bg-white font-weight-bold">1/ب</th>
+                <!-- الصف الثاني: الفصل 1/ب -->
+                <tr data-row-class="1/ب">
+                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ب</th>
                     <td>
-                        <div class="text-muted small">البدنية</div>
-                        <div class="teacher-badge"><span>عبدالاله الصاعدي</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">العربية</div>
-                        <div class="teacher-badge"><span>عبدالاله الصاعدي</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">الرياضيات</div>
-                        <div class="teacher-badge"><span>عصام الحازمي</span></div>
-                    </td>
-                    <td>
-                        <div class="text-muted small">العلوم</div>
-                        <div class="teacher-badge"><span>حسين الرحيلي</span></div>
-                    </td>
-                    <!-- حصة النشاط الخاص بالفصل -->
-                    <td class="bg-white">
-                        <div class="activity-card" id="act-2">
-                            <div class="activity-program-header">
-                                <span>المواطنة الرقمية</span>
-                                <span class="activity-type-badge type-flexible">مرنة</span>
-                            </div>
-                            <div class="teacher-badge mb-1">
-                                <span>عائض الجابري</span>
-                                <div>
-                                    <i class="fas fa-edit action-icon-btn" onclick="editActivity('act-2')" title="تعديل"></i>
-                                    <i class="fas fa-trash action-icon-btn delete" onclick="deleteActivity('act-2')" title="حذف"></i>
-                                </div>
-                            </div>
-                            <span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span>
+                        <div class="course-cell-box" data-teacher="عبدالاله الصاعدي">
+                            <div class="course-name-large">البدنية</div>
+                            <div class="teacher-name-badge">عبدالاله الصاعدي</div>
                         </div>
                     </td>
                     <td>
-                        <div class="text-muted small">الإنجليزية</div>
-                        <div class="teacher-badge"><span>محمد العمري</span></div>
+                        <div class="course-cell-box" data-teacher="عبدالاله الصاعدي">
+                            <div class="course-name-large">العربية</div>
+                            <div class="teacher-name-badge">عبدالاله الصاعدي</div>
+                        </div>
                     </td>
                     <td>
-                        <div class="text-muted small">الإسلامية</div>
-                        <div class="teacher-badge"><span>عائض الجابري</span></div>
+                        <div class="course-cell-box" data-teacher="عصام الحازمي">
+                            <div class="course-name-large">الرياضيات</div>
+                            <div class="teacher-name-badge">عصام الحازمي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
+                            <div class="course-name-large">العلوم</div>
+                            <div class="teacher-name-badge">حسين الرحيلي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- برنامج نشاط مرن -->
+                        <div class="activity-card" data-teacher="عائض الجابري">
+                            <div class="activity-header">
+                                <span>نشاط (رياضي)</span>
+                                <span class="activity-type-tag tag-flexible">مرنة</span>
+                            </div>
+                            <div class="teacher-name-badge">عائض الجابري</div>
+                            <span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span>
+                            <div class="cell-actions">
+                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="محمد العمري">
+                            <div class="course-name-large">الإنجليزية</div>
+                            <div class="teacher-name-badge">محمد العمري</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="عائض الجابري">
+                            <div class="course-name-large">الإسلامية</div>
+                            <div class="teacher-name-badge">عائض الجابري</div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- الصف الثالث: الفصل 1/ج (البيانات المدرجة تباعاً من السجل) -->
+                <tr data-row-class="1/ج">
+                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ج</th>
+                    <td>
+                        <div class="course-cell-box" data-teacher="يوسف اللقماني">
+                            <div class="course-name-large">العربية</div>
+                            <div class="teacher-name-badge">يوسف اللقماني</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="عبدالله العيسى">
+                            <div class="course-name-large">الرياضيات</div>
+                            <div class="teacher-name-badge">عبدالله العيسى</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="محمد العمري">
+                            <div class="course-name-large">الإنجليزية</div>
+                            <div class="teacher-name-badge">محمد العمري</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="خالد العوفي">
+                            <div class="course-name-large">الإسلامية</div>
+                            <div class="teacher-name-badge">خالد العوفي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="activity-card" data-teacher="خالد العوفي">
+                            <div class="activity-header">
+                                <span>نشاط ثقافي</span>
+                                <span class="activity-type-tag tag-fixed">ثابتة</span>
+                            </div>
+                            <div class="teacher-name-badge">خالد العوفي</div>
+                            <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
+                            <div class="cell-actions">
+                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="خالد العوفي">
+                            <div class="course-name-large">الإسلامية</div>
+                            <div class="teacher-name-badge">خالد العوفي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
+                            <div class="course-name-large">العلوم</div>
+                            <div class="teacher-name-badge">حسين الرحيلي</div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- الصف الرابع: الفصل 2/أ -->
+                <tr data-row-class="2/أ">
+                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/أ</th>
+                    <td>
+                        <div class="activity-card" data-teacher="خالد العوفي">
+                            <div class="activity-header">
+                                <span>نشاط كشفي</span>
+                                <span class="activity-type-tag tag-flexible">مرنة</span>
+                            </div>
+                            <div class="teacher-name-badge">خالد العوفي</div>
+                            <span class="status-pill status-pending">غير منفذ</span>
+                            <div class="cell-actions">
+                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="خالد العوفي">
+                            <div class="course-name-large">الإسلامية</div>
+                            <div class="teacher-name-badge">خالد العوفي</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="خالد البركاني">
+                            <div class="course-name-large">العربية</div>
+                            <div class="teacher-name-badge">خالد البركاني</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="عبدالله العيسى">
+                            <div class="course-name-large">الرياضيات</div>
+                            <div class="teacher-name-badge">عبدالله العيسى</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="محمد العمري">
+                            <div class="course-name-large">الإنجليزية</div>
+                            <div class="teacher-name-badge">محمد العمري</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="خالد البركاني">
+                            <div class="course-name-large">العربية</div>
+                            <div class="teacher-name-badge">خالد البركاني</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="course-cell-box" data-teacher="احمد البار">
+                            <div class="course-name-large">الفنية</div>
+                            <div class="teacher-name-badge">احمد البار</div>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- نافذة (Modal) لإضافة/تعديل برنامج وحصة نشاط -->
-    <div class="modal fade" id="activityModal" tabindex="-1" role="dialog">
+    <!-- نافذة تعديل أو إضافة بيانات الخلية / الحصة / النشاط -->
+    <div class="modal fade" id="editCellModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 16px;">
                 <div class="modal-header bg-success text-white" style="border-radius: 16px 16px 0 0;">
-                    <h5 class="modal-title font-weight-bold" id="modalTitle"><i class="fas fa-plus-circle"></i> إضافة / تعديل برنامج نشاط</h5>
+                    <h5 class="modal-title font-weight-bold"><i class="fas fa-edit"></i> تعديل أو تخصيص محتوى الحصة/النشاط</h5>
                     <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <form id="activityForm">
+                    <form id="cellEditForm">
                         <div class="form-group">
-                            <label class="font-weight-bold">اسم برنامج النشاط:</label>
-                            <input type="text" id="modalProgramName" class="form-control" placeholder="مثال: برنامج الثقافة المالية" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="font-weight-bold">نوع حصة النشاط:</label>
-                            <select id="modalActivityType" class="form-control">
-                                <option value="ثابتة">حصة نشاط ثابته</option>
-                                <option value="مرنة">حصة نشاط مرنة</option>
+                            <label class="font-weight-bold">نوع المحتوى:</label>
+                            <select id="contentType" class="form-control" onchange="toggleContentTypeFields()">
+                                <option value="course">حصة مادة دراسية</option>
+                                <option value="activity">برنامج / حصة نشاط</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="font-weight-bold">المعلم المسؤول:</label>
-                            <select id="modalTeacher" class="form-control">
-                                <option value="عائض الجابري">عائض الجابري</option>
-                                <option value="ناصر المزيني">ناصر المزيني</option>
-                                <option value="عصام الحازمي">عصام الحازمي</option>
-                                <option value="حسين الرحيلي">حسين الرحيلي</option>
-                            </select>
+
+                        <div id="courseFields">
+                            <div class="form-group">
+                                <label class="font-weight-bold">اسم المقرر / المادة:</label>
+                                <input type="text" id="inputCourseName" class="form-control" placeholder="مثال: الرياضيات، العلوم...">
+                            </div>
                         </div>
+
+                        <div id="activityFields" style="display: none;">
+                            <div class="form-group">
+                                <label class="font-weight-bold">اسم برنامج النشاط:</label>
+                                <input type="text" id="inputActivityName" class="form-control" placeholder="مثال: نشاط الإبداع العلمي">
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">طبيعة حصة النشاط:</label>
+                                <select id="inputActivityType" class="form-control">
+                                    <option value="ثابتة">حصة نشاط ثابتة</option>
+                                    <option value="مرنة">حصة نشاط مرنة</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">حالة التنفيذ:</label>
+                                <select id="inputActivityStatus" class="form-control">
+                                    <option value="منفذ">منفذ</option>
+                                    <option value="جاري التنفيذ">جاري التنفيذ</option>
+                                    <option value="غير منفذ">غير منفذ</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label class="font-weight-bold">حالة التنفيذ:</label>
-                            <select id="modalStatus" class="form-control">
-                                <option value="منفذ">منفذ</option>
-                                <option value="جاري التنفيذ">جاري التنفيذ</option>
-                                <option value="غير منفذ">غير منفذ</option>
-                            </select>
+                            <label class="font-weight-bold">اسم المعلم:</label>
+                            <input type="text" id="inputTeacherName" class="form-control" placeholder="اكتب اسم المعلم المسؤول">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn btn-success font-weight-bold" onclick="saveActivity()">حفظ التغيرات</button>
+                    <button type="button" class="btn btn-success font-weight-bold" onclick="saveCellChanges()">حفظ التعديلات</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- النص المساعد للجافاسكريبت -->
+    <!-- أكواد التفاعل البرمجية (JavaScript) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
-        let currentEditId = null;
+        let activeCellTd = null;
 
-        // فتح نافذة الإضافة
-        function openAddModal() {
-            currentEditId = null;
-            document.getElementById('modalTitle').innerText = "إضافة برنامج نشاط جديد";
-            document.getElementById('activityForm').reset();
-            $('#activityModal').modal('show');
+        // فلترة الجدول حسب المعلم المختار
+        function filterByTeacher() {
+            let selectedTeacher = document.getElementById('filterTeacherSelect').value;
+            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
+
+            boxes.forEach(box => {
+                let teacher = box.getAttribute('data-teacher');
+                let parentTd = box.closest('td');
+                if (selectedTeacher === 'all' || (teacher && teacher.includes(selectedTeacher))) {
+                    parentTd.style.opacity = '1';
+                    parentTd.style.pointerEvents = 'auto';
+                } else {
+                    parentTd.style.opacity = '0.2';
+                }
+            });
         }
 
-        // تعديل نشاط قائم
-        function editActivity(id) {
-            currentEditId = id;
-            document.getElementById('modalTitle').innerText = "تعديل برنامج النشاط";
-            
-            let card = document.getElementById(id);
-            let progName = card.querySelector('.activity-program-header span:first-child').innerText;
-            let teacherName = card.querySelector('.teacher-badge span').innerText;
-
-            document.getElementById('modalProgramName').value = progName;
-            document.getElementById('modalTeacher').value = teacherName;
-            $('#activityModal').modal('show');
+        // إلغاء الفرز
+        function resetTableFilter() {
+            document.getElementById('filterTeacherSelect').value = 'all';
+            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
+            boxes.forEach(box => {
+                box.closest('td').style.opacity = '1';
+            });
         }
 
-        // حفظ التغييرات أو الإضافة
-        function saveActivity() {
-            let name = document.getElementById('modalProgramName').value;
-            let type = document.getElementById('modalActivityType').value;
-            let teacher = document.getElementById('modalTeacher').value;
-            let status = document.getElementById('modalStatus').value;
+        // تغيير حالة التنفيذ لجميع الأنشطة دفعة واحدة
+        function setGlobalStatus(status) {
+            let pills = document.querySelectorAll('.activity-card .status-pill');
+            pills.forEach(pill => {
+                if (status === 'منفذ') {
+                    pill.className = 'status-pill status-done';
+                    pill.innerHTML = '<i class="fas fa-check"></i> منفذ';
+                } else if (status === 'جاري التنفيذ') {
+                    pill.className = 'status-pill status-progress';
+                    pill.innerHTML = '<i class="fas fa-spinner"></i> جاري التنفيذ';
+                } else {
+                    pill.className = 'status-pill status-pending';
+                    pill.innerHTML = 'غير منفذ';
+                }
+            });
+        }
 
-            if(!name) { alert("يرجى كتابة اسم برنامج النشاط"); return; }
+        // تبديل الحقول داخل النافذة المنبثقة بين مادة أو نشاط
+        function toggleContentTypeFields() {
+            let type = document.getElementById('contentType').value;
+            if (type === 'course') {
+                document.getElementById('courseFields').style.display = 'block';
+                document.getElementById('activityFields').style.display = 'none';
+            } else {
+                document.getElementById('courseFields').style.display = 'none';
+                document.getElementById('activityFields').style.display = 'block';
+            }
+        }
 
-            let statusClass = status === 'منفذ' ? 'status-done' : (status === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
-            let statusIcon = status === 'منفذ' ? 'fa-check-circle' : (status === 'جاري التنفيذ' ? 'fa-spinner' : 'fa-times-circle');
-            let typeClass = type === 'ثابتة' ? 'type-fixed' : 'type-flexible';
+        // فتح نافذة التعديل لخلايا الجدول
+        function editCell(iconElement) {
+            let card = iconElement.closest('.activity-card') || iconElement.closest('.course-cell-box');
+            activeCellTd = card.closest('td');
+            $('#editCellModal').modal('show');
+        }
 
-            if(currentEditId) {
-                let card = document.getElementById(currentEditId);
-                card.innerHTML = `
-                    <div class="activity-program-header">
-                        <span>${name}</span>
-                        <span class="activity-type-badge ${typeClass}">${type}</span>
-                    </div>
-                    <div class="teacher-badge mb-1">
-                        <span>${teacher}</span>
-                        <div>
-                            <i class="fas fa-edit action-icon-btn" onclick="editActivity('${currentEditId}')"></i>
-                            <i class="fas fa-trash action-icon-btn delete" onclick="deleteActivity('${currentEditId}')"></i>
+        function openModalForAdd() {
+            alert("يرجى النقر على أيقونة التعديل (القلم) داخل أي خلية في الجدول لتعديل أو تخصيص محتواها أو تحويلها لحصة نشاط.");
+        }
+
+        // تفريغ محتوى الخلية (حذف)
+        function clearCell(iconElement) {
+            if (confirm("هل أنت متأكد من تفريغ وحذف محتوى هذه الحصة؟")) {
+                let td = iconElement.closest('td');
+                td.innerHTML = `
+                    <div class="course-cell-box" data-teacher="">
+                        <div class="course-name-large text-muted">فارغ</div>
+                        <div class="teacher-name-badge text-muted">---------</div>
+                        <div class="cell-actions mt-1">
+                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
                         </div>
                     </div>
-                    <span class="status-pill ${statusClass}"><i class="fas ${statusIcon}"></i> ${status}</span>
                 `;
             }
-            $('#activityModal').modal('hide');
         }
 
-        // حذف نشاط
-        function deleteActivity(id) {
-            if(confirm("هل أنت تأكد من رغبتك في حذف هذا النشاط؟")) {
-                document.getElementById(id).remove();
+        // حفظ التغييرات المدخلة من النافذة
+        function saveCellChanges() {
+            if (!activeCellTd) return;
+            let contentType = document.getElementById('contentType').value;
+            let teacher = document.getElementById('inputTeacherName').value || "معلم غير محدد";
+
+            if (contentType === 'course') {
+                let courseName = document.getElementById('inputCourseName').value || "مادة دراسية";
+                activeCellTd.innerHTML = `
+                    <div class="course-cell-box" data-teacher="${teacher}">
+                        <div class="course-name-large">${courseName}</div>
+                        <div class="teacher-name-badge">${teacher}</div>
+                        <div class="cell-actions mt-1">
+                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                            <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let actName = document.getElementById('inputActivityName').value || "برنامج نشاط";
+                let actType = document.getElementById('inputActivityType').value;
+                let actStatus = document.getElementById('inputActivityStatus').value;
+                
+                let statusClass = actStatus === 'منفذ' ? 'status-done' : (actStatus === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
+                let tagClass = actType === 'ثابتة' ? 'tag-fixed' : 'tag-flexible';
+
+                activeCellTd.innerHTML = `
+                    <div class="activity-card" data-teacher="${teacher}">
+                        <div class="activity-header">
+                            <span>${actName}</span>
+                            <span class="activity-type-tag ${tagClass}">${actType}</span>
+                        </div>
+                        <div class="teacher-name-badge">${teacher}</div>
+                        <span class="status-pill ${statusClass}">${actStatus}</span>
+                        <div class="cell-actions">
+                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
+                            <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
+                        </div>
+                    </div>
+                `;
             }
-        }
-
-        // الفرز حسب المعلم
-        function filterTeacher() {
-            let selectedTeacher = document.getElementById('teacherSelect').value;
-            let cards = document.querySelectorAll('.activity-card');
-
-            cards.forEach(card => {
-                let teacher = card.querySelector('.teacher-badge span').innerText;
-                if(selectedTeacher === 'all' || teacher.includes(selectedTeacher)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // إعادة المسح والتصفية
-        function resetFilters() {
-            document.getElementById('teacherSelect').value = 'all';
-            document.getElementById('activitySelect').value = 'all';
-            filterTeacher();
-        }
-
-        // تغيير الحالة دفعة واحدة
-        function setStatusForSelected(status) {
-            let cards = document.querySelectorAll('.activity-card');
-            cards.forEach(card => {
-                let statusPill = card.querySelector('.status-pill');
-                if(status === 'منفذ') {
-                    statusPill.className = 'status-pill status-done';
-                    statusPill.innerHTML = '<i class="fas fa-check-circle"></i> منفذ';
-                } else if(status === 'جاري التنفيذ') {
-                    statusPill.className = 'status-pill status-progress';
-                    statusPill.innerHTML = '<i class="fas fa-spinner"></i> جاري التنفيذ';
-                } else {
-                    statusPill.className = 'status-pill status-pending';
-                    statusPill.innerHTML = '<i class="fas fa-times-circle"></i> غير منفذ';
-                }
-            });
+            $('#editCellModal').modal('hide');
         }
     </script>
 </body>
