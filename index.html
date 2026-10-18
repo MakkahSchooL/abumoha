@@ -3,711 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة حصص وبرامج النشاط والجدول - الجدول الذكي</title>
-
-    <!-- المكتبات والتنسيقات الأساسية المطابقة للموقع الأساسي -->
+    <title>الجدول الذكي - فرز المعلمين والأنشطة (الشامل 21 فصلاً)</title>
+    
+    <!-- الخطوط والمكتبات الخارجية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <style>
+        :root {
+            --bg-main: #0b0f14;
+            --bg-card: #11161d;
+            --bg-cell: #0f272a;
+            --cell-border: #134e4a;
+            --text-primary: #f1f5f9;
+            --text-accent: #2dd4bf;
+            --text-teacher: #94a3b8;
+        }
+
         body {
-            font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             direction: rtl;
             text-align: right;
+            margin: 0;
+            padding: 10px;
         }
 
-        /* ترويسة الصفحة */
-        .page-header-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 16px 22px;
-            box-shadow: 0 1px 2px rgba(15,23,42,.04);
+        /* شريط التحكم والتصفية العلوي */
+        .top-control-panel {
+            background: var(--bg-card);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
         }
 
-        .header-icon-box {
-            width: 42px;
-            height: 42px;
-            border-radius: 11px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, #0ea371, #0891b2);
-            color: #fff;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 18px -6px rgba(14,163,113,.45);
-        }
-
-        /* حاوية أزرار التحكم العلوي */
-        .control-btns-container {
-            border: 1px solid #e2e8f0;
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 20px !important;
-            box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
-            margin-bottom: 20px;
-        }
-
-        .action-bar-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .btn-act {
-            border-radius: 10px;
+        .action-btn-custom {
+            border-radius: 8px;
             font-size: 0.82rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-act-outline-green { border: 1px solid #0ea371; color: #0ea371; background: #fff; }
-        .btn-act-outline-green:hover { background: #0ea371; color: #fff; }
-
-        .btn-act-gray { border: 1px solid #e2e8f0; color: #475569; background: #f8fafc; }
-        .btn-act-gray:hover { background: #e2e8f0; }
-
-        .btn-act-green { background: linear-gradient(135deg, #0ea371, #0891b2); color: #fff; border: none; }
-        .btn-act-green:hover { filter: brightness(1.07); color: #fff; }
-
-        .btn-act-orange { background: #f59e0b; color: #fff; border: none; }
-        .btn-act-orange:hover { filter: brightness(1.07); color: #fff; }
-
-        .btn-act-red { background: #ef4444; color: #fff; border: none; }
-        .btn-act-red:hover { filter: brightness(1.07); color: #fff; }
-
-        /* الجدول الرئيسي وتوسيع الخلايا (اسم المقرر أكبر) */
-        .wc-main-table {
-            box-shadow: 0 4px 24px -4px rgba(15,23,42,.10);
-            border-radius: 16px;
-            overflow: hidden;
-            font-size: 0.9rem;
-            background: #fff;
-            border: none !important;
-        }
-
-        .wc-main-table thead th {
-            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
-            font-size: 0.8rem;
             font-weight: 700;
-            color: #64748b;
-            border-bottom: 2px solid #e2e8f0 !important;
-            padding: 12px 8px !important;
-            vertical-align: middle !important;
-        }
-
-        .wc-main-table td {
-            border-color: #edf0f5 !important;
-            padding: 10px 8px !important;
-            vertical-align: middle !important;
-            min-width: 140px; /* ضمان مساحة كافية لعرض المقرر والمعلم بوضوح */
-        }
-
-        /* تصميم خلية المقرر والمعلم (اسم المقرر أكبر ومميز) */
-        .course-cell-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
+            padding: 6px 14px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #cbd5e1;
             transition: all 0.2s;
         }
-        .course-cell-box:hover {
-            border-color: #0ea371;
-            box-shadow: 0 2px 8px rgba(14,163,113,0.15);
+        .action-btn-custom:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .btn-green-accent {
+            background: #059669;
+            color: #fff;
+            border: none;
+        }
+        .btn-green-accent:hover {
+            background: #10b981;
         }
 
-        .course-name-large {
+        /* الجدول الرئيسي المحاكي للواجهة الداكنة بالكامل */
+        .schedule-grid-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 6px;
+        }
+
+        .schedule-grid-table th {
+            background: #151d28;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            border: 1px solid #1e293b;
+        }
+
+        .classroom-header-cell {
+            background: #151d28;
+            color: #38bdf8;
             font-size: 1rem;
             font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-
-        .teacher-name-badge {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #047857;
-            background: #ecfdf5;
-            padding: 3px 8px;
-            border-radius: 6px;
-            display: inline-block;
-            width: 100%;
-        }
-
-        /* تنسيق حصص وبرامج النشاط */
-        .activity-card {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed #0ea371;
-            padding: 8px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(14,163,113,0.1);
+            vertical-align: middle;
+            border-radius: 6px;
+            border: 1px solid #1e293b;
+            width: 50px;
         }
 
-        .activity-header {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* خلية الحصة ومكوناتها المطابقة للصورة */
+        .cell-box-container {
+            background: var(--bg-cell);
+            border: 1px solid var(--cell-border);
+            border-radius: 8px;
+            padding: 8px 6px;
+            text-align: center;
+            position: relative;
+            transition: all 0.15s ease-in-out;
+            min-width: 135px;
+        }
+        .cell-box-container:hover {
+            border-color: #2dd4bf;
+            box-shadow: 0 0 10px rgba(45, 212, 191, 0.2);
         }
 
-        .activity-type-tag {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
+        /* خلية النشاط */
+        .cell-box-container.is-activity {
+            background: #064e3b;
+            border-color: #10b981;
         }
-        .tag-fixed { background: #dbeafe; color: #1d4ed8; }
-        .tag-flexible { background: #fef3c7; color: #b45309; }
 
-        .status-pill {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 5px;
+        .subject-title-large {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
-        .status-done { background: #dcfce7; color: #15803d; }
-        .status-progress { background: #fef9c3; color: #a16207; }
-        .status-pending { background: #fee2e2; color: #b91c1c; }
 
-        .cell-actions {
-            margin-top: 5px;
+        .teacher-title-sub {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--text-accent);
+            margin-bottom: 6px;
+        }
+
+        /* شريط الأزرار الصغيرة السفلي داخل الخلية (مطابق للواجهة) */
+        .mini-cell-toolbar {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 3px;
+            background: rgba(0,0,0,0.3);
+            padding: 3px;
+            border-radius: 4px;
+            font-size: 0.68rem;
         }
-        .cell-actions i {
+
+        .mini-btn {
+            color: #94a3b8;
             cursor: pointer;
-            font-size: 0.75rem;
-            color: #64748b;
+            padding: 1px 4px;
+            border-radius: 3px;
+            transition: 0.1s;
         }
-        .cell-actions i:hover { color: #0ea371; }
-        .cell-actions i.del:hover { color: #ef4444; }
+        .mini-btn:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .mini-btn.btn-del:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .badge-type-tag {
+            font-size: 0.65rem;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            display: inline-block;
+        }
+        .tag-fixed { background: #1e3a8a; color: #93c5fd; }
+        .tag-flexible { background: #78350f; color: #fde68a; }
+
+        /* تخصيص نافذة التعديل Modal */
+        .modal-content-dark {
+            background: #151d28;
+            color: #fff;
+            border: 1px solid #334155;
+            border-radius: 12px;
+        }
     </style>
 </head>
-<body class="p-3">
+<body>
 
-    <!-- Header Section -->
-    <div class="page-header-card">
-        <div class="d-flex align-items-center" style="gap: 12px;">
-            <div class="header-icon-box">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
-            <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وفرز المعلمين المطور</div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">إدارة الحصص، تخصيص برامج النشاط (ثابتة / مرنة)، وتعديل وحذف البيانات بكل مرونة</div>
-            </div>
+    <!-- شريط التحكم والأزرار العلوي -->
+    <div class="top-control-panel">
+        <div class="d-flex align-items-center gap-2">
+            <span class="font-weight-bold text-info" style="font-size: 1.1rem;"><i class="fas fa-th-large ml-1"></i> الجدول الذكي الشامل - إدارة حصص وفرز الأنشطة (21 فصلاً)</span>
         </div>
-        <div>
-            <span class="badge badge-light border p-2" style="font-size: 0.85rem;"><i class="fas fa-school text-success ml-1"></i> مكة المكرمة - الفصل الأول 1448 هـ</span>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="action-btn-custom btn-green-accent" onclick="setGlobalStatus('منفذ')"><i class="fas fa-check-circle ml-1"></i> تحديد الكل منفذ</button>
+            <button class="action-btn-custom" onclick="filterTeacher()"><i class="fas fa-user-check ml-1"></i> فرز حسب المعلم</button>
+            <button class="action-btn-custom" onclick="location.reload()"><i class="fas fa-sync-alt ml-1"></i> تحديث الجدول</button>
         </div>
     </div>
 
-    <!-- شريط الأزرار التفاعلي والتحكم (محاكاة الصورة والطلب) -->
-    <div class="control-btns-container">
-        <div class="action-bar-buttons mb-3 pb-3" style="border-bottom: 1px solid #e2e8f0;">
-            <div class="d-flex flex-wrap" style="gap: 6px;">
-                <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
-                <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
-                <button class="btn-act btn-act-green" onclick="setGlobalStatus('منفذ')"><i class="fas fa-check-circle"></i> تحديد كـ منفذ</button>
-                <button class="btn-act btn-act-orange" onclick="setGlobalStatus('جاري التنفيذ')"><i class="fas fa-spinner"></i> جاري التنفيذ</button>
-                <button class="btn-act btn-act-red" onclick="setGlobalStatus('غير منفذ')"><i class="fas fa-times-circle"></i> غير منفذ</button>
-            </div>
-            <div class="d-flex flex-wrap" style="gap: 6px;">
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> التقرير اليومي</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-print"></i> تقارير الانتظار والنشاط</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-archive"></i> الأرشيف</button>
-            </div>
-        </div>
-
-        <!-- فلاتر البحث السريع -->
-        <div class="row align-items-center">
-            <div class="col-md-4 mb-2">
-                <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-user-friends"></i> فرز حسب المعلم:</span>
-                    <select id="filterTeacherSelect" class="form-control form-control-sm" onchange="filterByTeacher()">
-                        <option value="all">جميع المعلمين</option>
-                        <option value="عصام الحازمي">عصام الحازمي</option>
-                        <option value="محمد العمري">محمد العمري</option>
-                        <option value="حسين الرحيلي">حسين الرحيلي</option>
-                        <option value="ناصر المزيني">ناصر المزيني</option>
-                        <option value="عائض الجابري">عائض الجابري</option>
-                        <option value="خالد العوفي">خالد العوفي</option>
-                        <option value="معتز دردير">معتز دردير</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4 mb-2">
-                <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-tasks"></i> نوع الحصة:</span>
-                    <select id="filterTypeSelect" class="form-control form-control-sm">
-                        <option value="all">جميع الحصص والأنشطة</option>
-                        <option value="درس">حصص المواد الدراسية</option>
-                        <option value="نشاط">برامج النشاط فقط</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة أو تعديل حصة/نشاط</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- الجدول الرئيسي المحدث بجميع بيانات الحصص والمعلمين المطلوبة -->
+    <!-- جدول الـ 21 فصلاً الكامل بالحصة والمادة والمعلم -->
     <div class="table-responsive">
-        <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
+        <table class="schedule-grid-table">
             <thead>
                 <tr>
-                    <th>الفصل / الحصة</th>
-                    <th>الحصة 1</th>
-                    <th>الحصة 2</th>
-                    <th>الحصة 3</th>
-                    <th>الحصة 4</th>
-                    <th>الحصة 5</th>
-                    <th>الحصة 6</th>
-                    <th>الحصة 7</th>
+                    <th style="width: 50px;">الفصل</th>
+                    <th>الأحد 1</th>
+                    <th>الأحد 2</th>
+                    <th>الأحد 3</th>
+                    <th>الأحد 4</th>
+                    <th>الأحد 5</th>
+                    <th>الأحد 6</th>
+                    <th>الأحد 7</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- الصف الأول: الفصل 1/أ -->
-                <tr data-row-class="1/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/أ</th>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عصام الحازمي">
-                            <div class="course-name-large">الرياضيات</div>
-                            <div class="teacher-name-badge">عصام الحازمي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="محمد العمري">
-                            <div class="course-name-large">الإنجليزية</div>
-                            <div class="teacher-name-badge">محمد العمري</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
-                            <div class="course-name-large">العلوم</div>
-                            <div class="teacher-name-badge">حسين الرحيلي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="ناصر المزيني">
-                            <div class="course-name-large">العربية</div>
-                            <div class="teacher-name-badge">ناصر المزيني</div>
-                        </div>
-                    </td>
-                    <td>
-                        <!-- برنامج نشاط ثابت -->
-                        <div class="activity-card" data-teacher="عائض الجابري">
-                            <div class="activity-header">
-                                <span>نشاط (الإبداع)</span>
-                                <span class="activity-type-tag tag-fixed">ثابتة</span>
-                            </div>
-                            <div class="teacher-name-badge">عائض الجابري</div>
-                            <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
-                            <div class="cell-actions">
-                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="ناصر المزيني">
-                            <div class="course-name-large">البدنية</div>
-                            <div class="teacher-name-badge">ناصر المزيني</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="ناصر المزيني">
-                            <div class="course-name-large">الحياتية</div>
-                            <div class="teacher-name-badge">ناصر المزيني</div>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- الصف الثاني: الفصل 1/ب -->
-                <tr data-row-class="1/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ب</th>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عبدالاله الصاعدي">
-                            <div class="course-name-large">البدنية</div>
-                            <div class="teacher-name-badge">عبدالاله الصاعدي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عبدالاله الصاعدي">
-                            <div class="course-name-large">العربية</div>
-                            <div class="teacher-name-badge">عبدالاله الصاعدي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عصام الحازمي">
-                            <div class="course-name-large">الرياضيات</div>
-                            <div class="teacher-name-badge">عصام الحازمي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
-                            <div class="course-name-large">العلوم</div>
-                            <div class="teacher-name-badge">حسين الرحيلي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <!-- برنامج نشاط مرن -->
-                        <div class="activity-card" data-teacher="عائض الجابري">
-                            <div class="activity-header">
-                                <span>نشاط (رياضي)</span>
-                                <span class="activity-type-tag tag-flexible">مرنة</span>
-                            </div>
-                            <div class="teacher-name-badge">عائض الجابري</div>
-                            <span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span>
-                            <div class="cell-actions">
-                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="محمد العمري">
-                            <div class="course-name-large">الإنجليزية</div>
-                            <div class="teacher-name-badge">محمد العمري</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عائض الجابري">
-                            <div class="course-name-large">الإسلامية</div>
-                            <div class="teacher-name-badge">عائض الجابري</div>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- الصف الثالث: الفصل 1/ج (البيانات المدرجة تباعاً من السجل) -->
-                <tr data-row-class="1/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ج</th>
-                    <td>
-                        <div class="course-cell-box" data-teacher="يوسف اللقماني">
-                            <div class="course-name-large">العربية</div>
-                            <div class="teacher-name-badge">يوسف اللقماني</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عبدالله العيسى">
-                            <div class="course-name-large">الرياضيات</div>
-                            <div class="teacher-name-badge">عبدالله العيسى</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="محمد العمري">
-                            <div class="course-name-large">الإنجليزية</div>
-                            <div class="teacher-name-badge">محمد العمري</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="خالد العوفي">
-                            <div class="course-name-large">الإسلامية</div>
-                            <div class="teacher-name-badge">خالد العوفي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="activity-card" data-teacher="خالد العوفي">
-                            <div class="activity-header">
-                                <span>نشاط ثقافي</span>
-                                <span class="activity-type-tag tag-fixed">ثابتة</span>
-                            </div>
-                            <div class="teacher-name-badge">خالد العوفي</div>
-                            <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
-                            <div class="cell-actions">
-                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="خالد العوفي">
-                            <div class="course-name-large">الإسلامية</div>
-                            <div class="teacher-name-badge">خالد العوفي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="حسين الرحيلي">
-                            <div class="course-name-large">العلوم</div>
-                            <div class="teacher-name-badge">حسين الرحيلي</div>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- الصف الرابع: الفصل 2/أ -->
-                <tr data-row-class="2/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/أ</th>
-                    <td>
-                        <div class="activity-card" data-teacher="خالد العوفي">
-                            <div class="activity-header">
-                                <span>نشاط كشفي</span>
-                                <span class="activity-type-tag tag-flexible">مرنة</span>
-                            </div>
-                            <div class="teacher-name-badge">خالد العوفي</div>
-                            <span class="status-pill status-pending">غير منفذ</span>
-                            <div class="cell-actions">
-                                <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                                <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="خالد العوفي">
-                            <div class="course-name-large">الإسلامية</div>
-                            <div class="teacher-name-badge">خالد العوفي</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="خالد البركاني">
-                            <div class="course-name-large">العربية</div>
-                            <div class="teacher-name-badge">خالد البركاني</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="عبدالله العيسى">
-                            <div class="course-name-large">الرياضيات</div>
-                            <div class="teacher-name-badge">عبدالله العيسى</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="محمد العمري">
-                            <div class="course-name-large">الإنجليزية</div>
-                            <div class="teacher-name-badge">محمد العمري</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="خالد البركاني">
-                            <div class="course-name-large">العربية</div>
-                            <div class="teacher-name-badge">خالد البركاني</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="course-cell-box" data-teacher="احمد البار">
-                            <div class="course-name-large">الفنية</div>
-                            <div class="teacher-name-badge">احمد البار</div>
-                        </div>
-                    </td>
-                </tr>
+            <tbody id="scheduleTableBody">
+                <!-- وسيتم توليد البيانات والـ 21 فصلاً بنفس ترتيب الجدول بدقة -->
             </tbody>
         </table>
     </div>
 
-    <!-- نافذة تعديل أو إضافة بيانات الخلية / الحصة / النشاط -->
-    <div class="modal fade" id="editCellModal" tabindex="-1" role="dialog">
+    <!-- نافذة التعديل التفاعلية Modal -->
+    <div class="modal fade" id="cellModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="border-radius: 16px;">
-                <div class="modal-header bg-success text-white" style="border-radius: 16px 16px 0 0;">
-                    <h5 class="modal-title font-weight-bold"><i class="fas fa-edit"></i> تعديل أو تخصيص محتوى الحصة/النشاط</h5>
+            <div class="modal-content modal-content-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title font-weight-bold" id="modalTitle"><i class="fas fa-edit text-success ml-2"></i> تعديل بيانات الحصة / النشاط</h5>
                     <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <form id="cellEditForm">
+                    <form id="editForm">
                         <div class="form-group">
-                            <label class="font-weight-bold">نوع المحتوى:</label>
-                            <select id="contentType" class="form-control" onchange="toggleContentTypeFields()">
-                                <option value="course">حصة مادة دراسية</option>
+                            <label class="small text-muted">نوع الحصة:</label>
+                            <select id="modalType" class="form-control bg-dark text-white border-secondary" onchange="toggleActivityOption()">
+                                <option value="lesson">مادة دراسية عادية</option>
                                 <option value="activity">برنامج / حصة نشاط</option>
                             </select>
                         </div>
-
-                        <div id="courseFields">
-                            <div class="form-group">
-                                <label class="font-weight-bold">اسم المقرر / المادة:</label>
-                                <input type="text" id="inputCourseName" class="form-control" placeholder="مثال: الرياضيات، العلوم...">
-                            </div>
-                        </div>
-
-                        <div id="activityFields" style="display: none;">
-                            <div class="form-group">
-                                <label class="font-weight-bold">اسم برنامج النشاط:</label>
-                                <input type="text" id="inputActivityName" class="form-control" placeholder="مثال: نشاط الإبداع العلمي">
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">طبيعة حصة النشاط:</label>
-                                <select id="inputActivityType" class="form-control">
-                                    <option value="ثابتة">حصة نشاط ثابتة</option>
-                                    <option value="مرنة">حصة نشاط مرنة</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">حالة التنفيذ:</label>
-                                <select id="inputActivityStatus" class="form-control">
-                                    <option value="منفذ">منفذ</option>
-                                    <option value="جاري التنفيذ">جاري التنفيذ</option>
-                                    <option value="غير منفذ">غير منفذ</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label class="font-weight-bold">اسم المعلم:</label>
-                            <input type="text" id="inputTeacherName" class="form-control" placeholder="اكتب اسم المعلم المسؤول">
+                            <label class="small text-muted">اسم المقرر / برنامج النشاط:</label>
+                            <input type="text" id="modalSubject" class="form-control bg-dark text-white border-secondary">
+                        </div>
+                        <div class="form-group">
+                            <label class="small text-muted">اسم المعلم:</label>
+                            <input type="text" id="modalTeacher" class="form-control bg-dark text-white border-secondary">
+                        </div>
+                        <div class="form-group" id="actTypeGroup" style="display: none;">
+                            <label class="small text-muted">طبيعة حصة النشاط:</label>
+                            <select id="modalActNature" class="form-control bg-dark text-white border-secondary">
+                                <option value="ثابتة">حصة نشاط ثابتة</option>
+                                <option value="مرنة">حصة نشاط مرنة</option>
+                            </select>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn btn-success font-weight-bold" onclick="saveCellChanges()">حفظ التعديلات</button>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-sm btn-success font-weight-bold" onclick="saveCellData()">حفظ التعديلات</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- أكواد التفاعل البرمجية (JavaScript) -->
+    <!-- السكريبت التفاعلي لبناء جدول الـ 21 فصلاً وتفعيل التعديل والحذف -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
-        let activeCellTd = null;
+        // مصفوفة البيانات لجميع الفصول الـ 21 بالترتيب من الصورة
+        const rawScheduleData = [
+            { cls: "1/أ", data: [["الرياضيات", "عصام الحازمي"], ["الإنجليزية", "محمد العمري"], ["العلوم", "حسين الرحيلي"], ["العربية", "ناصر المزيني"], ["العربية", "ناصر المزيني"], ["البدنية", "ناصر المزيني"], ["الحياتية", "ناصر المزيني"]] },
+            { cls: "1/ب", data: [["البدنية", "عبدالاله الصاعدي"], ["العربية", "عبدالاله الصاعدي"], ["الرياضيات", "عصام الحازمي"], ["العلوم", "حسين الرحيلي"], ["نشاط", "عائض الجابري", true], ["الإنجليزية", "محمد العمري"], ["الإسلامية", "عائض الجابري"]] },
+            { cls: "1/ج", data: [["العربية", "يوسف اللقماني"], ["الرياضيات", "عبدالله العيسى"], ["الإنجليزية", "محمد العمري"], ["الإسلامية", "خالد العوفي"], ["نشاط", "خالد العوفي", true], ["الإسلامية", "خالد العوفي"], ["العلوم", "حسين الرحيلي"]] },
+            { cls: "2/أ", data: [["نشاط", "خالد العوفي", true], ["الإسلامية", "خالد العوفي"], ["العربية", "خالد البركاني"], ["الرياضيات", "عبدالله العيسى"], ["الإنجليزية", "محمد العمري"], ["العربية", "خالد البركاني"], ["الفنية", "احمد البار"]] },
+            { cls: "2/ب", data: [["الرياضيات", "عبدالله العيسى"], ["الإسلامية", "عيسى مرشود"], ["العربية", "خالد المطيري"], ["الإنجليزية", "محمد العمري"], ["البدنية", "محمد العروي"], ["العلوم", "حسين الرحيلي"], ["العربية", "خالد المطيري"]] },
+            { cls: "2/ج", data: [["الإسلامية", "عيسى مرشود"], ["العلوم", "حسين الرحيلي"], ["الرياضيات", "رائد الصاعدي"], ["العربية", "خالد المطيري"], ["الرياضيات", "رائد الصاعدي"], ["العربية", "خالد المطيري"], ["الحياتية", "خالد البركاني"]] },
+            { cls: "3/أ", data: [["البدنية", "عبدالرحمن الجهني"], ["الرياضيات", "رائد الصاعدي"], ["العلوم", "عبدالله السهلي"], ["العربية", "عبدالحفيظ الاحمدي"], ["الإسلامية", "عبدالرحمن سعود"], ["الفنية", "نايف الترجمي"], ["العربية", "عبدالحفيظ الاحمدي"]] },
+            { cls: "3/ب", data: [["الرياضيات", "رائد الصاعدي"], ["البدنية", "عبدالرحمن الجهني"], ["العلوم", "عادل المغذوي"], ["الإنجليزية", "احمد المطرفي"], ["العربية", "عبدالحفيظ الاحمدي"], ["العربية", "عبدالحفيظ الاحمدي"], ["الإسلامية", "عبدالرحمن سعود"]] },
+            { cls: "3/ج", data: [["الرياضيات", "حسن الصاعدي"], ["العربية", "موسى عبدالله"], ["الإنجليزية", "احمد المطرفي"], ["الرياضيات", "حسن الصاعدي"], ["العلوم", "عادل المغذوي"], ["العربية", "موسى عبدالله"], ["الإسلامية", "فائز الرحيلي"]] },
+            { cls: "4/أ", data: [["البدنية", "نايف السيالي"], ["العلوم", "عادل المغذوي"], ["العربية", "موسى عبدالله"], ["نشاط", "موسى عبدالله", true], ["الرياضيات", "حسن الصاعدي"], ["الإسلامية", "فائز الرحيلي"], ["العربية", "موسى عبدالله"]] },
+            { cls: "4/ب", data: [["العربية", "خالد الحسيني"], ["الرياضيات", "حسن الصاعدي"], ["العربية", "خالد الحسيني"], ["نشاط", "عبدالرحيم الشريف", true], ["البدنية", "نايف السيالي"], ["العلوم", "عادل المغذوي"], ["الإنجليزية", "احمد المطرفي"]] },
+            { cls: "4/ج", data: [["الرياضيات", "عبدالله الرحيلي"], ["البدنية", "نايف السيالي"], ["الرياضيات", "عبدالله الرحيلي"], ["الإسلامية", "صالح باوارث"], ["العربية", "خالد الحسيني"], ["نشاط", "خالد الحسيني", true], ["الفنية", "نايف الترجمي"]] },
+            { cls: "5/أ", data: [["الرياضيات", "عبدالله"], ["نشاط", "معتز دردير", true], ["الإجتماعية", "معتز دردير"], ["الرقمية", "عبدالوهاب العوفي"], ["الإسلامية", "صالح باوارث"], ["الإنجليزية", "احمد المطرفي"], ["العربية", "طلال الحجيلي"]] },
+            { cls: "5/ب", data: [["الإسلامية", "احمد العوفي"], ["العلوم", "عبدالله السهلي"], ["الرياضيات", "عبدالله"], ["العربية", "طلال الحجيلي"], ["الفنية", "نايف الترجمي"], ["الحياتية", "معتز دردير"], ["الإجتماعية", "معتز دردير"]] },
+            { cls: "5/ج", data: [["العلوم", "عبدالله السهلي"], ["الرياضيات", "عبدالله"], ["الرقمية", "عبدالوهاب العوفي"], ["الإنجليزية", "خالد الحازمي"], ["الحياتية", "معتز دردير"], ["الإنجليزية", "خالد الحازمي"], ["الإسلامية", "احمد العوفي"]] },
+            { cls: "6/أ", data: [["الإجتماعية", "معتز دردير"], ["نشاط", "محمد عيد", true], ["الرياضيات", "نواف السهلي"], ["الإسلامية", "محمد سالم"], ["الإنجليزية", "خالد الحازمي"], ["الرقمية", "عبدالوهاب العوفي"], ["العربية", "عليان الحمدي"]] },
+            { cls: "6/ب", data: [["نشاط", "محمد عيد", true], ["الرياضيات", "نواف السهلي"], ["الإجتماعية", "ابراهيم الحمدي"], ["الحياتية", "ابراهيم الحمدي"], ["العلوم", "عبدالله الحربي"], ["العربية", "طلال الحجيلي"], ["الإنجليزية", "خالد الحازمي"]] },
+            { cls: "6/ج", data: [["الرياضيات", "نواف السهلي"], ["الإنجليزية", "خالد الحازمي"], ["نشاط", "محمد عيد", true], ["العلوم", "عبدالله الحربي"], ["الإسلامية", "محمد سالم"], ["الإسلامية", "محمد سالم"], ["العربية", "سامي الرجبي"]] },
+            { cls: "7/أ", data: [["الإسلامية", "ايمن الحسيني"], ["الرياضيات", "مشعل الصاعدي"], ["العلوم", "عبدالله الحربي"], ["الإسلامية", "ايمن الحسيني"], ["العربية", "سامي الرجبي"], ["الإجتماعية", "ابراهيم الحمدي"], ["الإسلامية", "ايمن الحسيني"]] },
+            { cls: "7/ب", data: [["الإنجليزية", "خالد الحازمي"], ["الإسلامية", "ايمن الحسيني"], ["الرياضيات", "مشعل الصاعدي"], ["العربية", "سامي الرجبي"], ["الفنية", "احمد البار"], ["نشاط", "محمد عيد", true], ["الرقمية", "عبدالوهاب العوفي"]] },
+            { cls: "7/ج", data: [["الرياضيات", "مشعل الصاعدي"], ["العلوم", "عبدالله الحربي"], ["الإسلامية", "ايمن الحسيني"], ["البدنية", "نايف السيالي"], ["الرياضيات", "مشعل الصاعدي"], ["العربية", "سامي الرجبي"], ["الإجتماعية", "ابراهيم الحمدي"]] }
+        ];
 
-        // فلترة الجدول حسب المعلم المختار
-        function filterByTeacher() {
-            let selectedTeacher = document.getElementById('filterTeacherSelect').value;
-            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
+        let targetCell = null;
 
+        // بناء الجدول ديناميكياً
+        function buildScheduleTable() {
+            const tbody = document.getElementById('scheduleTableBody');
+            tbody.innerHTML = '';
+
+            rawScheduleData.forEach(item => {
+                let tr = document.createElement('tr');
+                let th = document.createElement('th');
+                th.className = 'classroom-header-cell';
+                th.innerText = item.cls;
+                tr.appendChild(th);
+
+                item.data.forEach(cellData => {
+                    let td = document.createElement('td');
+                    let isAct = cellData[2] || cellData[0] === 'نشاط';
+                    
+                    td.innerHTML = `
+                        <div class="cell-box-container ${isAct ? 'is-activity' : ''}">
+                            ${isAct ? '<span class="badge-type-tag tag-fixed">حصة نشاط</span>' : ''}
+                            <div class="subject-title-large">${cellData[0]}</div>
+                            <div class="teacher-title-sub">${cellData[1]}</div>
+                            <div class="mini-cell-toolbar">
+                                <span class="mini-btn" onclick="openEditModal(this)"><i class="fas fa-edit"></i> تعديل</span>
+                                <span class="mini-btn btn-del" onclick="deleteCellContent(this)"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </div>
+                    `;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openEditModal(btn) {
+            targetCell = btn.closest('.cell-box-container');
+            let subj = targetCell.querySelector('.subject-title-large').innerText;
+            let teacher = targetCell.querySelector('.teacher-title-sub').innerText;
+            let isAct = targetCell.classList.contains('is-activity');
+
+            document.getElementById('modalSubject').value = subj;
+            document.getElementById('modalTeacher').value = teacher;
+            document.getElementById('modalType').value = isAct ? 'activity' : 'lesson';
+            toggleActivityOption();
+            $('#cellModal').modal('show');
+        }
+
+        function toggleActivityOption() {
+            let val = document.getElementById('modalType').value;
+            document.getElementById('actTypeGroup').style.display = val === 'activity' ? 'block' : 'none';
+        }
+
+        function saveCellData() {
+            if (!targetCell) return;
+            let subj = document.getElementById('modalSubject').value || "فارغ";
+            let teacher = document.getElementById('modalTeacher').value || "---";
+            let type = document.getElementById('modalType').value;
+
+            targetCell.querySelector('.subject-title-large').innerText = subj;
+            targetCell.querySelector('.teacher-title-sub').innerText = teacher;
+
+            if (type === 'activity') {
+                targetCell.classList.add('is-activity');
+                if(!targetCell.querySelector('.badge-type-tag')) {
+                    let tag = document.createElement('span');
+                    tag.className = 'badge-type-tag tag-fixed';
+                    tag.innerText = 'حصة نشاط';
+                    targetCell.prepend(tag);
+                }
+            } else {
+                targetCell.classList.remove('is-activity');
+                let tag = targetCell.querySelector('.badge-type-tag');
+                if (tag) tag.remove();
+            }
+
+            $('#cellModal').modal('hide');
+        }
+
+        function deleteCellContent(btn) {
+            if (confirm("هل تريد تفريغ وحذف بيانات هذه الحصة؟")) {
+                let cell = btn.closest('.cell-box-container');
+                cell.classList.remove('is-activity');
+                let tag = cell.querySelector('.badge-type-tag');
+                if (tag) tag.remove();
+                cell.querySelector('.subject-title-large').innerText = "فارغ";
+                cell.querySelector('.teacher-title-sub').innerText = "---";
+            }
+        }
+
+        function filterTeacher() {
+            let teacherName = prompt("أدخل اسم المعلم للفرز والتحديد:");
+            if (!teacherName) return;
+            let boxes = document.querySelectorAll('.cell-box-container');
             boxes.forEach(box => {
-                let teacher = box.getAttribute('data-teacher');
-                let parentTd = box.closest('td');
-                if (selectedTeacher === 'all' || (teacher && teacher.includes(selectedTeacher))) {
-                    parentTd.style.opacity = '1';
-                    parentTd.style.pointerEvents = 'auto';
+                let t = box.querySelector('.teacher-title-sub').innerText;
+                if (t.includes(teacherName)) {
+                    box.style.border = "2px solid #38bdf8";
+                    box.style.opacity = "1";
                 } else {
-                    parentTd.style.opacity = '0.2';
+                    box.style.opacity = "0.2";
                 }
             });
         }
 
-        // إلغاء الفرز
-        function resetTableFilter() {
-            document.getElementById('filterTeacherSelect').value = 'all';
-            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
-            boxes.forEach(box => {
-                box.closest('td').style.opacity = '1';
-            });
-        }
-
-        // تغيير حالة التنفيذ لجميع الأنشطة دفعة واحدة
-        function setGlobalStatus(status) {
-            let pills = document.querySelectorAll('.activity-card .status-pill');
-            pills.forEach(pill => {
-                if (status === 'منفذ') {
-                    pill.className = 'status-pill status-done';
-                    pill.innerHTML = '<i class="fas fa-check"></i> منفذ';
-                } else if (status === 'جاري التنفيذ') {
-                    pill.className = 'status-pill status-progress';
-                    pill.innerHTML = '<i class="fas fa-spinner"></i> جاري التنفيذ';
-                } else {
-                    pill.className = 'status-pill status-pending';
-                    pill.innerHTML = 'غير منفذ';
-                }
-            });
-        }
-
-        // تبديل الحقول داخل النافذة المنبثقة بين مادة أو نشاط
-        function toggleContentTypeFields() {
-            let type = document.getElementById('contentType').value;
-            if (type === 'course') {
-                document.getElementById('courseFields').style.display = 'block';
-                document.getElementById('activityFields').style.display = 'none';
-            } else {
-                document.getElementById('courseFields').style.display = 'none';
-                document.getElementById('activityFields').style.display = 'block';
-            }
-        }
-
-        // فتح نافذة التعديل لخلايا الجدول
-        function editCell(iconElement) {
-            let card = iconElement.closest('.activity-card') || iconElement.closest('.course-cell-box');
-            activeCellTd = card.closest('td');
-            $('#editCellModal').modal('show');
-        }
-
-        function openModalForAdd() {
-            alert("يرجى النقر على أيقونة التعديل (القلم) داخل أي خلية في الجدول لتعديل أو تخصيص محتواها أو تحويلها لحصة نشاط.");
-        }
-
-        // تفريغ محتوى الخلية (حذف)
-        function clearCell(iconElement) {
-            if (confirm("هل أنت متأكد من تفريغ وحذف محتوى هذه الحصة؟")) {
-                let td = iconElement.closest('td');
-                td.innerHTML = `
-                    <div class="course-cell-box" data-teacher="">
-                        <div class="course-name-large text-muted">فارغ</div>
-                        <div class="teacher-name-badge text-muted">---------</div>
-                        <div class="cell-actions mt-1">
-                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // حفظ التغييرات المدخلة من النافذة
-        function saveCellChanges() {
-            if (!activeCellTd) return;
-            let contentType = document.getElementById('contentType').value;
-            let teacher = document.getElementById('inputTeacherName').value || "معلم غير محدد";
-
-            if (contentType === 'course') {
-                let courseName = document.getElementById('inputCourseName').value || "مادة دراسية";
-                activeCellTd.innerHTML = `
-                    <div class="course-cell-box" data-teacher="${teacher}">
-                        <div class="course-name-large">${courseName}</div>
-                        <div class="teacher-name-badge">${teacher}</div>
-                        <div class="cell-actions mt-1">
-                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                            <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                        </div>
-                    </div>
-                `;
-            } else {
-                let actName = document.getElementById('inputActivityName').value || "برنامج نشاط";
-                let actType = document.getElementById('inputActivityType').value;
-                let actStatus = document.getElementById('inputActivityStatus').value;
-                
-                let statusClass = actStatus === 'منفذ' ? 'status-done' : (actStatus === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
-                let tagClass = actType === 'ثابتة' ? 'tag-fixed' : 'tag-flexible';
-
-                activeCellTd.innerHTML = `
-                    <div class="activity-card" data-teacher="${teacher}">
-                        <div class="activity-header">
-                            <span>${actName}</span>
-                            <span class="activity-type-tag ${tagClass}">${actType}</span>
-                        </div>
-                        <div class="teacher-name-badge">${teacher}</div>
-                        <span class="status-pill ${statusClass}">${actStatus}</span>
-                        <div class="cell-actions">
-                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                            <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                        </div>
-                    </div>
-                `;
-            }
-            $('#editCellModal').modal('hide');
-        }
+        // تشغيل الجدول عند تحميل الصفحة
+        window.onload = buildScheduleTable;
     </script>
 </body>
 </html>
