@@ -414,7 +414,7 @@
         </div>
     </div>
 
-    <!-- نافذة التقويم المودال (مطابقة للكود الأصلي للتقويم) -->
+    <!-- نافذة التقويم المودال المتكاملة -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
@@ -490,7 +490,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي الشامل بجميع الفصول الـ 21 -->
+    <!-- الجدول الرئيسي الشامل -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -528,570 +528,172 @@
                     <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
                     <td><div class="course-cell-box" data-teacher="عائض الجابري"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عائض الجابري</div></div></td>
                 </tr>
-                <!-- 1/ج -->
-                <tr data-row-class="1/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ج</th>
-                    <td><div class="course-cell-box" data-teacher="يوسف اللقماني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">يوسف اللقماني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله العيسى"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله العيسى</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد العوفي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">خالد العوفي</div></div></td>
-                    <td><div class="activity-card" data-teacher="خالد العوفي"><div class="activity-header"><span>نشاط ثقافي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">خالد العوفي</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد العوفي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">خالد العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسين الرحيلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">حسين الرحيلي</div></div></td>
-                </tr>
-                <!-- 1/د -->
-                <tr data-row-class="1/د">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/د</th>
-                    <td><div class="activity-card" data-teacher="خالد العوفي"><div class="activity-header"><span>نشاط كشفي</span><span class="activity-type-tag tag-flexible">مرنة</span></div><div class="teacher-name-badge">خالد العوفي</div><span class="status-pill status-pending">غير منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد العوفي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">خالد العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد البركاني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد البركاني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله العيسى"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله العيسى</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد البركاني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد البركاني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد البار"><div class="course-name-large">الفنية</div><div class="teacher-name-badge">احمد البار</div></div></td>
-                </tr>
-                <!-- 2/أ -->
-                <tr data-row-class="2/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/أ</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالله العيسى"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله العيسى</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عيسى مرشود"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عيسى مرشود</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد المطيري"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد المطيري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العروي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">محمد العروي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسين الرحيلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">حسين الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد المطيري"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد المطيري</div></div></td>
-                </tr>
-                <!-- 2/ب -->
-                <tr data-row-class="2/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/ب</th>
-                    <td><div class="course-cell-box" data-teacher="عيسى مرشود"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عيسى مرشود</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسين الرحيلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">حسين الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="رائد الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">رائد الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد المطيري"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد المطيري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="رائد الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">رائد الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد المطيري"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد المطيري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد البركاني"><div class="course-name-large">الحياتية</div><div class="teacher-name-badge">خالد البركاني</div></div></td>
-                </tr>
-                <!-- 2/ج -->
-                <tr data-row-class="2/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/ج</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالرحمن الجهني"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">عبدالرحمن الجهني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="رائد الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">رائد الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله السهلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالحفيظ الاحمدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عبدالحفيظ الاحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالرحمن سعود"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عبدالرحمن سعود</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف الترجمي"><div class="course-name-large">الفنية</div><div class="teacher-name-badge">نايف الترجمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالحفيظ الاحمدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عبدالحفيظ الاحمدي</div></div></td>
-                </tr>
-                <!-- 2/د -->
-                <tr data-row-class="2/د">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">2/د</th>
-                    <td><div class="course-cell-box" data-teacher="رائد الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">رائد الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالرحمن الجهني"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">عبدالرحمن الجهني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عادل المغذوي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عادل المغذوي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد المطرفي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">احمد المطرفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالحفيظ الاحمدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عبدالحفيظ الاحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالحفيظ الاحمدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عبدالحفيظ الاحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالرحمن سعود"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عبدالرحمن سعود</div></div></td>
-                </tr>
-                <!-- 3/أ -->
-                <tr data-row-class="3/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">3/أ</th>
-                    <td><div class="course-cell-box" data-teacher="حسن الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">حسن الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="موسى عبدالله"><div class="course-name-large">العربية</div><div class="teacher-name-badge">موسى عبدالله</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد المطرفي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">احمد المطرفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسن الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">حسن الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عادل المغذوي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عادل المغذوي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="موسى عبدالله"><div class="course-name-large">العربية</div><div class="teacher-name-badge">موسى عبدالله</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="فائز الرحيلي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">فائز الرحيلي</div></div></td>
-                </tr>
-                <!-- 3/ب -->
-                <tr data-row-class="3/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">3/ب</th>
-                    <td><div class="course-cell-box" data-teacher="نايف السيالي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">نايف السيالي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عادل المغذوي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عادل المغذوي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="موسى عبدالله"><div class="course-name-large">العربية</div><div class="teacher-name-badge">موسى عبدالله</div></div></td>
-                    <td><div class="activity-card" data-teacher="موسى عبدالله"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">موسى عبدالله</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسن الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">حسن الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="فائز الرحيلي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">فائز الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="موسى عبدالله"><div class="course-name-large">العربية</div><div class="teacher-name-badge">موسى عبدالله</div></div></td>
-                </tr>
-                <!-- 3/ج -->
-                <tr data-row-class="3/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">3/ج</th>
-                    <td><div class="course-cell-box" data-teacher="خالد الحسيني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد الحسيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسن الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">حسن الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحسيني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد الحسيني</div></div></td>
-                    <td><div class="activity-card" data-teacher="عبدالرحيم الشريف"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-flexible">مرنة</span></div><div class="teacher-name-badge">عبدالرحيم الشريف</div><span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف السيالي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">نايف السيالي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عادل المغذوي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عادل المغذوي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد المطرفي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">احمد المطرفي</div></div></td>
-                </tr>
-                <!-- 3/د -->
-                <tr data-row-class="3/د">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">3/د</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الرحيلي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف السيالي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">نايف السيالي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الرحيلي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="صالح باوارث"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">صالح باوارث</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحسيني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">خالد الحسيني</div></div></td>
-                    <td><div class="activity-card" data-teacher="خالد الحسيني"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">خالد الحسيني</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف الترجمي"><div class="course-name-large">الفنية</div><div class="teacher-name-badge">نايف الترجمي</div></div></td>
-                </tr>
-                <!-- 4/أ -->
-                <tr data-row-class="4/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">4/أ</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالله"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله</div></div></td>
-                    <td><div class="activity-card" data-teacher="معتز دردير"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-flexible">مرنة</span></div><div class="teacher-name-badge">معتز دردير</div><span class="status-pill status-pending">غير منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="معتز دردير"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">معتز دردير</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالوهاب العوفي"><div class="course-name-large">الرقمية</div><div class="teacher-name-badge">عبدالوهاب العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="صالح باوارث"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">صالح باوارث</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد المطرفي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">احمد المطرفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="طلال الحجيلي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">طلال الحجيلي</div></div></td>
-                </tr>
-                <!-- 4/ب -->
-                <tr data-row-class="4/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">4/ب</th>
-                    <td><div class="course-cell-box" data-teacher="احمد العوفي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">احمد العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله السهلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="طلال الحجيلي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">طلال الحجيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف الترجمي"><div class="course-name-large">الفنية</div><div class="teacher-name-badge">نايف الترجمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="معتز دردير"><div class="course-name-large">الحياتية</div><div class="teacher-name-badge">معتز دردير</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="معتز دردير"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">معتز دردير</div></div></td>
-                </tr>
-                <!-- 4/ج -->
-                <tr data-row-class="4/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">4/ج</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالله السهلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عبدالله</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالوهاب العوفي"><div class="course-name-large">الرقمية</div><div class="teacher-name-badge">عبدالوهاب العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="معتز دردير"><div class="course-name-large">الحياتية</div><div class="teacher-name-badge">معتز دردير</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد العوفي"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">احمد العوفي</div></div></td>
-                </tr>
-                <!-- 5/أ -->
-                <tr data-row-class="5/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">5/أ</th>
-                    <td><div class="course-cell-box" data-teacher="معتز دردير"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">معتز دردير</div></div></td>
-                    <td><div class="activity-card" data-teacher="محمد عيد"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">محمد عيد</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نواف السهلي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">نواف السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد سالم"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">محمد سالم</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالوهاب العوفي"><div class="course-name-large">الرقمية</div><div class="teacher-name-badge">عبدالوهاب العوفي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عليان الحمدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عليان الحمدي</div></div></td>
-                </tr>
-                <!-- 5/ب -->
-                <tr data-row-class="5/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">5/ب</th>
-                    <td><div class="activity-card" data-teacher="محمد عيد"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-flexible">مرنة</span></div><div class="teacher-name-badge">محمد عيد</div><span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نواف السهلي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">نواف السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ابراهيم الحمدي"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">ابراهيم الحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ابراهيم الحمدي"><div class="course-name-large">الحياتية</div><div class="teacher-name-badge">ابراهيم الحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الحربي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله الحربي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="طلال الحجيلي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">طلال الحجيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                </tr>
-                <!-- 5/ج -->
-                <tr data-row-class="5/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">5/ج</th>
-                    <td><div class="course-cell-box" data-teacher="نواف السهلي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">نواف السهلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                    <td><div class="activity-card" data-teacher="محمد عيد"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">محمد عيد</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الحربي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله الحربي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد سالم"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">محمد سالم</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد سالم"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">محمد سالم</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="سامي الرجبي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">سامي الرجبي</div></div></td>
-                </tr>
-                <!-- 6/أ -->
-                <tr data-row-class="6/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">6/أ</th>
-                    <td><div class="course-cell-box" data-teacher="ايمن الحسيني"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">ايمن الحسيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="مشعل الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">مشعل الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الحربي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله الحربي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ايمن الحسيني"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">ايمن الحسيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="سامي الرجبي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">سامي الرجبي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ابراهيم الحمدي"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">ابراهيم الحمدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ايمن الحسيني"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">ايمن الحسيني</div></div></td>
-                </tr>
-                <!-- 6/ب -->
-                <tr data-row-class="6/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">6/ب</th>
-                    <td><div class="course-cell-box" data-teacher="خالد الحازمي"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">خالد الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ايمن الحسيني"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">ايمن الحسيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="مشعل الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">مشعل الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="سامي الرجبي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">سامي الرجبي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="احمد البار"><div class="course-name-large">الفنية</div><div class="teacher-name-badge">احمد البار</div></div></td>
-                    <td><div class="activity-card" data-teacher="محمد عيد"><div class="activity-header"><span>نشاط</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">محمد عيد</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالوهاب العوفي"><div class="course-name-large">الرقمية</div><div class="teacher-name-badge">عبدالوهاب العوفي</div></div></td>
-                </tr>
-                <!-- 6/ج -->
-                <tr data-row-class="6/ج">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">6/ج</th>
-                    <td><div class="course-cell-box" data-teacher="مشعل الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">مشعل الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالله الحربي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">عبدالله الحربي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ايمن الحسيني"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">ايمن الحسيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="نايف السيالي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">نايف السيالي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="مشعل الصاعدي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">مشعل الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="سامي الرجبي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">سامي الرجبي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ابراهيم الحمدي"><div class="course-name-large">الإجتماعية</div><div class="teacher-name-badge">ابراهيم الحمدي</div></div></td>
-                </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- نافذة تعديل بيانات الخلية -->
-    <div class="modal fade" id="editCellModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="border-radius: 16px;">
-                <div class="modal-header bg-success text-white" style="border-radius: 16px 16px 0 0;">
-                    <h5 class="modal-title font-weight-bold"><i class="fas fa-edit"></i> تعديل محتوى الحصة/النشاط</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form id="cellEditForm">
-                        <div class="form-group">
-                            <label class="font-weight-bold">نوع المحتوى:</label>
-                            <select id="contentType" class="form-control" onchange="toggleContentTypeFields()">
-                                <option value="course">حصة مادة دراسية</option>
-                                <option value="activity">برنامج / حصة نشاط</option>
-                            </select>
-                        </div>
-                        <div id="courseFields">
-                            <div class="form-group">
-                                <label class="font-weight-bold">اسم المقرر / المادة:</label>
-                                <input type="text" id="inputCourseName" class="form-control" placeholder="مثال: الرياضيات">
-                            </div>
-                        </div>
-                        <div id="activityFields" style="display: none;">
-                            <div class="form-group">
-                                <label class="font-weight-bold">اسم برنامج النشاط:</label>
-                                <input type="text" id="inputActivityName" class="form-control" placeholder="مثال: مسابقة القرآن الكريم">
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">طبيعة الحصة:</label>
-                                <select id="inputActivityType" class="form-control">
-                                    <option value="ثابتة">حصة ثابتة</option>
-                                    <option value="مرنة">حصة مرنة</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">حالة التنفيذ:</label>
-                                <select id="inputActivityStatus" class="form-control">
-                                    <option value="منفذ">منفذ</option>
-                                    <option value="جاري التنفيذ">جاري التنفيذ</option>
-                                    <option value="غير منفذ">غير منفذ</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="font-weight-bold">اسم المعلم:</label>
-                            <input type="text" id="inputTeacherName" class="form-control" placeholder="اكتب اسم المعلم">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn btn-success font-weight-bold" onclick="saveCellChanges()">حفظ التعديلات</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
-        // بيانات التقويم المعتمدة الشاملة للفصلين لمدارس مكة والمدينة وجدة والطائف 1448هـ
-        const fullCalendarData = {
-            1: [
-                {
-                    weekId: 1, name: "الأسبوع الأول", dateRange: "03/17 - 03/21هـ | 3/9 - 3/13م",
-                    days: [
-                        { name: "الأحد", hDate: "17 ربيع الأول 1448", mDate: "3 سبتمبر 2026" },
-                        { name: "الإثنين", hDate: "18 ربيع الأول 1448", mDate: "4 سبتمبر 2026" },
-                        { name: "الثلاثاء", hDate: "19 ربيع الأول 1448", mDate: "5 سبتمبر 2026" },
-                        { name: "الأربعاء", hDate: "20 ربيع الأول 1448", mDate: "6 سبتمبر 2026" },
-                        { name: "الخميس", hDate: "21 ربيع الأول 1448", mDate: "7 سبتمبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 2, name: "الأسبوع الثاني", dateRange: "03/24 - 03/28هـ | 6/9 - 10/9م",
-                    days: [
-                        { name: "الأحد", hDate: "24 ربيع الأول 1448", mDate: "10 سبتمبر 2026" },
-                        { name: "الإثنين", hDate: "25 ربيع الأول 1448", mDate: "11 سبتمبر 2026" },
-                        { name: "الثلاثاء", hDate: "26 ربيع الأول 1448", mDate: "12 سبتمبر 2026" },
-                        { name: "الأربعاء", hDate: "27 ربيع الأول 1448", mDate: "13 سبتمبر 2026" },
-                        { name: "الخميس", hDate: "28 ربيع الأول 1448", mDate: "14 سبتمبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 3, name: "الأسبوع الثالث", dateRange: "04/02 - 04/06هـ | 13/9 - 17/9م",
-                    days: [
-                        { name: "الأحد", hDate: "2 ربيع الثاني 1448", mDate: "17 سبتمبر 2026" },
-                        { name: "الإثنين", hDate: "3 ربيع الثاني 1448", mDate: "18 سبتمبر 2026" },
-                        { name: "الثلاثاء", hDate: "4 ربيع الثاني 1448", mDate: "19 سبتمبر 2026" },
-                        { name: "الأربعاء", hDate: "5 ربيع الثاني 1448", mDate: "20 سبتمبر 2026" },
-                        { name: "الخميس", hDate: "6 ربيع الثاني 1448", mDate: "21 سبتمبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 4, name: "الأسبوع الرابع", dateRange: "04/09 - 04/13هـ | 20/9 - 24/9م", eventTag: "تتخلله إجازة اليوم الوطني",
-                    days: [
-                        { name: "الأحد", hDate: "9 ربيع الثاني 1448", mDate: "24 سبتمبر 2026" },
-                        { name: "الإثنين", hDate: "10 ربيع الثاني 1448", mDate: "25 سبتمبر 2026" },
-                        { name: "الثلاثاء", hDate: "11 ربيع الثاني 1448", mDate: "26 سبتمبر 2026", note: "إجازة اليوم الوطني" },
-                        { name: "الأربعاء", hDate: "12 ربيع الثاني 1448", mDate: "27 سبتمبر 2026", note: "إجازة اليوم الوطني" },
-                        { name: "الخميس", hDate: "13 ربيع الثاني 1448", mDate: "28 سبتمبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 5, name: "الأسبوع الخامس", dateRange: "04/16 - 04/20هـ | 27/9 - 1/10م",
-                    days: [
-                        { name: "الأحد", hDate: "16 ربيع الثاني 1448", mDate: "1 أكتوبر 2026" },
-                        { name: "الإثنين", hDate: "17 ربيع الثاني 1448", mDate: "2 أكتوبر 2026" },
-                        { name: "الثلاثاء", hDate: "18 ربيع الثاني 1448", mDate: "3 أكتوبر 2026" },
-                        { name: "الأربعاء", hDate: "19 ربيع الثاني 1448", mDate: "4 أكتوبر 2026" },
-                        { name: "الخميس", hDate: "20 ربيع الثاني 1448", mDate: "5 أكتوبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 6, name: "الأسبوع السادس", dateRange: "04/23 - 04/27هـ | 4/10 - 8/10م",
-                    days: [
-                        { name: "الأحد", hDate: "23 ربيع الثاني 1448", mDate: "8 أكتوبر 2026" },
-                        { name: "الإثنين", hDate: "24 ربيع الثاني 1448", mDate: "9 أكتوبر 2026" },
-                        { name: "الثلاثاء", hDate: "25 ربيع الثاني 1448", mDate: "10 أكتوبر 2026" },
-                        { name: "الأربعاء", hDate: "26 ربيع الثاني 1448", mDate: "11 أكتوبر 2026" },
-                        { name: "الخميس", hDate: "27 ربيع الثاني 1448", mDate: "12 أكتوبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 7, name: "الأسبوع السابع", dateRange: "04/30 - 05/04هـ | 11/10 - 15/10م",
-                    days: [
-                        { name: "الأحد", hDate: "30 ربيع الثاني 1448", mDate: "15 أكتوبر 2026" },
-                        { name: "الإثنين", hDate: "1 جمادى الأولى 1448", mDate: "16 أكتوبر 2026" },
-                        { name: "الثلاثاء", hDate: "2 جمادى الأولى 1448", mDate: "17 أكتوبر 2026" },
-                        { name: "الأربعاء", hDate: "3 جمادى الأولى 1448", mDate: "18 أكتوبر 2026" },
-                        { name: "الخميس", hDate: "4 جمادى الأولى 1448", mDate: "19 أكتوبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 8, name: "الأسبوع الثامن", dateRange: "05/07 - 05/11هـ | 18/10 - 22/10م", eventTag: "نهاية أسبوع مطولة",
-                    days: [
-                        { name: "الأحد", hDate: "7 جمادى الأولى 1448", mDate: "22 أكتوبر 2026" },
-                        { name: "الإثنين", hDate: "8 جمادى الأولى 1448", mDate: "23 أكتوبر 2026" },
-                        { name: "الثلاثاء", hDate: "9 جمادى الأولى 1448", mDate: "24 أكتوبر 2026" },
-                        { name: "الأربعاء", hDate: "10 جمادى الأولى 1448", mDate: "25 أكتوبر 2026", note: "إجازة مطولة" },
-                        { name: "الخميس", hDate: "11 جمادى الأولى 1448", mDate: "26 أكتوبر 2026", note: "إجازة مطولة" }
-                    ]
-                }
-            ],
-            2: [
-                {
-                    weekId: 1, name: "الأسبوع الأول (ف2)", dateRange: "06/16 - 06/20هـ | 15/11 - 19/11م",
-                    days: [
-                        { name: "الأحد", hDate: "16 جمادى الآخرة 1448", mDate: "30 نوفمبر 2026" },
-                        { name: "الإثنين", hDate: "17 جمادى الآخرة 1448", mDate: "1 ديسمبر 2026" },
-                        { name: "الثلاثاء", hDate: "18 جمادى الآخرة 1448", mDate: "2 ديسمبر 2026" },
-                        { name: "الأربعاء", hDate: "19 جمادى الآخرة 1448", mDate: "3 ديسمبر 2026" },
-                        { name: "الخميس", hDate: "20 جمادى الآخرة 1448", mDate: "4 ديسمبر 2026" }
-                    ]
-                },
-                {
-                    weekId: 6, name: "الأسبوع السادس (ف2)", dateRange: "09/14 - 09/18هـ | 22/2 - 26/2م", eventTag: "إجازة يوم التأسيس",
-                    days: [
-                        { name: "الأحد", hDate: "14 رمضان 1448", mDate: "22 فبراير 2027", note: "إجازة يوم التأسيس" },
-                        { name: "الإثنين", hDate: "15 رمضان 1448", mDate: "23 فبراير 2027" },
-                        { name: "الثلاثاء", hDate: "16 رمضان 1448", mDate: "24 فبراير 2027" },
-                        { name: "الأربعاء", hDate: "17 رمضان 1448", mDate: "25 فبراير 2027" },
-                        { name: "الخميس", hDate: "18 رمضان 1448", mDate: "26 فبراير 2027" }
-                    ]
-                }
-            ]
-        };
+        // بيانات التقويم الشاملة للفصلين الأول والثاني لعام 1448هـ
+        const CAL_1448 = [
+            // الفصل الدراسي الأول (T1)
+            { t: 1, w: 1, label: "الأسبوع 1", start: "1448-02-10", end: "1448-02-14" },
+            { t: 1, w: 2, label: "الأسبوع 2", start: "1448-02-17", end: "1448-02-21" },
+            { t: 1, w: 3, label: "الأسبوع 3", start: "1448-02-24", end: "1448-02-28" },
+            { t: 1, w: 4, label: "الأسبوع 4", start: "1448-03-02", end: "1448-03-06" },
+            { t: 1, w: 5, label: "الأسبوع 5 (اليوم الوطني)", start: "1448-03-09", end: "1448-03-13", event: "إجازة اليوم الوطني 12-03" },
+            { t: 1, w: 6, label: "الأسبوع 6", start: "1448-03-16", end: "1448-03-20" },
+            { t: 1, w: 7, label: "الأسبوع 7", start: "1448-03-23", end: "1448-03-27" },
+            { t: 1, w: 8, label: "الأسبوع 8", start: "1448-03-30", end: "1448-04-04" },
+            { t: 1, w: 9, label: "الأسبوع 9", start: "1448-04-07", end: "1448-04-11" },
+            { t: 1, w: 10, label: "الأسبوع 10 (مطولة)", start: "1448-04-14", end: "1448-04-18", event: "إجازة نهاية أسبوع مطولة 17-04" },
+            { t: 1, w: 11, label: "الأسبوع 11", start: "1448-04-21", end: "1448-04-25" },
+            { t: 1, w: 12, label: "الأسبوع 12 (اختبارات)", start: "1448-04-28", end: "1448-05-03" },
 
-        let currentActiveTerm = 1;
-        let selectedDayObj = fullCalendarData[1][5].days[0]; // افتراضي: الأحد الأسبوع السادس
-        let activeCellTd = null;
+            // الفصل الدراسي الثاني (T2) - الأسابيع الـ 12 كاملة
+            { t: 2, w: 1, label: "الأسبوع 1", start: "1448-05-13", end: "1448-05-17" },
+            { t: 2, w: 2, label: "الأسبوع 2", start: "1448-05-20", end: "1448-05-24" },
+            { t: 2, w: 3, label: "الأسبوع 3 (مطولة)", start: "1448-05-27", end: "1448-06-02", event: "إجازة نهاية أسبوع مطولة 01-06" },
+            { t: 2, w: 4, label: "الأسبوع 4", start: "1448-06-05", end: "1448-06-09" },
+            { t: 2, w: 5, label: "الأسبوع 5", start: "1448-06-12", end: "1448-06-16" },
+            { t: 2, w: 6, label: "الأسبوع 6 (منتصف الفصل)", start: "1448-06-19", end: "1448-06-23", event: "إجازة منتصف الفصل الثاني 24-06" },
+            { t: 2, w: 7, label: "الأسبوع 7", start: "1448-07-01", end: "1448-07-05" },
+            { t: 2, w: 8, label: "الأسبوع 8", start: "1448-07-08", end: "1448-07-12" },
+            { t: 2, w: 9, label: "الأسبوع 9 (التأسيس)", start: "1448-07-15", end: "1448-07-19", event: "إجازة يوم التأسيس 15-07" },
+            { t: 2, w: 10, label: "الأسبوع 10", start: "1448-07-22", end: "1448-07-26" },
+            { t: 2, w: 11, label: "الأسبوع 11", start: "1448-07-29", end: "1448-08-03" },
+            { t: 2, w: 12, label: "الأسبوع 12 (اختبارات)", start: "1448-08-06", end: "1448-08-10" }
+        ];
+
+        let currentTerm = 1;
 
         function openCalendarModal() {
-            renderWeeksForTerm(currentActiveTerm);
             document.getElementById('calendarModal').classList.add('show');
+            renderWeeksList(currentTerm);
         }
 
         function closeCalendarModal() {
             document.getElementById('calendarModal').classList.remove('show');
         }
 
-        function switchTerm(termNum) {
-            currentActiveTerm = termNum;
-            document.getElementById('tabTerm1').classList.toggle('active', termNum === 1);
-            document.getElementById('tabTerm2').classList.toggle('active', termNum === 2);
-            renderWeeksForTerm(termNum);
+        function switchTerm(term) {
+            currentTerm = term;
+            document.getElementById('tabTerm1').classList.toggle('active', term === 1);
+            document.getElementById('tabTerm2').classList.toggle('active', term === 2);
+            renderWeeksList(term);
         }
 
-        function renderWeeksForTerm(termNum) {
+        function renderWeeksList(term) {
             const container = document.getElementById('weeksListContainer');
             container.innerHTML = '';
-
-            fullCalendarData[termNum].forEach((week, wIdx) => {
+            
+            const filteredWeeks = CAL_1448.filter(w => w.t === term);
+            
+            filteredWeeks.forEach((wk, idx) => {
                 const wkDiv = document.createElement('div');
-                wkDiv.className = `wk-item ${wIdx === 0 ? 'open' : ''}`;
-
-                let eventBadgeHtml = week.eventTag ? `<span class="etag-badge">${week.eventTag}</span>` : '';
-
+                wkDiv.className = 'wk-item' + (idx === 0 ? ' open' : '');
+                
+                let eventHtml = wk.event ? `<span class="etag-badge">${wk.event}</span>` : '';
+                
                 wkDiv.innerHTML = `
-                    <button class="wk-head-btn" onclick="toggleWeekAccordion(this)">
-                        <div><b>${week.name}</b> ${eventBadgeHtml}</div>
-                        <span>${week.dateRange}</span>
+                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
+                        <div><b>${wk.label}</b> ${eventHtml}</div>
+                        <span>من ${wk.start} إلى ${wk.end} <i class="fas fa-chevron-down mr-1"></i></span>
                     </button>
-                    <div class="days-list">
-                        ${week.days.map(d => `
-                            <div class="day-card-item" onclick="selectCalendarDay('${week.name}', '${d.name}', '${d.hDate}', '${d.note || ''}')">
-                                <b>${d.name}</b>
-                                <div><small style="color:#d1d5db;">${d.hDate}</small></div>
-                                <em>${d.note ? '<span style="color:#E0A43A;">' + d.note + '</span>' : d.mDate}</em>
-                            </div>
-                        `).join('')}
+                    <div class="days-list" style="display: ${idx === 0 ? 'grid' : 'none'};">
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - الأحد', '${wk.start}')">
+                            <b>الأحد</b> <em>الموافق ${wk.start}</em>
+                            <span class="badge badge-success badge-pill">اختر</span>
+                        </div>
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - الإثنين', '${wk.start}')">
+                            <b>الإثنين</b> <em>اليوم الدراسي</em>
+                            <span class="badge badge-success badge-pill">اختر</span>
+                        </div>
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - الثلاثاء', '${wk.start}')">
+                            <b>الثلاثاء</b> <em>اليوم الدراسي</em>
+                            <span class="badge badge-success badge-pill">اختر</span>
+                        </div>
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - الأربعاء', '${wk.start}')">
+                            <b>الأربعاء</b> <em>اليوم الدراسي</em>
+                            <span class="badge badge-success badge-pill">اختر</span>
+                        </div>
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - الخميس', '${wk.end}')">
+                            <b>الخميس</b> <em>نهاية الأسبوع (${wk.end})</em>
+                            <span class="badge badge-success badge-pill">اختر</span>
+                        </div>
                     </div>
                 `;
                 container.appendChild(wkDiv);
             });
         }
 
-        function toggleWeekAccordion(btn) {
-            const wkItem = btn.closest('.wk-item');
-            wkItem.classList.toggle('open');
+        function toggleWeekOpen(btn) {
+            const item = btn.parentElement;
+            const list = item.querySelector('.days-list');
+            const isOpen = item.classList.contains('open');
+            
+            // إغلاق البقية أو التبديل
+            item.classList.toggle('open', !isOpen);
+            list.style.display = isOpen ? 'none' : 'grid';
         }
 
-        function selectCalendarDay(weekName, dayName, hDate, note) {
-            document.getElementById('currentDayText').textContent = `${dayName} ${hDate}`;
-            document.getElementById('currentWeekText').textContent = weekName;
-
-            const noticeBanner = document.getElementById('vacationNotice');
-            if (note) {
-                noticeBanner.style.display = 'block';
-                document.getElementById('vacationNoticeText').textContent = note;
-            } else {
-                noticeBanner.style.display = 'none';
-            }
-
+        function selectDate(dayName, dateStr) {
+            document.getElementById('currentDayText').innerText = dayName;
+            document.getElementById('currentWeekText').innerText = `الموافق: ${dateStr}`;
             closeCalendarModal();
         }
 
         function resetToToday() {
-            selectCalendarDay("الأسبوع السادس", "الأحد", "23 ربيع الثاني 1448", "");
+            document.getElementById('currentDayText').innerText = "الأحد 7 جمادى الأولى 1448هـ";
+            document.getElementById('currentWeekText').innerText = "الأسبوع السادس";
+            closeCalendarModal();
         }
 
-        // تفاعلات الجدول والفرز
         function filterByTeacher() {
-            let selectedTeacher = document.getElementById('filterTeacherSelect').value;
-            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
-
-            boxes.forEach(box => {
-                let teacher = box.getAttribute('data-teacher');
-                let parentTd = box.closest('td');
-                if (selectedTeacher === 'all' || (teacher && teacher.includes(selectedTeacher))) {
-                    parentTd.style.opacity = '1';
-                    parentTd.style.pointerEvents = 'auto';
-                } else {
-                    parentTd.style.opacity = '0.2';
-                }
+            const selectedTeacher = document.getElementById('filterTeacherSelect').value;
+            const rows = document.querySelectorAll('#mainScheduleTable tbody tr');
+            
+            rows.forEach(row => {
+                let rowHasTeacher = false;
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    const teacher = cell.querySelector('[data-teacher]')?.getAttribute('data-teacher');
+                    if (selectedTeacher === 'all' || teacher === selectedTeacher) {
+                        rowHasTeacher = true;
+                        cell.style.opacity = '1';
+                    } else if (selectedTeacher !== 'all') {
+                        cell.style.opacity = '0.3';
+                    }
+                });
             });
         }
 
         function resetTableFilter() {
             document.getElementById('filterTeacherSelect').value = 'all';
-            let boxes = document.querySelectorAll('.course-cell-box, .activity-card');
-            boxes.forEach(box => {
-                box.closest('td').style.opacity = '1';
-            });
+            const cells = document.querySelectorAll('#mainScheduleTable td');
+            cells.forEach(cell => cell.style.opacity = '1');
         }
 
-        function setGlobalStatus(status) {
-            let pills = document.querySelectorAll('.activity-card .status-pill');
+        function setGlobalStatus(statusText) {
+            const pills = document.querySelectorAll('.status-pill');
             pills.forEach(pill => {
-                if (status === 'منفذ') {
-                    pill.className = 'status-pill status-done';
-                    pill.innerHTML = '<i class="fas fa-check"></i> منفذ';
-                } else if (status === 'جاري التنفيذ') {
-                    pill.className = 'status-pill status-progress';
-                    pill.innerHTML = '<i class="fas fa-spinner"></i> جاري التنفيذ';
-                } else {
-                    pill.className = 'status-pill status-pending';
-                    pill.innerHTML = 'غير منفذ';
-                }
+                pill.innerText = statusText;
+                pill.className = 'status-pill ' + (statusText === 'منفذ' ? 'status-done' : statusText === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
             });
         }
 
-        function toggleContentTypeFields() {
-            let type = document.getElementById('contentType').value;
-            document.getElementById('courseFields').style.display = type === 'course' ? 'block' : 'none';
-            document.getElementById('activityFields').style.display = type === 'activity' ? 'block' : 'none';
+        function editCell(el) {
+            alert("تعديل محتوى الحصة أو النشاط...");
         }
 
-        function editCell(iconElement) {
-            let card = iconElement.closest('.activity-card') || iconElement.closest('.course-cell-box');
-            activeCellTd = card.closest('td');
-            $('#editCellModal').modal('show');
+        function clearCell(el) {
+            if(confirm("هل أنت متأكد من مسح محتوى هذه الخلية؟")) {
+                const box = el.closest('td');
+                box.innerHTML = '<div class="text-muted small p-2">فارغ</div>';
+            }
         }
 
         function openModalForAdd() {
-            alert("انقر على أيقونة القلم (التعديل) داخل أي خلية لتغيير مادتها أو معلمها.");
-        }
-
-        function clearCell(iconElement) {
-            if (confirm("هل أنت متأكد من تفريغ وحذف محتوى هذه الحصة؟")) {
-                let td = iconElement.closest('td');
-                td.innerHTML = `
-                    <div class="course-cell-box" data-teacher="">
-                        <div class="course-name-large text-muted">فارغ</div>
-                        <div class="teacher-name-badge text-muted">---------</div>
-                        <div class="cell-actions mt-1">
-                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function saveCellChanges() {
-            if (!activeCellTd) return;
-            let contentType = document.getElementById('contentType').value;
-            let teacher = document.getElementById('inputTeacherName').value || "معلم غير محدد";
-
-            if (contentType === 'course') {
-                let courseName = document.getElementById('inputCourseName').value || "مادة دراسية";
-                activeCellTd.innerHTML = `
-                    <div class="course-cell-box" data-teacher="${teacher}">
-                        <div class="course-name-large">${courseName}</div>
-                        <div class="teacher-name-badge">${teacher}</div>
-                    </div>
-                `;
-            } else {
-                let actName = document.getElementById('inputActivityName').value || "نشاط مدرسي";
-                let actType = document.getElementById('inputActivityType').value;
-                let actStatus = document.getElementById('inputActivityStatus').value;
-                let statusClass = actStatus === 'منفذ' ? 'status-done' : (actStatus === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
-                let tagClass = actType === 'ثابتة' ? 'tag-fixed' : 'tag-flexible';
-
-                activeCellTd.innerHTML = `
-                    <div class="activity-card" data-teacher="${teacher}">
-                        <div class="activity-header">
-                            <span>${actName}</span>
-                            <span class="activity-type-tag ${tagClass}">${actType}</span>
-                        </div>
-                        <div class="teacher-name-badge">${teacher}</div>
-                        <span class="status-pill ${statusClass}">${actStatus}</span>
-                        <div class="cell-actions">
-                            <i class="fas fa-edit" title="تعديل" onclick="editCell(this)"></i>
-                            <i class="fas fa-trash del" title="حذف" onclick="clearCell(this)"></i>
-                        </div>
-                    </div>
-                `;
-            }
-            $('#editCellModal').modal('hide');
+            alert("نافذة إضافة وتعديل حصة أو برنامج نشاط جديدة.");
         }
     </script>
 </body>
