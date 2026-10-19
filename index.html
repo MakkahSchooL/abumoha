@@ -104,7 +104,7 @@
             font-weight: 600;
         }
 
-        /* نافذة التقويم والمودال العامة */
+        /* نافذة المودال العامة */
         .modal-cal {
             position: fixed;
             inset: 0;
@@ -350,7 +350,6 @@
             font-weight: 700;
         }
         .tag-fixed { background: #dbeafe; color: #1d4ed8; }
-        .tag-flexible { background: #fef3c7; color: #b45309; }
 
         .status-pill {
             font-size: 0.7rem;
@@ -361,22 +360,6 @@
             margin-top: 5px;
         }
         .status-done { background: #dcfce7; color: #15803d; }
-        .status-progress { background: #fef9c3; color: #a16207; }
-        .status-pending { background: #fee2e2; color: #b91c1c; }
-
-        .cell-actions {
-            margin-top: 5px;
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-        }
-        .cell-actions i {
-            cursor: pointer;
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-        .cell-actions i:hover { color: var(--brand); }
-        .cell-actions i.del:hover { color: #ef4444; }
     </style>
 </head>
 <body>
@@ -407,9 +390,6 @@
                 <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">الإثنين 8 جمادى الأولى 1448هـ</span> - <span id="currentWeekText">الأسبوع الثامن</span>
             </div>
         </div>
-        <div id="vacationNotice" style="display: none; font-size: 0.85rem; color: #fcd34d; font-weight: 700;">
-            <i class="fas fa-star ml-1"></i> <span id="vacationNoticeText"></span>
-        </div>
     </div>
 
     <!-- نافذة التقويم المودال -->
@@ -426,11 +406,7 @@
                     <button class="mtab-btn" id="tabTerm2" onclick="switchTerm(2)">الفصل الدراسي الثاني</button>
                 </div>
             </div>
-
-            <div class="mbody-cal" id="weeksListContainer">
-                <!-- يتم توليد الأسابيع والأيام برمجياً -->
-            </div>
-
+            <div class="mbody-cal" id="weeksListContainer"></div>
             <div class="mfoot-cal">
                 <button type="button" class="btn btn-sm btn-outline-light" onclick="resetToToday()">اليوم الحالي</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeCalendarModal()">إغلاق</button>
@@ -438,60 +414,76 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل الحصة (قوائم منسدلة للمعلم، الصف، والمادة) -->
-    <div class="modal-cal" id="editCellModal">
-        <div class="mbox-cal" style="width: min(420px, 95%);">
+    <!-- نافذة إدارة الإسناد بالقوائم المنسدلة -->
+    <div class="modal-cal" id="assignmentModal">
+        <div class="mbox-cal" style="width: min(500px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>تعديل إسناد الحصة</h3>
-                    <button type="button" class="close text-white" onclick="closeEditModal()">&times;</button>
+                    <h3>إدارة وتعديل الإسناد</h3>
+                    <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>قم بتحديد الخيارات المناسبة ثم اضغط تثبيت</p>
+                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث الجدول</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">الصف / الفصل:</label>
-                    <select id="editClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                    <label class="small font-weight-bold text-light">اليوم المستهدف:</label>
+                    <select id="assignDaySelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="الأحد">الأحد</option>
+                        <option value="الإثنين">الإثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">الفصل / الصف:</label>
+                    <select id="assignClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
                         <!-- تعبئة برمجية -->
                     </select>
                 </div>
                 <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">رقم الحصة:</label>
+                    <select id="assignPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="1">الحصة 1</option>
+                        <option value="2">الحصة 2</option>
+                        <option value="3">الحصة 3</option>
+                        <option value="4">الحصة 4</option>
+                        <option value="5">الحصة 5</option>
+                        <option value="6">الحصة 6</option>
+                        <option value="7">الحصة 7</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
-                    <select id="editTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                    <select id="assignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
                         <!-- تعبئة برمجية -->
                     </select>
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
-                    <select id="editCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
                         <!-- تعبئة برمجية -->
                     </select>
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellEdit()">تثبيت الإسناد</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeEditModal()">إلغاء</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="applyAssignmentChanges()">حفظ وتثبيت الإسناد</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeAssignmentModal()">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- شريط التحكم والفرز -->
+    <!-- شريط التحكم والفرز وزر الإسناد الجديد -->
     <div class="control-btns-container">
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
             <div class="d-flex flex-wrap" style="gap: 6px;">
+                <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
-                <button class="btn-act btn-act-green" onclick="setGlobalStatus('منفذ')"><i class="fas fa-check-circle"></i> تحديد كـ منفذ</button>
-                <button class="btn-act btn-act-orange" onclick="setGlobalStatus('جاري التنفيذ')"><i class="fas fa-spinner"></i> جاري التنفيذ</button>
-                <button class="btn-act btn-act-red" onclick="setGlobalStatus('غير منفذ')"><i class="fas fa-times-circle"></i> غير منفذ</button>
-            </div>
-            <div class="d-flex flex-wrap" style="gap: 6px;">
-                <button class="btn-act btn-act-gray"><i class="fas fa-external-link-alt"></i> التقرير اليومي</button>
-                <button class="btn-act btn-act-gray"><i class="fas fa-print"></i> تقارير الانتظار والنشاط</button>
             </div>
         </div>
 
-        <!-- فلاتر البحث وإضافة فصل/نشاط -->
+        <!-- فلاتر البحث وإضافة فصل -->
         <div class="row align-items-center">
             <div class="col-md-5 mb-2">
                 <div class="d-flex align-items-center">
@@ -509,23 +501,13 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-4 mb-2">
-                <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-tasks"></i> نوع الحصة:</span>
-                    <select id="filterTypeSelect" class="form-control form-control-sm">
-                        <option value="all">جميع الحصص والأنشطة</option>
-                        <option value="درس">حصص المواد الدراسية</option>
-                        <option value="نشاط">برامج النشاط فقط</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل / تعديل</button>
+            <div class="col-md-7 mb-2 text-left">
+                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             </div>
         </div>
     </div>
 
-    <!-- الجدول الرئيسي الشامل لـ 21 فصل المتغير حسب اليوم -->
+    <!-- الجدول الرئيسي الشامل لـ 21 فصل -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -540,45 +522,33 @@
                     <th>الحصة 7</th>
                 </tr>
             </thead>
-            <tbody id="scheduleTableBody">
-                <!-- يتم تعبئة الجدول برمجياً بحسب اليوم المختار -->
-            </tbody>
+            <tbody id="scheduleTableBody"></tbody>
         </table>
     </div>
 
-    <!-- نافذة إضافة وتعديل الفصول والإسناد -->
+    <!-- نافذة إضافة فصل جديد -->
     <div class="modal-cal" id="addClassModal" style="display: none;">
-        <div class="mbox-cal" style="width: min(500px, 95%);">
+        <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إضافة فصل دراسي وإسناد المعلمين</h3>
+                    <h3>إضافة فصل دراسي جديد</h3>
                     <button type="button" class="close text-white" onclick="closeAddModal()">&times;</button>
                 </div>
-                <p>قم بإدخال اسم الفصل الجديد لإضافته للجدول فوراً</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 3/ج):</label>
+                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 7/أ):</label>
                     <input type="text" id="newClassNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم الفصل">
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
-                    <input type="text" id="newTeacherInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المعلم">
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
-                    <input type="text" id="newCourseInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المادة أو النشاط">
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة للجدول</button>
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeAddModal()">إلغاء</button>
             </div>
         </div>
     </div>
 
     <script>
-        // الـ 21 فصل المحددة بدقة
         const targetClasses = [
             "1/أ", "1/ب", "1/ج", "1/د",
             "2/أ", "2/ب", "2/ج", "2/د",
@@ -591,10 +561,13 @@
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
         const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
-        let currentEditingCell = null;
+        // هيكل لتخزين البيانات المخصصة لكل يوم وفصل وحصة
+        let customAssignments = {};
 
-        // دالة توليد الجدول بناءً على اليوم
+        let activeDay = "الإثنين";
+
         function renderScheduleTableForDay(dayName) {
+            activeDay = dayName;
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
@@ -612,16 +585,24 @@
                 let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
                 
                 for(let i = 1; i <= 7; i++) {
-                    let teacher = teachersPool[(index + i + dayOffset) % teachersPool.length];
-                    let course = coursesPool[(index + i * dayOffset) % coursesPool.length];
+                    // التحقق مما إذا كان هناك تعديل مسند مسبقاً لهذا اليوم والفصل والحصة
+                    let key = `${dayName}_${cls}_${i}`;
+                    let teacher, course;
+
+                    if (customAssignments[key]) {
+                        teacher = customAssignments[key].teacher;
+                        course = customAssignments[key].course;
+                    } else {
+                        teacher = teachersPool[(index + i + dayOffset) % teachersPool.length];
+                        course = coursesPool[(index + i * dayOffset) % coursesPool.length];
+                    }
                     
-                    if(i === 5) {
+                    if(i === 5 && !customAssignments[key]) {
                         html += `<td>
                             <div class="activity-card" data-teacher="${teacher}">
                                 <div class="activity-header"><span>نشاط مدرسي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
                                 <div class="teacher-name-badge">${teacher}</div>
                                 <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
-                                <div class="cell-actions"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
                             </div>
                         </td>`;
                     } else {
@@ -629,7 +610,6 @@
                             <div class="course-cell-box" data-teacher="${teacher}">
                                 <div class="course-name-large">${course}</div>
                                 <div class="teacher-name-badge">${teacher}</div>
-                                <div class="cell-actions mt-1"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
                             </div>
                         </td>`;
                     }
@@ -639,331 +619,54 @@
             });
         }
 
-        // فتح نافذة التعديل وتعبئة القوائم المنسدلة
-        function openEditModal(el) {
-            currentEditingCell = el.closest('td');
+        // فتح نافذة الإسناد وتعبئة قوائمها
+        function openAssignmentModal() {
+            document.getElementById('assignDaySelect').value = activeDay.includes("الأحد") ? "الأحد" : activeDay.includes("الإثنين") ? "الإثنين" : activeDay.includes("الثلاثاء") ? "الثلاثاء" : activeDay.includes("الأربعاء") ? "الأربعاء" : "الخميس";
             
-            // تعبئة قائمة الصفوف/الفصول
-            const classSelect = document.getElementById('editClassSelect');
-            classSelect.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
-            const rowClass = currentEditingCell.closest('tr').getAttribute('data-row-class');
-            classSelect.value = rowClass || targetClasses[0];
+            const classSel = document.getElementById('assignClassSelect');
+            classSel.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            // تعبئة قائمة المعلمين
-            const teacherSelect = document.getElementById('editTeacherSelect');
-            teacherSelect.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
-            const currentTeacher = currentEditingCell.querySelector('[data-teacher]')?.getAttribute('data-teacher') || teachersPool[0];
-            teacherSelect.value = currentTeacher;
+            const teacherSel = document.getElementById('assignTeacherSelect');
+            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
 
-            // تعبئة قائمة المواد والأنشطة
-            const courseSelect = document.getElementById('editCourseSelect');
-            courseSelect.innerHTML = coursesPool.map(co => `<option value="${co}">${co}</option>`).join('');
-            const currentCourse = currentEditingCell.querySelector('.course-name-large')?.innerText || coursesPool[0];
-            courseSelect.value = currentCourse;
+            const courseSel = document.getElementById('assignCourseSelect');
+            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}">${co}</option>`).join('');
 
-            document.getElementById('editCellModal').classList.add('show');
+            document.getElementById('assignmentModal').classList.add('show');
         }
 
-        function closeEditModal() {
-            document.getElementById('editCellModal').classList.remove('show');
-            currentEditingCell = null;
+        function closeAssignmentModal() {
+            document.getElementById('assignmentModal').classList.remove('show');
         }
 
-        // حفظ وتثبيت التعديلات من نافذة القوائم المنسدلة
-        function saveCellEdit() {
-            if (!currentEditingCell) return;
+        // تطبيق حفظ التغييرات من قائمة الإسناد العليا
+        function applyAssignmentChanges() {
+            const day = document.getElementById('assignDaySelect').value;
+            const cls = document.getElementById('assignClassSelect').value;
+            const period = document.getElementById('assignPeriodSelect').value;
+            const teacher = document.getElementById('assignTeacherSelect').value;
+            const course = document.getElementById('assignCourseSelect').value;
 
-            const selectedClass = document.getElementById('editClassSelect').value;
-            const selectedTeacher = document.getElementById('editTeacherSelect').value;
-            const selectedCourse = document.getElementById('editCourseSelect').value;
+            let key = `${day}_${cls}_${period}`;
+            customAssignments[key] = { teacher: teacher, course: course };
 
-            // تحديث الصف إذا تغير
-            const currentRow = currentEditingCell.closest('tr');
-            if (currentRow.getAttribute('data-row-class') !== selectedClass) {
-                currentRow.setAttribute('data-row-class', selectedClass);
-                currentRow.querySelector('th').innerText = selectedClass;
+            alert("تم تحديث وتثبيت الإسناد بنجاح!");
+            closeAssignmentModal();
+
+            // إعادة تحديث الجدول إذا كان اليوم المعروض حالياً هو نفس اليوم المعدل
+            if (activeDay.includes(day)) {
+                renderScheduleTableForDay(activeDay);
             }
-
-            // تحديث محتوى الخلية (المعلم والمادة)
-            let box = currentEditingCell.querySelector('.course-cell-box') || currentEditingCell.querySelector('.activity-card');
-            if (box) {
-                box.setAttribute('data-teacher', selectedTeacher);
-                let nameEl = box.querySelector('.course-name-large') || box.querySelector('.activity-header span');
-                let teacherEl = box.querySelector('.teacher-name-badge');
-                if (nameEl) nameEl.innerText = selectedCourse;
-                if (teacherEl) teacherEl.innerText = selectedTeacher;
-            }
-
-            closeEditModal();
         }
 
         // بيانات التقويم
         const CAL_1448 = [
-            { t: 1, w: 1, label: "الأسبوع الأول", days: [
-                { name: "الأحد", h: "1448/02/10 هـ", m: "2026/08/16 م" },
-                { name: "الإثنين", h: "1448/02/11 هـ", m: "2026/08/17 م" },
-                { name: "الثلاثاء", h: "1448/02/12 هـ", m: "2026/08/18 م" },
-                { name: "الأربعاء", h: "1448/02/13 هـ", m: "2026/08/19 م" },
-                { name: "الخميس", h: "1448/02/14 هـ", m: "2026/08/20 م" }
-            ]},
-            { t: 1, w: 2, label: "الأسبوع الثاني", days: [
-                { name: "الأحد", h: "1448/02/17 هـ", m: "2026/08/23 م" },
-                { name: "الإثنين", h: "1448/02/18 هـ", m: "2026/08/24 م" },
-                { name: "الثلاثاء", h: "1448/02/19 هـ", m: "2026/08/25 م" },
-                { name: "الأربعاء", h: "1448/02/20 هـ", m: "2026/08/26 م" },
-                { name: "الخميس", h: "1448/02/21 هـ", m: "2026/08/27 م" }
-            ]},
-            { t: 1, w: 3, label: "الأسبوع الثالث", days: [
-                { name: "الأحد", h: "1448/02/24 هـ", m: "2026/08/30 م" },
-                { name: "الإثنين", h: "1448/02/25 هـ", m: "2026/08/31 م" },
-                { name: "الثلاثاء", h: "1448/02/26 هـ", m: "2026/09/01 م" },
-                { name: "الأربعاء", h: "1448/02/27 هـ", m: "2026/09/02 م" },
-                { name: "الخميس", h: "1448/02/28 هـ", m: "2026/09/03 م" }
-            ]},
-            { t: 1, w: 4, label: "الأسبوع الرابع", days: [
-                { name: "الأحد", h: "1448/03/02 هـ", m: "2026/09/06 م" },
-                { name: "الإثنين", h: "1448/03/03 هـ", m: "2026/09/07 م" },
-                { name: "الثلاثاء", h: "1448/03/04 هـ", m: "2026/09/08 م" },
-                { name: "الأربعاء", h: "1448/03/05 هـ", m: "2026/09/09 م" },
-                { name: "الخميس", h: "1448/03/06 هـ", m: "2026/09/10 م" }
-            ]},
-            { t: 1, w: 5, label: "الأسبوع الخامس", event: "إجازة اليوم الوطني", days: [
-                { name: "الأحد", h: "1448/03/09 هـ", m: "2026/09/13 م" },
-                { name: "الإثنين", h: "1448/03/10 هـ", m: "2026/09/14 م" },
-                { name: "الثلاثاء", h: "1448/03/11 هـ", m: "2026/09/15 م" },
-                { name: "الأربعاء", h: "1448/03/12 هـ", m: "2026/09/16 م" },
-                { name: "الخميس", h: "1448/03/13 هـ", m: "2026/09/17 م" }
-            ]},
-            { t: 1, w: 6, label: "الأسبوع السادس", days: [
-                { name: "الأحد", h: "1448/03/16 هـ", m: "2026/09/20 م" },
-                { name: "الإثنين", h: "1448/03/17 هـ", m: "2026/09/21 م" },
-                { name: "الثلاثاء", h: "1448/03/18 هـ", m: "2026/09/22 م" },
-                { name: "الأربعاء", h: "1448/03/19 هـ", m: "2026/09/23 م" },
-                { name: "الخميس", h: "1448/03/20 هـ", m: "2026/09/24 م" }
-            ]},
-            { t: 1, w: 7, label: "الأسبوع السابع", days: [
-                { name: "الأحد", h: "1448/03/23 هـ", m: "2026/09/27 م" },
-                { name: "الإثنين", h: "1448/03/24 هـ", m: "2026/09/28 م" },
-                { name: "الثلاثاء", h: "1448/03/25 هـ", m: "2026/09/29 م" },
-                { name: "الأربعاء", h: "1448/03/26 هـ", m: "2026/09/30 م" },
-                { name: "الخميس", h: "1448/03/27 هـ", m: "2026/10/01 م" }
-            ]},
             { t: 1, w: 8, label: "الأسبوع الثامن", days: [
                 { name: "الأحد", h: "1448/05/07 هـ", m: "2026/10/18 م" },
                 { name: "الإثنين", h: "1448/05/08 هـ", m: "2026/10/19 م" },
                 { name: "الثلاثاء", h: "1448/05/09 هـ", m: "2026/10/20 م" },
                 { name: "الأربعاء", h: "1448/05/10 هـ", m: "2026/10/21 م" },
                 { name: "الخميس", h: "1448/05/11 هـ", m: "2026/10/22 م" }
-            ]},
-            { t: 1, w: 9, label: "الأسبوع التاسع", days: [
-                { name: "الأحد", h: "1448/05/14 هـ", m: "2026/10/25 م" },
-                { name: "الإثنين", h: "1448/05/15 هـ", m: "2026/10/26 م" },
-                { name: "الثلاثاء", h: "1448/05/16 هـ", m: "2026/10/27 م" },
-                { name: "الأربعاء", h: "1448/05/17 هـ", m: "2026/10/28 م" },
-                { name: "الخميس", h: "1448/05/18 هـ", m: "2026/10/29 م" }
-            ]},
-            { t: 1, w: 10, label: "الأسبوع العاشر", event: "إجازة مطولة", days: [
-                { name: "الأحد", h: "1448/05/21 هـ", m: "2026/11/01 م" },
-                { name: "الإثنين", h: "1448/05/22 هـ", m: "2026/11/02 م" },
-                { name: "الثلاثاء", h: "1448/05/23 هـ", m: "2026/11/03 م" },
-                { name: "الأربعاء", h: "1448/05/24 هـ", m: "2026/11/04 م" },
-                { name: "الخميس", h: "1448/05/25 هـ", m: "2026/11/05 م" }
-            ]},
-            { t: 1, w: 11, label: "الأسبوع الحادي عشر", days: [
-                { name: "الأحد", h: "1448/05/28 هـ", m: "2026/11/08 م" },
-                { name: "الإثنين", h: "1448/05/29 هـ", m: "2026/11/09 م" },
-                { name: "الثلاثاء", h: "1448/06/01 هـ", m: "2026/11/10 م" },
-                { name: "الأربعاء", h: "1448/06/02 هـ", m: "2026/11/11 م" },
-                { name: "الخميس", h: "1448/06/03 هـ", m: "2026/11/12 م" }
-            ]},
-            { t: 1, w: 12, label: "الأسبوع الثاني عشر", days: [
-                { name: "الأحد", h: "1448/06/05 هـ", m: "2026/11/15 م" },
-                { name: "الإثنين", h: "1448/06/06 هـ", m: "2026/11/16 م" },
-                { name: "الثلاثاء", h: "1448/06/07 هـ", m: "2026/11/17 م" },
-                { name: "الأربعاء", h: "1448/06/08 هـ", m: "2026/11/18 م" },
-                { name: "الخميس", h: "1448/06/09 هـ", m: "2026/11/19 م" }
-            ]},
-            { t: 1, w: 13, label: "الأسبوع الثالث عشر", days: [
-                { name: "الأحد", h: "1448/06/12 هـ", m: "2026/11/22 م" },
-                { name: "الإثنين", h: "1448/06/13 هـ", m: "2026/11/23 م" },
-                { name: "الثلاثاء", h: "1448/06/14 هـ", m: "2026/11/24 م" },
-                { name: "الأربعاء", h: "1448/06/15 هـ", m: "2026/11/25 م" },
-                { name: "الخميس", h: "1448/06/16 هـ", m: "2026/11/26 م" }
-            ]},
-            { t: 1, w: 14, label: "الأسبوع الرابع عشر", days: [
-                { name: "الأحد", h: "1448/06/19 هـ", m: "2026/11/29 م" },
-                { name: "الإثنين", h: "1448/06/20 هـ", m: "2026/11/30 م" },
-                { name: "الثلاثاء", h: "1448/06/21 هـ", m: "2026/12/01 م" },
-                { name: "الأربعاء", h: "1448/06/22 هـ", m: "2026/12/02 م" },
-                { name: "الخميس", h: "1448/06/23 هـ", m: "2026/12/03 م" }
-            ]},
-            { t: 1, w: 15, label: "الأسبوع الخامس عشر", days: [
-                { name: "الأحد", h: "1448/07/01 هـ", m: "2026/12/06 م" },
-                { name: "الإثنين", h: "1448/07/02 هـ", m: "2026/12/07 م" },
-                { name: "الثلاثاء", h: "1448/07/03 هـ", m: "2026/12/08 م" },
-                { name: "الأربعاء", h: "1448/07/04 هـ", m: "2026/12/09 م" },
-                { name: "الخميس", h: "1448/07/05 هـ", m: "2026/12/10 م" }
-            ]},
-            { t: 1, w: 16, label: "الأسبوع السادس عشر", days: [
-                { name: "الأحد", h: "1448/07/08 هـ", m: "2026/12/13 م" },
-                { name: "الإثنين", h: "1448/07/09 هـ", m: "2026/12/14 م" },
-                { name: "الثلاثاء", h: "1448/07/10 هـ", m: "2026/12/15 م" },
-                { name: "الأربعاء", h: "1448/07/11 هـ", m: "2026/12/16 م" },
-                { name: "الخميس", h: "1448/07/12 هـ", m: "2026/12/17 م" }
-            ]},
-            { t: 1, w: 17, label: "الأسبوع السابع عشر", days: [
-                { name: "الأحد", h: "1448/07/15 هـ", m: "2026/12/20 م" },
-                { name: "الإثنين", h: "1448/07/16 هـ", m: "2026/12/21 م" },
-                { name: "الثلاثاء", h: "1448/07/17 هـ", m: "2026/12/22 م" },
-                { name: "الأربعاء", h: "1448/07/18 هـ", m: "2026/12/23 م" },
-                { name: "الخميس", h: "1448/07/19 هـ", m: "2026/12/24 م" }
-            ]},
-            { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [
-                { name: "الأحد", h: "1448/07/22 هـ", m: "2026/12/27 م" },
-                { name: "الإثنين", h: "1448/07/23 هـ", m: "2026/12/28 م" },
-                { name: "الثلاثاء", h: "1448/07/24 هـ", m: "2026/12/29 م" },
-                { name: "الأربعاء", h: "1448/07/25 هـ", m: "2026/12/30 م" },
-                { name: "الخميس", h: "1448/07/26 هـ", m: "2026/12/31 م" }
-            ]},
-            { t: 1, w: 19, label: "الأسبوع التاسع عشر", event: "اختبارات نهاية الفصل", days: [
-                { name: "الأحد", h: "1448/07/29 هـ", m: "2027/01/03 م" },
-                { name: "الإثنين", h: "1448/08/01 هـ", m: "2027/01/04 م" },
-                { name: "الثلاثاء", h: "1448/08/02 هـ", m: "2027/01/05 م" },
-                { name: "الأربعاء", h: "1448/08/03 هـ", m: "2027/01/06 م" },
-                { name: "الخميس", h: "1448/08/04 هـ", m: "2027/01/07 م" }
-            ]},
-            { t: 2, w: 1, label: "الأسبوع الأول", days: [
-                { name: "الأحد", h: "1448/08/13 هـ", m: "2027/01/10 م" },
-                { name: "الإثنين", h: "1448/08/14 هـ", m: "2027/01/11 م" },
-                { name: "الثلاثاء", h: "1448/08/15 هـ", m: "2027/01/12 م" },
-                { name: "الأربعاء", h: "1448/08/16 هـ", m: "2027/01/13 م" },
-                { name: "الخميس", h: "1448/08/17 هـ", m: "2027/01/14 م" }
-            ]},
-            { t: 2, w: 2, label: "الأسبوع الثاني", days: [
-                { name: "الأحد", h: "1448/08/20 هـ", m: "2027/01/17 م" },
-                { name: "الإثنين", h: "1448/08/21 هـ", m: "2027/01/18 م" },
-                { name: "الثلاثاء", h: "1448/08/22 هـ", m: "2027/01/19 م" },
-                { name: "الأربعاء", h: "1448/08/23 هـ", m: "2027/01/20 م" },
-                { name: "الخميس", h: "1448/08/24 هـ", m: "2027/01/21 م" }
-            ]},
-            { t: 2, w: 3, label: "الأسبوع الثالث", days: [
-                { name: "الأحد", h: "1448/08/27 هـ", m: "2027/01/24 م" },
-                { name: "الإثنين", h: "1448/08/28 هـ", m: "2027/01/25 م" },
-                { name: "الثلاثاء", h: "1448/08/29 هـ", m: "2027/01/26 م" },
-                { name: "الأربعاء", h: "1448/09/01 هـ", m: "2027/01/27 م" },
-                { name: "الخميس", h: "1448/09/02 هـ", m: "2027/01/28 م" }
-            ]},
-            { t: 2, w: 4, label: "الأسبوع الرابع", days: [
-                { name: "الأحد", h: "1448/09/05 هـ", m: "2027/01/31 م" },
-                { name: "الإثنين", h: "1448/09/06 هـ", m: "2027/02/01 م" },
-                { name: "الثلاثاء", h: "1448/09/07 هـ", m: "2027/02/02 م" },
-                { name: "الأربعاء", h: "1448/09/08 هـ", m: "2027/02/03 م" },
-                { name: "الخميس", h: "1448/09/09 هـ", m: "2027/02/04 م" }
-            ]},
-            { t: 2, w: 5, label: "الأسبوع الخامس", days: [
-                { name: "الأحد", h: "1448/09/12 هـ", m: "2027/02/07 م" },
-                { name: "الإثنين", h: "1448/09/13 هـ", m: "2027/02/08 م" },
-                { name: "الثلاثاء", h: "1448/09/14 هـ", m: "2027/02/09 م" },
-                { name: "الأربعاء", h: "1448/09/15 هـ", m: "2027/02/10 م" },
-                { name: "الخميس", h: "1448/09/16 هـ", m: "2027/02/11 م" }
-            ]},
-            { t: 2, w: 6, label: "الأسبوع السادس", days: [
-                { name: "الأحد", h: "1448/09/19 هـ", m: "2027/02/14 م" },
-                { name: "الإثنين", h: "1448/09/20 هـ", m: "2027/02/15 م" },
-                { name: "الثلاثاء", h: "1448/09/21 هـ", m: "2027/02/16 م" },
-                { name: "الأربعاء", h: "1448/09/22 هـ", m: "2027/02/17 م" },
-                { name: "الخميس", h: "1448/09/23 هـ", m: "2027/02/18 م" }
-            ]},
-            { t: 2, w: 7, label: "الأسبوع السابع", days: [
-                { name: "الأحد", h: "1448/10/03 هـ", m: "2027/02/21 م" },
-                { name: "الإثنين", h: "1448/10/04 هـ", m: "2027/02/22 م" },
-                { name: "الثلاثاء", h: "1448/10/05 هـ", m: "2027/02/23 م" },
-                { name: "الأربعاء", h: "1448/10/06 هـ", m: "2027/02/24 م" },
-                { name: "الخميس", h: "1448/10/07 هـ", m: "2027/02/25 م" }
-            ]},
-            { t: 2, w: 8, label: "الأسبوع الثامن", days: [
-                { name: "الأحد", h: "1448/10/10 هـ", m: "2027/02/28 م" },
-                { name: "الإثنين", h: "1448/10/11 هـ", m: "2027/03/01 م" },
-                { name: "الثلاثاء", h: "1448/10/12 هـ", m: "2027/03/02 م" },
-                { name: "الأربعاء", h: "1448/10/13 هـ", m: "2027/03/03 م" },
-                { name: "الخميس", h: "1448/10/14 هـ", m: "2027/03/04 م" }
-            ]},
-            { t: 2, w: 9, label: "الأسبوع التاسع", days: [
-                { name: "الأحد", h: "1448/10/17 هـ", m: "2027/03/07 م" },
-                { name: "الإثنين", h: "1448/10/18 هـ", m: "2027/03/08 م" },
-                { name: "الثلاثاء", h: "1448/10/19 هـ", m: "2027/03/09 م" },
-                { name: "الأربعاء", h: "1448/10/20 هـ", m: "2027/03/10 م" },
-                { name: "الخميس", h: "1448/10/21 هـ", m: "2027/03/11 م" }
-            ]},
-            { t: 2, w: 10, label: "الأسبوع العاشر", days: [
-                { name: "الأحد", h: "1448/10/24 هـ", m: "2027/03/14 م" },
-                { name: "الإثنين", h: "1448/10/25 هـ", m: "2027/03/15 م" },
-                { name: "الثلاثاء", h: "1448/10/26 هـ", m: "2027/03/16 م" },
-                { name: "الأربعاء", h: "1448/10/27 هـ", m: "2027/03/17 م" },
-                { name: "الخميس", h: "1448/10/28 هـ", m: "2027/03/18 م" }
-            ]},
-            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [
-                { name: "الأحد", h: "1448/11/01 هـ", m: "2027/03/21 م" },
-                { name: "الإثنين", h: "1448/11/02 هـ", m: "2027/03/22 م" },
-                { name: "الثلاثاء", h: "1448/11/03 هـ", m: "2027/03/23 م" },
-                { name: "الأربعاء", h: "1448/11/04 هـ", m: "2027/03/24 م" },
-                { name: "الخميس", h: "1448/11/05 هـ", m: "2027/03/25 م" }
-            ]},
-            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [
-                { name: "الأحد", h: "1448/11/08 هـ", m: "2027/03/28 م" },
-                { name: "الإثنين", h: "1448/11/09 هـ", m: "2027/03/29 م" },
-                { name: "الثلاثاء", h: "1448/11/10 هـ", m: "2027/03/30 م" },
-                { name: "الأربعاء", h: "1448/11/11 هـ", m: "2027/03/31 م" },
-                { name: "الخميس", h: "1448/11/12 هـ", m: "2027/04/01 م" }
-            ]},
-            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [
-                { name: "الأحد", h: "1448/11/15 هـ", m: "2027/04/04 م" },
-                { name: "الإثنين", h: "1448/11/16 هـ", m: "2027/04/05 م" },
-                { name: "الثلاثاء", h: "1448/11/17 هـ", m: "2027/04/06 م" },
-                { name: "الأربعاء", h: "1448/11/18 هـ", m: "2027/04/07 م" },
-                { name: "الخميس", h: "1448/11/19 هـ", m: "2027/04/08 م" }
-            ]},
-            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [
-                { name: "الأحد", h: "1448/11/22 هـ", m: "2027/04/11 م" },
-                { name: "الإثنين", h: "1448/11/23 هـ", m: "2027/04/12 م" },
-                { name: "الثلاثاء", h: "1448/11/24 هـ", m: "2027/04/13 م" },
-                { name: "الأربعاء", h: "1448/11/25 هـ", m: "2027/04/14 م" },
-                { name: "الخميس", h: "1448/11/26 هـ", m: "2027/04/15 م" }
-            ]},
-            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [
-                { name: "الأحد", h: "1448/12/01 هـ", m: "2027/04/18 م" },
-                { name: "الإثنين", h: "1448/12/02 هـ", m: "2027/04/19 م" },
-                { name: "الثلاثاء", h: "1448/12/03 هـ", m: "2027/04/20 م" },
-                { name: "الأربعاء", h: "1448/12/04 هـ", m: "2027/04/21 م" },
-                { name: "الخميس", h: "1448/12/05 هـ", m: "2027/04/22 م" }
-            ]},
-            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [
-                { name: "الأحد", h: "1448/12/08 هـ", m: "2027/04/25 م" },
-                { name: "الإثنين", h: "1448/12/09 هـ", m: "2027/04/26 م" },
-                { name: "الثلاثاء", h: "1448/12/10 هـ", m: "2027/04/27 م" },
-                { name: "الأربعاء", h: "1448/12/11 هـ", m: "2027/04/28 م" },
-                { name: "الخميس", h: "1448/12/12 هـ", m: "2027/04/29 م" }
-            ]},
-            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [
-                { name: "الأحد", h: "1448/12/15 هـ", m: "2027/05/02 م" },
-                { name: "الإثنين", h: "1448/12/16 هـ", m: "2027/05/03 م" },
-                { name: "الثلاثاء", h: "1448/12/17 هـ", m: "2027/05/04 م" },
-                { name: "الأربعاء", h: "1448/12/18 هـ", m: "2027/05/05 م" },
-                { name: "الخميس", h: "1448/12/19 هـ", m: "2027/05/06 م" }
-            ]},
-            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [
-                { name: "الأحد", h: "1448/12/22 هـ", m: "2027/05/09 م" },
-                { name: "الإثنين", h: "1448/12/23 هـ", m: "2027/05/10 م" },
-                { name: "الثلاثاء", h: "1448/12/24 هـ", m: "2027/05/11 م" },
-                { name: "الأربعاء", h: "1448/12/25 هـ", m: "2027/05/12 م" },
-                { name: "الخميس", h: "1448/12/26 هـ", m: "2027/05/13 م" }
-            ]},
-            { t: 2, w: 19, label: "الأسبوع التاسع عشر", event: "نهاية الفصل", days: [
-                { name: "الأحد", h: "1448/12/29 هـ", m: "2027/05/16 م" },
-                { name: "الإثنين", h: "1448/13/01 هـ", m: "2027/05/17 م" },
-                { name: "الثلاثاء", h: "1448/13/02 هـ", m: "2027/05/18 م" },
-                { name: "الأربعاء", h: "1448/13/03 هـ", m: "2027/05/19 م" },
-                { name: "الخميس", h: "1448/13/04 هـ", m: "2027/05/20 م" }
             ]}
         ];
 
@@ -993,13 +696,9 @@
             const container = document.getElementById('weeksListContainer');
             container.innerHTML = '';
             
-            const filteredWeeks = CAL_1448.filter(w => w.t === term);
-            
-            filteredWeeks.forEach((wk) => {
+            CAL_1448.forEach((wk) => {
                 const wkDiv = document.createElement('div');
-                wkDiv.className = 'wk-item' + (wk.w === 8 && term === 1 ? ' open' : '');
-                
-                let eventHtml = wk.event ? `<span class="etag-badge">${wk.event}</span>` : '';
+                wkDiv.className = 'wk-item open';
                 
                 let daysHtml = '';
                 wk.days.forEach(d => {
@@ -1012,25 +711,11 @@
                 });
 
                 wkDiv.innerHTML = `
-                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
-                        <div><b>${wk.label}</b> ${eventHtml}</div>
-                        <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
-                    </button>
-                    <div class="days-list" style="display: ${wk.w === 8 && term === 1 ? 'grid' : 'none'};">
-                        ${daysHtml}
-                    </div>
+                    <button class="wk-head-btn"><div><b>${wk.label}</b></div></button>
+                    <div class="days-list" style="display: grid;">${daysHtml}</div>
                 `;
                 container.appendChild(wkDiv);
             });
-        }
-
-        function toggleWeekOpen(btn) {
-            const item = btn.parentElement;
-            const list = item.querySelector('.days-list');
-            const isOpen = item.classList.contains('open');
-            
-            item.classList.toggle('open', !isOpen);
-            list.style.display = isOpen ? 'none' : 'grid';
         }
 
         function selectDate(dayName, dateStr) {
@@ -1053,36 +738,19 @@
             
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
+                let match = false;
                 cells.forEach(cell => {
                     const teacher = cell.querySelector('[data-teacher]')?.getAttribute('data-teacher');
-                    if (selectedTeacher === 'all' || teacher === selectedTeacher) {
-                        cell.style.opacity = '1';
-                    } else if (selectedTeacher !== 'all') {
-                        cell.style.opacity = '0.3';
-                    }
+                    if (selectedTeacher === 'all' || teacher === selectedTeacher) match = true;
                 });
+                row.style.opacity = (selectedTeacher === 'all' || match) ? '1' : '0.3';
             });
         }
 
         function resetTableFilter() {
             document.getElementById('filterTeacherSelect').value = 'all';
-            const cells = document.querySelectorAll('#mainScheduleTable td');
-            cells.forEach(cell => cell.style.opacity = '1');
-        }
-
-        function setGlobalStatus(statusText) {
-            const pills = document.querySelectorAll('.status-pill');
-            pills.forEach(pill => {
-                pill.innerText = statusText;
-                pill.className = 'status-pill ' + (statusText === 'منفذ' ? 'status-done' : statusText === 'جاري التنفيذ' ? 'status-progress' : 'status-pending');
-            });
-        }
-
-        function clearCell(el) {
-            if(confirm("هل أنت متأكد من مسح محتوى هذه الخلية؟")) {
-                const box = el.closest('td');
-                box.innerHTML = '<div class="text-muted small p-2">فارغ</div>';
-            }
+            const rows = document.querySelectorAll('#mainScheduleTable tbody tr');
+            rows.forEach(row => row.style.opacity = '1');
         }
 
         function openModalForAdd() {
@@ -1095,34 +763,15 @@
 
         function addNewClassRow() {
             let className = document.getElementById('newClassNameInput').value.trim();
-            let teacherName = document.getElementById('newTeacherInput').value.trim();
-            let courseName = document.getElementById('newCourseInput').value.trim();
-
             if(!className) {
                 alert("الرجاء إدخال اسم الفصل");
                 return;
             }
 
-            const tbody = document.getElementById('scheduleTableBody');
-            let tr = document.createElement('tr');
-            tr.setAttribute('data-row-class', className);
-
-            let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${className}</th>`;
-            for(let i = 1; i <= 7; i++) {
-                let t = teacherName || "معلم جديد";
-                let c = courseName || "مادة دراسية";
-                html += `<td>
-                    <div class="course-cell-box" data-teacher="${t}">
-                        <div class="course-name-large">${c}</div>
-                        <div class="teacher-name-badge">${t}</div>
-                        <div class="cell-actions mt-1"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
-                    </div>
-                </td>`;
-            }
-            tr.innerHTML = html;
-            tbody.appendChild(tr);
+            targetClasses.push(className);
+            renderScheduleTableForDay(activeDay);
             closeAddModal();
-            alert("تم إضافة الفصل بنجاح إلى الجدول!");
+            alert("تم إضافة الفصل الجديد بنجاح!");
         }
     </script>
 </body>
