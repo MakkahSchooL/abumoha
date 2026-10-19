@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف 1448هـ</title>
 
-    <!-- المكتبات الخطية والتنسيقية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -189,6 +188,16 @@
         .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
         .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
 
+        .etag-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #E0A43A;
+            border: 1px solid #E0A43A;
+            border-radius: 4px;
+            padding: 1px 6px;
+            margin-inline-start: 6px;
+        }
+
         .days-list {
             display: none;
             gap: 6px;
@@ -286,6 +295,7 @@
             padding: 8px;
             text-align: center;
             transition: all 0.2s;
+            position: relative;
         }
         .course-cell-box:hover {
             border-color: var(--brand);
@@ -293,21 +303,50 @@
         }
 
         .course-name-large {
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .teacher-name-badge {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: #047857;
             background: #ecfdf5;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 6px;
             display: inline-block;
             width: 100%;
+        }
+
+        .empty-cell-text {
+            color: #94a3b8;
+            font-size: 0.82rem;
+            padding: 10px 0;
+        }
+
+        .edit-pen-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .edit-pen-btn:hover { color: var(--brand); }
+
+        .activity-card {
+            border-radius: 10px;
+            background: #fff;
+            border: 2px dashed var(--brand);
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(12,106,100,0.1);
+            position: relative;
         }
     </style>
 </head>
@@ -336,17 +375,17 @@
                 <i class="fas fa-calendar-alt"></i> اختر التاريخ / الأسبوع
             </button>
             <div class="selected-date-badge" id="selectedDateDisplay">
-                <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">الإثنين - الأسبوع الثامن</span> - <span id="currentWeekText">الموافق: 1448/05/08 هـ</span>
+                <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">الأسبوع الثامن - الإثنين</span> - <span id="currentWeekText">الموافق: 1448/05/08 هـ</span>
             </div>
         </div>
     </div>
 
-    <!-- نافذة التقويم المودال -->
+    <!-- نافذة التقويم المودال (شاملة للترم الأول والثاني بالكامل) -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>تقويم مكة المكرمة والمدينة المنورة وجدة والطائف</h3>
+                    <h3>تقويم مكة والمدينة وجدة والطائف 1448هـ</h3>
                     <button type="button" class="close text-white" onclick="closeCalendarModal()">&times;</button>
                 </div>
                 <p>اختر الأسبوع ثم اليوم لعرض جدول الحصص الخاص به</p>
@@ -363,15 +402,15 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الإسناد بالقوائم المنسدلة -->
+    <!-- نافذة إدارة الإسناد الأساسية -->
     <div class="modal-cal" id="assignmentModal">
         <div class="mbox-cal" style="width: min(500px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة وتعديل الإسناد (السحابة)</h3>
+                    <h3>إدارة وتعديل الإسناد العام (للجدول الثابت)</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث السحابة مباشرة</p>
+                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتثبيتها في السحابة</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -416,11 +455,81 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والفرز وزر الإسناد -->
+    <!-- نافذة ضبط النشاط المدرسي -->
+    <div class="modal-cal" id="activitySettingsModal">
+        <div class="mbox-cal" style="width: min(450px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>ضبط حصص وبرامج النشاط</h3>
+                    <button type="button" class="close text-white" onclick="closeActivityModal()">&times;</button>
+                </div>
+                <p>تحديد اسم البرنامج، عدد الحصص ونوعها (ثابتة أو مرنة)</p>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">اسم برنامج النشاط:</label>
+                    <input type="text" id="actNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي والاجتماعي">
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة للنشاط:</label>
+                    <select id="actPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="5">الحصة الخامسة (افتراضي)</option>
+                        <option value="1">الحصة 1</option>
+                        <option value="2">الحصة 2</option>
+                        <option value="3">الحصة 3</option>
+                        <option value="4">الحصة 4</option>
+                        <option value="6">الحصة 6</option>
+                        <option value="7">الحصة 7</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">نوع الحصة:</label>
+                    <select id="actTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="ثابتة">ثابتة</option>
+                        <option value="مرنة">مرنة (قابل للتغيير أسبوعياً)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveActivitySettings()">حفظ إعدادات النشاط</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeActivityModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة التعديل المؤقت للأسبوع الحالي (القلم) -->
+    <div class="modal-cal" id="cellEditModal">
+        <div class="mbox-cal" style="width: min(400px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>تعديل استثنائي (هذا الأسبوع فقط)</h3>
+                    <button type="button" class="close text-white" onclick="closeCellEditModal()">&times;</button>
+                </div>
+                <p id="cellEditSubTitle" class="text-warning"></p>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المادة أو المقرر:</label>
+                    <select id="tempCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المعلم:</label>
+                    <select id="tempTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveTempCellEdit()">حفظ لهذا الأسبوع</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellEditModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط التحكم والفرز -->
     <div class="control-btns-container">
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
             <div class="d-flex flex-wrap" style="gap: 6px;">
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
+                <button class="btn-act btn-act-outline-green" onclick="openActivityModal()"><i class="fas fa-star"></i> ضبط النشاط</button>
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
                 <button class="btn-act btn-act-gray text-danger" onclick="clearCloudData()"><i class="fas fa-trash-alt"></i> إعادة ضبط السحابة</button>
@@ -492,7 +601,7 @@
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بمشروعك makkahschool-32961
+        // إعدادات Firebase الخاصة بمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
             authDomain: "makkahschool-32961.firebaseapp.com",
@@ -503,7 +612,6 @@
             measurementId: "G-HMQSMFF391"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -517,12 +625,16 @@
         ];
 
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
+        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
 
         let customAssignments = {};
+        let tempOverrides = {};
+        let activitySettings = { name: "نشاط مدرسي", period: "5", type: "ثابتة" };
+        
         let activeDayName = "الإثنين";
+        let activeWeekLabel = "الأسبوع الثامن";
+        let currentEditingCellInfo = null;
 
-        // تحميل البيانات من سحابة Firebase عند فتح الصفحة
         async function loadDataFromCloud() {
             try {
                 let docRef = await db.collection("schedules").doc("main_schedule").get();
@@ -530,9 +642,11 @@
                     let data = docRef.data();
                     if (data.assignments) customAssignments = data.assignments;
                     if (data.classes) targetClasses = data.classes;
+                    if (data.activity) activitySettings = data.activity;
+                    if (data.overrides) tempOverrides = data.overrides;
                 }
             } catch (e) {
-                console.log("جارِ استخدام البيانات الافتراضية...");
+                console.log("جارِ استخدام البيانات...");
             }
             renderScheduleTableForDay("الإثنين");
         }
@@ -547,41 +661,134 @@
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            let dayOffset = 0;
-            if(cleanDay === "الأحد") dayOffset = 1;
-            else if(cleanDay === "الإثنين") dayOffset = 2;
-            else if(cleanDay === "الثلاثاء") dayOffset = 3;
-            else if(cleanDay === "الأربعاء") dayOffset = 4;
-            else if(cleanDay === "الخميس") dayOffset = 5;
-
-            targetClasses.forEach((cls, index) => {
+            targetClasses.forEach((cls) => {
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
                 let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
                 
                 for(let i = 1; i <= 7; i++) {
-                    let key = `${cleanDay}_${cls}_${i}`;
-                    let teacher, course;
-
-                    if (customAssignments[key]) {
-                        teacher = customAssignments[key].teacher;
-                        course = customAssignments[key].course;
-                    } else {
-                        teacher = teachersPool[(index + i + dayOffset) % teachersPool.length];
-                        course = coursesPool[(index + i * dayOffset) % coursesPool.length];
-                    }
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
+                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
                     
-                    html += `<td>
-                        <div class="course-cell-box" data-teacher="${teacher}">
-                            <div class="course-name-large">${course}</div>
-                            <div class="teacher-name-badge">${teacher}</div>
-                        </div>
-                    </td>`;
+                    let teacher = "";
+                    let course = "";
+                    let isActivity = (i.toString() === activitySettings.period);
+
+                    if (tempOverrides[weekKey]) {
+                        teacher = tempOverrides[weekKey].teacher;
+                        course = tempOverrides[weekKey].course;
+                        isActivity = false;
+                    } else if (customAssignments[baseKey]) {
+                        teacher = customAssignments[baseKey].teacher;
+                        course = customAssignments[baseKey].course;
+                    } else if (isActivity) {
+                        teacher = "مشرف النشاط";
+                        course = activitySettings.name;
+                    }
+
+                    if (isActivity && !tempOverrides[weekKey] && !customAssignments[baseKey]) {
+                        html += `<td>
+                            <div class="activity-card">
+                                <div class="activity-header"><span>${activitySettings.name}</span><span class="activity-type-tag tag-fixed">${activitySettings.type}</span></div>
+                                <div class="teacher-name-badge">نشاط مدرسي</div>
+                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
+                            </div>
+                        </td>`;
+                    } else if (teacher || course) {
+                        html += `<td>
+                            <div class="course-cell-box" data-teacher="${teacher}">
+                                <div class="course-name-large">${course || "—"}</div>
+                                <div class="teacher-name-badge">${teacher || "—"}</div>
+                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
+                            </div>
+                        </td>`;
+                    } else {
+                        html += `<td>
+                            <div class="course-cell-box text-center">
+                                <div class="empty-cell-text">فارغ</div>
+                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '', '')"><i class="fas fa-pen"></i> إسناد</button>
+                            </div>
+                        </td>`;
+                    }
                 }
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
+        }
+
+        function openCellEditModal(day, cls, period, currentCourse, currentTeacher) {
+            currentEditingCellInfo = { day, cls, period };
+            document.getElementById('cellEditSubTitle').innerText = `${activeWeekLabel} - ${day} - الفصل ${cls} - الحصة ${period}`;
+            
+            const courseSel = document.getElementById('tempCourseSelect');
+            courseSel.innerHTML = coursesPool.concat([activitySettings.name]).map(c => `<option value="${c}" ${c === currentCourse ? 'selected' : ''}>${c}</option>`).join('');
+
+            const teacherSel = document.getElementById('tempTeacherSelect');
+            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}" ${t === currentTeacher ? 'selected' : ''}>${t}</option>`).join('');
+
+            document.getElementById('cellEditModal').classList.add('show');
+        }
+
+        function closeCellEditModal() {
+            document.getElementById('cellEditModal').classList.remove('show');
+            currentEditingCellInfo = null;
+        }
+
+        async function saveTempCellEdit() {
+            if (!currentEditingCellInfo) return;
+            let { day, cls, period } = currentEditingCellInfo;
+            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+
+            tempOverrides[weekKey] = {
+                course: document.getElementById('tempCourseSelect').value,
+                teacher: document.getElementById('tempTeacherSelect').value
+            };
+
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses,
+                    activity: activitySettings,
+                    overrides: tempOverrides
+                }, { merge: true });
+
+                closeCellEditModal();
+                renderScheduleTableForDay(activeDayName);
+                alert("تم تعديل الحصة بنجاح لهذا الأسبوع فقط ولن تؤثر على الأسابيع الأخرى!");
+            } catch (e) {
+                alert("حدث خطأ أثناء الحفظ بالسحابة.");
+            }
+        }
+
+        function openActivityModal() {
+            document.getElementById('actNameInput').value = activitySettings.name;
+            document.getElementById('actPeriodSelect').value = activitySettings.period;
+            document.getElementById('actTypeSelect').value = activitySettings.type;
+            document.getElementById('activitySettingsModal').classList.add('show');
+        }
+        function closeActivityModal() {
+            document.getElementById('activitySettingsModal').classList.remove('show');
+        }
+        async function saveActivitySettings() {
+            activitySettings.name = document.getElementById('actNameInput').value || "نشاط مدرسي";
+            activitySettings.period = document.getElementById('actPeriodSelect').value;
+            activitySettings.type = document.getElementById('actTypeSelect').value;
+
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses,
+                    activity: activitySettings,
+                    overrides: tempOverrides
+                }, { merge: true });
+
+                closeActivityModal();
+                renderScheduleTableForDay(activeDayName);
+                alert("تم تحديث إعدادات النشاط وحفظها في السحابة بنجاح!");
+            } catch (e) {
+                alert("خطأ أثناء الحفظ بالسحابة.");
+            }
         }
 
         function openAssignmentModal() {
@@ -603,7 +810,6 @@
             document.getElementById('assignmentModal').classList.remove('show');
         }
 
-        // حفظ التعديلات في سحابة Firebase مباشرة
         async function applyAssignmentChanges() {
             const day = document.getElementById('assignDaySelect').value;
             const cls = document.getElementById('assignClassSelect').value;
@@ -617,24 +823,25 @@
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
-                    classes: targetClasses
+                    classes: targetClasses,
+                    activity: activitySettings,
+                    overrides: tempOverrides
                 }, { merge: true });
 
                 closeAssignmentModal();
                 renderScheduleTableForDay(activeDayName);
-                alert("تم حفظ وتثبيت الإسناد في السحابة بنجاح! ☁️");
+                alert("تم حفظ وثبيت الإسناد العام في السحابة بنجاح! ☁️");
             } catch (error) {
-                console.error("خطأ في الحفظ بالسحابة: ", error);
                 alert("حدث خطأ أثناء الاتصال بالسحابة.");
             }
         }
 
-        // مسح وإعادة ضبط البيانات من السحابة
         async function clearCloudData() {
-            if(confirm("هل أنت متأكد من مسح كافة التعديلات من السحابة واستعادة الجدول الافتراضي؟")) {
+            if(confirm("هل أنت متأكد من مسح كافة التعديلات والإسنادات من السحابة؟")) {
                 try {
                     await db.collection("schedules").doc("main_schedule").delete();
                     customAssignments = {};
+                    tempOverrides = {};
                     location.reload();
                 } catch (e) {
                     alert("حدث خطأ أثناء الحذف.");
@@ -642,14 +849,47 @@
             }
         }
 
+        // التقويم الشامل لجميع أسابيع الفصلين الدراسيين 1448هـ
         const CAL_1448 = [
-            { t: 1, w: 8, label: "الأسبوع الثامن", days: [
-                { name: "الأحد", h: "1448/05/07 هـ", m: "2026/10/18 م" },
-                { name: "الإثنين", h: "1448/05/08 هـ", m: "2026/10/19 م" },
-                { name: "الثلاثاء", h: "1448/05/09 هـ", m: "2026/10/20 م" },
-                { name: "الأربعاء", h: "1448/05/10 هـ", m: "2026/10/21 م" },
-                { name: "الخميس", h: "1448/05/11 هـ", m: "2026/10/22 م" }
-            ]}
+            { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
+            { t: 1, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/02/17 هـ",m:"2026/08/23 م"},{name:"الإثنين",h:"1448/02/18 هـ",m:"2026/08/24 م"},{name:"الثلاثاء",h:"1448/02/19 هـ",m:"2026/08/25 م"},{name:"الأربعاء",h:"1448/02/20 هـ",m:"2026/08/26 م"},{name:"الخميس",h:"1448/02/21 هـ",m:"2026/08/27 م"}]},
+            { t: 1, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/02/24 هـ",m:"2026/08/30 م"},{name:"الإثنين",h:"1448/02/25 هـ",m:"2026/08/31 م"},{name:"الثلاثاء",h:"1448/02/26 هـ",m:"2026/09/01 م"},{name:"الأربعاء",h:"1448/02/27 هـ",m:"2026/09/02 م"},{name:"الخميس",h:"1448/02/28 هـ",m:"2026/09/03 م"}]},
+            { t: 1, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/03/02 هـ",m:"2026/09/06 م"},{name:"الإثنين",h:"1448/03/03 هـ",m:"2026/09/07 م"},{name:"الثلاثاء",h:"1448/03/04 هـ",m:"2026/09/08 م"},{name:"الأربعاء",h:"1448/03/05 هـ",m:"2026/09/09 م"},{name:"الخميس",h:"1448/03/06 هـ",m:"2026/09/10 م"}]},
+            { t: 1, w: 5, label: "الأسبوع الخامس", event: "إجازة اليوم الوطني", days: [{name:"الأحد",h:"1448/03/09 هـ",m:"2026/09/13 م"},{name:"الإثنين",h:"1448/03/10 هـ",m:"2026/09/14 م"},{name:"الثلاثاء",h:"1448/03/11 هـ",m:"2026/09/15 م"},{name:"الأربعاء",h:"1448/03/12 هـ",m:"2026/09/16 م"},{name:"الخميس",h:"1448/03/13 هـ",m:"2026/09/17 م"}]},
+            { t: 1, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/03/16 هـ",m:"2026/09/20 م"},{name:"الإثنين",h:"1448/03/17 هـ",m:"2026/09/21 م"},{name:"الثلاثاء",h:"1448/03/18 هـ",m:"2026/09/22 م"},{name:"الأربعاء",h:"1448/03/19 هـ",m:"2026/09/23 م"},{name:"الخميس",h:"1448/03/20 هـ",m:"2026/09/24 م"}]},
+            { t: 1, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/03/23 هـ",m:"2026/09/27 م"},{name:"الإثنين",h:"1448/03/24 هـ",m:"2026/09/28 م"},{name:"الثلاثاء",h:"1448/03/25 هـ",m:"2026/09/29 م"},{name:"الأربعاء",h:"1448/03/26 هـ",m:"2026/09/30 م"},{name:"الخميس",h:"1448/03/27 هـ",m:"2026/10/01 م"}]},
+            { t: 1, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/05/07 هـ",m:"2026/10/18 م"},{name:"الإثنين",h:"1448/05/08 هـ",m:"2026/10/19 م"},{name:"الثلاثاء",h:"1448/05/09 هـ",m:"2026/10/20 م"},{name:"الأربعاء",h:"1448/05/10 هـ",m:"2026/10/21 م"},{name:"الخميس",h:"1448/05/11 هـ",m:"2026/10/22 م"}]},
+            { t: 1, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/05/14 هـ",m:"2026/10/25 م"},{name:"الإثنين",h:"1448/05/15 هـ",m:"2026/10/26 م"},{name:"الثلاثاء",h:"1448/05/16 هـ",m:"2026/10/27 م"},{name:"الأربعاء",h:"1448/05/17 هـ",m:"2026/10/28 م"},{name:"الخميس",h:"1448/05/18 هـ",m:"2026/10/29 م"}]},
+            { t: 1, w: 10, label: "الأسبوع العاشر", event: "إجازة مطولة", days: [{name:"الأحد",h:"1448/05/21 هـ",m:"2026/11/01 م"},{name:"الإثنين",h:"1448/05/22 هـ",m:"2026/11/02 م"},{name:"الثلاثاء",h:"1448/05/23 هـ",m:"2026/11/03 م"},{name:"الأربعاء",h:"1448/05/24 هـ",m:"2026/11/04 م"},{name:"الخميس",h:"1448/05/25 هـ",m:"2026/11/05 م"}]},
+            { t: 1, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/05/28 هـ",m:"2026/11/08 م"},{name:"الإثنين",h:"1448/05/29 هـ",m:"2026/11/09 م"},{name:"الثلاثاء",h:"1448/06/01 هـ",m:"2026/11/10 م"},{name:"الأربعاء",h:"1448/06/02 هـ",m:"2026/11/11 م"},{name:"الخميس",h:"1448/06/03 هـ",m:"2026/11/12 م"}]},
+            { t: 1, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/06/05 هـ",m:"2026/11/15 م"},{name:"الإثنين",h:"1448/06/06 هـ",m:"2026/11/16 م"},{name:"الثلاثاء",h:"1448/06/07 هـ",m:"2026/11/17 م"},{name:"الأربعاء",h:"1448/06/08 هـ",m:"2026/11/18 م"},{name:"الخميس",h:"1448/06/09 هـ",m:"2026/11/19 م"}]},
+            { t: 1, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/06/12 هـ",m:"2026/11/22 م"},{name:"الإثنين",h:"1448/06/13 هـ",m:"2026/11/23 م"},{name:"الثلاثاء",h:"1448/06/14 هـ",m:"2026/11/24 م"},{name:"الأربعاء",h:"1448/06/15 هـ",m:"2026/11/25 م"},{name:"الخميس",h:"1448/06/16 هـ",m:"2026/11/26 م"}]},
+            { t: 1, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/06/19 هـ",m:"2026/11/29 م"},{name:"الإثنين",h:"1448/06/20 هـ",m:"2026/11/30 م"},{name:"الثلاثاء",h:"1448/06/21 هـ",m:"2026/12/01 م"},{name:"الأربعاء",h:"1448/06/22 هـ",m:"2026/12/02 م"},{name:"الخميس",h:"1448/06/23 هـ",m:"2026/12/03 م"}]},
+            { t: 1, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/07/01 هـ",m:"2026/12/06 م"},{name:"الإثنين",h:"1448/07/02 هـ",m:"2026/12/07 م"},{name:"الثلاثاء",h:"1448/07/03 هـ",m:"2026/12/08 م"},{name:"الأربعاء",h:"1448/07/04 هـ",m:"2026/12/09 م"},{name:"الخميس",h:"1448/07/05 هـ",m:"2026/12/10 م"}]},
+            { t: 1, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/07/08 هـ",m:"2026/12/13 م"},{name:"الإثنين",h:"1448/07/09 هـ",m:"2026/12/14 م"},{name:"الثلاثاء",h:"1448/07/10 هـ",m:"2026/12/15 م"},{name:"الأربعاء",h:"1448/07/11 هـ",m:"2026/12/16 م"},{name:"الخميس",h:"1448/07/12 هـ",m:"2026/12/17 م"}]},
+            { t: 1, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/07/15 هـ",m:"2026/12/20 م"},{name:"الإثنين",h:"1448/07/16 هـ",m:"2026/12/21 م"},{name:"الثلاثاء",h:"1448/07/17 هـ",m:"2026/12/22 م"},{name:"الأربعاء",h:"1448/07/18 هـ",m:"2026/12/23 م"},{name:"الخميس",h:"1448/07/19 هـ",m:"2026/12/24 م"}]},
+            { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/07/22 هـ",m:"2026/12/27 م"},{name:"الإثنين",h:"1448/07/23 هـ",m:"2026/12/28 م"},{name:"الثلاثاء",h:"1448/07/24 هـ",m:"2026/12/29 م"},{name:"الأربعاء",h:"1448/07/25 هـ",m:"2026/12/30 م"},{name:"الخميس",h:"1448/07/26 هـ",m:"2026/12/31 م"}]},
+            { t: 1, w: 19, label: "الأسبوع التاسع عشر", event: "اختبارات ونهاية الفصل", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
+
+            { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/13 هـ",m:"2027/01/10 م"},{name:"الإثنين",h:"1448/08/14 هـ",m:"2027/01/11 م"},{name:"الثلاثاء",h:"1448/08/15 هـ",m:"2027/01/12 م"},{name:"الأربعاء",h:"1448/08/16 هـ",m:"2027/01/13 م"},{name:"الخميس",h:"1448/08/17 هـ",m:"2027/01/14 م"}]},
+            { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/20 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/21 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/22 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/23 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/24 هـ",m:"2027/01/21 م"}]},
+            { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/27 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/28 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/29 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/09/01 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/09/02 هـ",m:"2027/01/28 م"}]},
+            { t: 2, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/09/05 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/09/06 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/07 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/08 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/09 هـ",m:"2027/02/04 م"}]},
+            { t: 2, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/09/12 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/13 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/14 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/15 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/16 هـ",m:"2027/02/11 م"}]},
+            { t: 2, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/09/19 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/20 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/21 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/22 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/23 هـ",m:"2027/02/18 م"}]},
+            { t: 2, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/10/03 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/10/04 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/10/05 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/10/06 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/10/07 هـ",m:"2027/02/25 م"}]},
+            { t: 2, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/10/10 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/10/11 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/10/12 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/13 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/14 هـ",m:"2027/03/04 م"}]},
+            { t: 2, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/10/17 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/18 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/19 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/20 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/21 هـ",m:"2027/03/11 م"}]},
+            { t: 2, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/10/24 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/25 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/26 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/27 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/28 هـ",m:"2027/03/18 م"}]},
+            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/11/01 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/11/02 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/11/03 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/11/04 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/11/05 هـ",m:"2027/03/25 م"}]},
+            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/11/08 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/11/09 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/11/10 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/11/11 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/12 هـ",m:"2027/04/01 م"}]},
+            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/11/15 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/16 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/17 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/18 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/19 هـ",m:"2027/04/08 م"}]},
+            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/11/22 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/23 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/24 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/25 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/26 هـ",m:"2027/04/15 م"}]},
+            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/12/01 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/12/02 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/12/03 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/12/04 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/12/05 هـ",m:"2027/04/22 م"}]},
+            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/12/08 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/12/09 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/12/10 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/12/11 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/12/12 هـ",m:"2027/04/29 م"}]},
+            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/12/15 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/16 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/17 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/18 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/19 هـ",m:"2027/05/06 م"}]},
+            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/12/22 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/23 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/24 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/25 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/26 هـ",m:"2027/05/13 م"}]},
+            { t: 2, w: 19, label: "الأسبوع التاسع عشر", event: "نهاية الفصل", days: [{name:"الأحد",h:"1448/12/29 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/13/01 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/13/02 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/13/03 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/13/04 هـ",m:"2027/05/20 م"}]}
         ];
 
         let currentTerm = 1;
@@ -678,14 +918,18 @@
             const container = document.getElementById('weeksListContainer');
             container.innerHTML = '';
             
-            CAL_1448.forEach((wk) => {
+            const filteredWeeks = CAL_1448.filter(w => w.t === term);
+            
+            filteredWeeks.forEach((wk) => {
                 const wkDiv = document.createElement('div');
-                wkDiv.className = 'wk-item open';
+                wkDiv.className = 'wk-item';
+                
+                let eventHtml = wk.event ? `<span class="etag-badge">${wk.event}</span>` : '';
                 
                 let daysHtml = '';
                 wk.days.forEach(d => {
                     daysHtml += `
-                        <div class="day-card-item" onclick="selectDate('${wk.label} - ${d.name}', '${d.h} (${d.m})')">
+                        <div class="day-card-item" onclick="selectDate('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
                             <b>${d.name}</b> 
                             <em>${d.h} — ${d.m}</em>
                         </div>
@@ -693,22 +937,38 @@
                 });
 
                 wkDiv.innerHTML = `
-                    <button class="wk-head-btn"><div><b>${wk.label}</b></div></button>
-                    <div class="days-list" style="display: grid;">${daysHtml}</div>
+                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
+                        <div><b>${wk.label}</b> ${eventHtml}</div>
+                        <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
+                    </button>
+                    <div class="days-list">
+                        ${daysHtml}
+                    </div>
                 `;
                 container.appendChild(wkDiv);
             });
         }
 
-        function selectDate(dayName, dateStr) {
-            document.getElementById('currentDayText').innerText = dayName;
+        function toggleWeekOpen(btn) {
+            const item = btn.parentElement;
+            const list = item.querySelector('.days-list');
+            const isOpen = item.classList.contains('open');
+            
+            item.classList.toggle('open', !isOpen);
+            list.style.display = isOpen ? 'none' : 'grid';
+        }
+
+        function selectDate(weekLabel, dayName, dateStr) {
+            activeWeekLabel = weekLabel;
+            document.getElementById('currentDayText').innerText = `${weekLabel} - ${dayName}`;
             document.getElementById('currentWeekText').innerText = `الموافق: ${dateStr}`;
             renderScheduleTableForDay(dayName);
             closeCalendarModal();
         }
 
         function resetToToday() {
-            document.getElementById('currentDayText').innerText = "الإثنين - الأسبوع الثامن";
+            activeWeekLabel = "الأسبوع الثامن";
+            document.getElementById('currentDayText').innerText = "الأسبوع الثامن - الإثنين";
             document.getElementById('currentWeekText').innerText = "الموافق: 1448/05/08 هـ (2026/10/19 م)";
             renderScheduleTableForDay("الإثنين");
             closeCalendarModal();
@@ -755,7 +1015,9 @@
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
-                    classes: targetClasses
+                    classes: targetClasses,
+                    activity: activitySettings,
+                    overrides: tempOverrides
                 }, { merge: true });
 
                 renderScheduleTableForDay(activeDayName);
