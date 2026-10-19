@@ -26,6 +26,15 @@
             --brand: #0C6A64;
             --brand-ink: #FFFFFF;
             --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+
+            /* ألوان المجالات المطابقة للصورة */
+            --color-citizenship: #2a9d8f; /* المواطنة والحياة */
+            --color-culture: #e06d9f;     /* الثقافة والفنون */
+            --color-science: #4a90e2;     /* العلوم والتقنية */
+            --color-sports: #52b788;      /* الرياضة والصحة */
+            --color-scout: #c0a02d;       /* المجال الكشفي */
+            --color-days: #e76f51;        /* الأيام والمناسبات */
+            --color-competitions: #9b59b6;/* المسابقات */
         }
 
         body {
@@ -226,26 +235,61 @@
             background: #152322;
         }
 
-        .control-btns-container {
-            border: 1px solid var(--line);
-            background: #fff;
-            border-radius: 16px;
-            padding: 12px 20px !important;
-            box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
-            margin-bottom: 20px;
+        /* شريط شارات المجالات المأخوذ من الصورة */
+        .fields-bar-container {
+            background: #1b262c;
+            border-radius: 20px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            border: 1px solid #2d3748;
         }
-
-        .btn-act {
-            border-radius: 10px;
-            font-size: 0.82rem;
+        .field-pill {
+            background: #232d36;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
             font-weight: 600;
-            padding: 8px 16px;
-            transition: all 0.15s ease;
+            white-space: nowrap;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .btn-act-outline-green { border: 1px solid var(--brand); color: var(--brand); background: #fff; }
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .control-btns-container {
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 16px;
+            padding: 12px 16px !important;
+            box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-act-outline-green {
+            border: 1px solid var(--brand);
+            color: var(--brand);
+            background: #fff;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            transition: all 0.15s ease;
+        }
         .btn-act-outline-green:hover { background: var(--brand); color: #fff; }
 
         .wc-main-table {
@@ -294,11 +338,9 @@
             padding: 8px !important;
             vertical-align: middle !important;
             min-width: 135px;
-            cursor: pointer; /* تجعل الخلية كاملة قابلة للنقر */
+            cursor: pointer;
         }
-        .wc-main-table td:hover {
-            background-color: #f1f5f9;
-        }
+        .wc-main-table td:hover { background-color: #f1f5f9; }
 
         .course-cell-box {
             background: #f8fafc;
@@ -306,14 +348,12 @@
             border-radius: 10px;
             padding: 8px;
             text-align: center;
-            transition: all 0.2s;
             min-height: 62px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        /* الحصة الخالية تكون بيضاء ونظيفة بدون أي نص */
         .empty-cell-box {
             background: #ffffff;
             border: 1px dashed #e2e8f0;
@@ -339,23 +379,33 @@
             width: 100%;
         }
 
-        .activity-card {
+        /* الإطار المقطع بحسب لون المجال لحصص النشاط */
+        .activity-card-custom {
             border-radius: 10px;
             background: #fff;
-            border: 2px dashed #0C6A64;
-            padding: 8px;
+            border: 2px dashed #0C6A64; /* لون افتراضي لخط النشاط المقطع */
+            padding: 6px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(12,106,100,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             min-height: 62px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
         }
-        .activity-header {
-            font-size: 0.88rem;
+        .activity-header-custom {
+            font-size: 0.85rem;
             font-weight: 800;
-            color: #0C6A64;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+        }
+        .field-tag-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-bottom: 3px;
+            display: inline-block;
         }
 
         .gear-btn {
@@ -368,10 +418,7 @@
             border-radius: 4px;
             transition: all 0.2s;
         }
-        .gear-btn:hover {
-            background: #e2e8f0;
-            color: #0C6A64;
-        }
+        .gear-btn:hover { background: #e2e8f0; color: #0C6A64; }
     </style>
 </head>
 <body>
@@ -475,12 +522,12 @@
         </div>
     </div>
 
-    <!-- النافذة التفاعلية الجديدة للإسناد والتعديل الفوري عند الضغط على أية حصة بالجدول -->
+    <!-- النافذة التفاعلية بدون نطاق الإسناد ومضاف لها المجالات والمسابقات -->
     <div class="modal-cal" id="cellClickModal">
         <div class="mbox-cal" style="width: min(480px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3 id="cellModalTitle">إسناد وتعديل الحصة</h3>
+                    <h3 id="cellModalTitle">تعديل وإسناد الحصة</h3>
                     <button type="button" class="close text-white" onclick="closeCellClickModal()">&times;</button>
                 </div>
                 <p id="cellModalSubtitle" class="text-info font-weight-bold mb-0"></p>
@@ -495,17 +542,29 @@
                     </select>
                 </div>
 
-                <!-- خانة اختيار المادة (تظهر في حال اختيار حصة دراسية) -->
+                <!-- مادة دراسية -->
                 <div class="form-group text-right" id="courseSelectionGroup">
                     <label class="small font-weight-bold text-light">المادة الدراسية:</label>
                     <select id="cellCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
 
-                <!-- الخانات الخاصة بالنشاط المدرسي (تظهر تلقائياً عند اختيار نشاط) -->
+                <!-- تفاصيل النشاط مع المجالات والمسابقات بالألوان -->
                 <div id="activityFieldsGroup" style="display: none; background: #121E1D; border: 1px dashed #0C6A64; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
                     <div class="form-group text-right mb-2">
+                        <label class="small font-weight-bold text-success">المجال / الفعالية:</label>
+                        <select id="cellActFieldSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                            <option value="citizenship">المواطنة والحياة (10)</option>
+                            <option value="culture">الثقافة والفنون (3)</option>
+                            <option value="science">العلوم والتقنية (2)</option>
+                            <option value="sports">الرياضة والصحة (3)</option>
+                            <option value="scout">المجال الكشفي (1)</option>
+                            <option value="days">الأيام والمناسبات العالميّة/الوطنيّة</option>
+                            <option value="competitions">المسابقات المدرسيّة</option>
+                        </select>
+                    </div>
+                    <div class="form-group text-right mb-2">
                         <label class="small font-weight-bold text-success">اسم برنامج النشاط:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي / التطوع">
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: ورشة الفنون والابتكار">
                     </div>
                     <div class="form-group text-right mb-0">
                         <label class="small font-weight-bold text-success">عدد الحصص / الساعات:</label>
@@ -520,30 +579,27 @@
                     </label>
                     <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
-
-                <!-- نطاق التطبيق -->
-                <div class="form-group text-right" id="scopeSelectionGroup" style="background: #1A2B2A; padding: 10px; border-radius: 8px;">
-                    <label class="small font-weight-bold text-warning">نطاق تطبيق الإسناد:</label>
-                    <select id="cellScopeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="all_weeks">كافة الأسابيع (جدول ثابت طوال الفصل)</option>
-                        <option value="this_week">هذا الأسبوع فقط</option>
-                    </select>
-                </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellAssignment()">حفظ الإسناد ☁️</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellAssignment()">حفظ الحصة ☁️</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellClickModal()">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- شريط التحكم المبسط -->
+    <!-- شريط التحكم مع استبدال التعليمات بالمجالات والمناسبات المطابقة للصورة المرفقة -->
     <div class="control-btns-container">
-        <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap: 8px;">
-            <div class="d-flex flex-wrap" style="gap: 8px;">
-                <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
-            </div>
-            <div class="small text-muted"><i class="fas fa-info-circle ml-1"></i> اضغط على أي حصة بالجدول لإسنادها، تعديلها، أو تخصيص برنامج النشاط</div>
+        <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+        
+        <!-- المجالات الكبسولية كما في الصورة المرفقة -->
+        <div class="fields-bar-container">
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (10)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (3)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-science);"></span> العلوم والتقنية (2)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-sports);"></span> الرياضة والصحة (3)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> المجال الكشفي (1)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> الأيام والمناسبات</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-competitions);"></span> المسابقات</span>
         </div>
     </div>
 
@@ -604,7 +660,20 @@
 
         let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
+        
+        // مادة الفنية تمت إضافتها مع باقي المواد
+        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الفنية", "الحياتية", "الاجتماعيات"];
+
+        // قاموس ألوان ومسميات المجالات
+        const FIELDS_CONFIG = {
+            "citizenship": { title: "المواطنة والحياة", color: "#2a9d8f" },
+            "culture": { title: "الثقافة والفنون", color: "#e06d9f" },
+            "science": { title: "العلوم والتقنية", color: "#4a90e2" },
+            "sports": { title: "الرياضة والصحة", color: "#52b788" },
+            "scout": { title: "المجال الكشفي", color: "#c0a02d" },
+            "days": { title: "الأيام والمناسبات", color: "#e76f51" },
+            "competitions": { title: "المسابقات", color: "#9b59b6" }
+        };
 
         let customAssignments = {};
         let tempOverrides = {};
@@ -716,36 +785,28 @@
                     let baseKey = `${cleanDay}_${cls}_${i}`;
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
                     
-                    let teacher = "";
-                    let course = "";
+                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
-                    if (tempOverrides[weekKey]) {
-                        teacher = tempOverrides[weekKey].teacher || "";
-                        course = tempOverrides[weekKey].course || "";
-                    } else if (customAssignments[baseKey]) {
-                        teacher = customAssignments[baseKey].teacher || "";
-                        course = customAssignments[baseKey].course || "";
-                    }
+                    if (cellData && cellData.isActivity) {
+                        let fKey = cellData.fieldKey || "citizenship";
+                        let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
 
-                    let isActivityCard = course && course.includes("نشاط");
-
-                    if (isActivityCard) {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')">
-                            <div class="activity-card">
-                                <div class="activity-header">${course}</div>
-                                <div class="teacher-name-badge">${teacher || "نشاط مدرسي"}</div>
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                            <div class="activity-card-custom" style="border-color: ${fConf.color};">
+                                <span class="field-tag-badge" style="background: ${fConf.color};">${fConf.title}</span>
+                                <div class="activity-header-custom" style="color: ${fConf.color};">${cellData.course}</div>
+                                <div class="teacher-name-badge">${cellData.teacher || "نشاط مدرسي"}</div>
                             </div>
                         </td>`;
-                    } else if (course) {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')">
+                    } else if (cellData && cellData.course) {
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
                             <div class="course-cell-box">
-                                <div class="course-name-large">${course}</div>
-                                <div class="teacher-name-badge">${teacher || "—"}</div>
+                                <div class="course-name-large">${cellData.course}</div>
+                                <div class="teacher-name-badge">${cellData.teacher || "—"}</div>
                             </div>
                         </td>`;
                     } else {
-                        // الحصة الفاضية خالية ونظيفة وتتحول لزر تفاعلي
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i}, '', '')">
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
                             <div class="empty-cell-box"></div>
                         </td>`;
                     }
@@ -756,27 +817,31 @@
         }
 
         // تفاعلات النقر المباشر على أي حصة بالجدول
-        function openCellClickModal(day, cls, period, currentCourse, currentTeacher) {
-            selectedCellInfo = { day, cls, period, currentCourse, currentTeacher };
+        function openCellClickModal(day, cls, period) {
+            let baseKey = `${day}_${cls}_${period}`;
+            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+
+            selectedCellInfo = { day, cls, period };
 
             document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
             
-            // تحديد الخيارات وتجهيزها
             updateTeacherDropdowns();
             const courseSel = document.getElementById('cellCourseSelect');
-            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === currentCourse ? 'selected' : ''}>${co}</option>`).join('');
+            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === cellData.course ? 'selected' : ''}>${co}</option>`).join('');
 
             const cellTypeSel = document.getElementById('cellTypeSelect');
-            if (currentCourse && currentCourse.includes("نشاط")) {
+            if (cellData.isActivity) {
                 cellTypeSel.value = "activity";
-                document.getElementById('cellActNameInput').value = currentCourse;
-            } else if (currentCourse) {
+                document.getElementById('cellActNameInput').value = cellData.course || "نشاط مدرسي";
+                document.getElementById('cellActFieldSelect').value = cellData.fieldKey || "citizenship";
+            } else if (cellData.course) {
                 cellTypeSel.value = "course";
             } else {
                 cellTypeSel.value = "empty";
             }
 
-            document.getElementById('cellTeacherSelect').value = currentTeacher || "";
+            document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
             handleCellTypeChange(cellTypeSel.value);
 
             document.getElementById('cellClickModal').classList.add('show');
@@ -791,7 +856,6 @@
             document.getElementById('courseSelectionGroup').style.display = (typeVal === 'course') ? 'block' : 'none';
             document.getElementById('activityFieldsGroup').style.display = (typeVal === 'activity') ? 'block' : 'none';
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
-            document.getElementById('scopeSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
         async function saveCellAssignment() {
@@ -799,10 +863,11 @@
 
             const { day, cls, period } = selectedCellInfo;
             const typeVal = document.getElementById('cellTypeSelect').value;
-            const scope = document.getElementById('cellScopeSelect').value;
             
             let courseName = "";
             let teacherName = "";
+            let isAct = false;
+            let fieldKey = "";
 
             if (typeVal === 'course') {
                 courseName = document.getElementById('cellCourseSelect').value;
@@ -810,19 +875,24 @@
             } else if (typeVal === 'activity') {
                 courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط مدرسي";
                 teacherName = document.getElementById('cellTeacherSelect').value;
-            } else { // تفريغ
+                isAct = true;
+                fieldKey = document.getElementById('cellActFieldSelect').value;
+            } else {
                 courseName = "";
                 teacherName = "";
             }
 
             let baseKey = `${day}_${cls}_${period}`;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
 
-            if (scope === 'all_weeks' || typeVal === 'empty') {
-                customAssignments[baseKey] = { teacher: teacherName, course: courseName };
-                delete tempOverrides[weekKey];
+            if (typeVal === 'empty') {
+                delete customAssignments[baseKey];
             } else {
-                tempOverrides[weekKey] = { teacher: teacherName, course: courseName };
+                customAssignments[baseKey] = {
+                    course: courseName,
+                    teacher: teacherName,
+                    isActivity: isAct,
+                    fieldKey: fieldKey
+                };
             }
 
             await saveToCloud();
