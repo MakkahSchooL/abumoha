@@ -348,6 +348,14 @@
             box-shadow: 0 2px 6px rgba(12,106,100,0.1);
             position: relative;
         }
+
+        .class-row-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            padding: 2px 4px;
+        }
     </style>
 </head>
 <body>
@@ -380,7 +388,7 @@
         </div>
     </div>
 
-    <!-- نافذة التقويم المودال (شاملة للترم الأول والثاني بالكامل) -->
+    <!-- نافذة التقويم الشامل -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
@@ -530,30 +538,11 @@
             <div class="d-flex flex-wrap" style="gap: 6px;">
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
                 <button class="btn-act btn-act-outline-green" onclick="openActivityModal()"><i class="fas fa-star"></i> ضبط النشاط</button>
-                <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
-                <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
-                <button class="btn-act btn-act-gray text-danger" onclick="clearCloudData()"><i class="fas fa-trash-alt"></i> إعادة ضبط السحابة</button>
             </div>
         </div>
 
         <div class="row align-items-center">
-            <div class="col-md-5 mb-2">
-                <div class="d-flex align-items-center">
-                    <span class="ml-2 font-weight-bold small text-muted" style="white-space: nowrap;"><i class="fas fa-user-friends"></i> فرز حسب المعلم:</span>
-                    <select id="filterTeacherSelect" class="form-control form-control-sm" onchange="filterByTeacher()">
-                        <option value="all">جميع المعلمين</option>
-                        <option value="عصام الحازمي">عصام الحازمي</option>
-                        <option value="محمد العمري">محمد العمري</option>
-                        <option value="حسين الرحيلي">حسين الرحيلي</option>
-                        <option value="ناصر المزيني">ناصر المزيني</option>
-                        <option value="عائض الجابري">عائض الجابري</option>
-                        <option value="خالد العوفي">خالد العوفي</option>
-                        <option value="معتز دردير">معتز دردير</option>
-                        <option value="رائد الصاعدي">رائد الصاعدي</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-7 mb-2 text-left">
+            <div class="col-md-12 mb-2 text-left">
                 <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             </div>
         </div>
@@ -589,7 +578,7 @@
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 7/أ):</label>
+                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 4/ج):</label>
                     <input type="text" id="newClassNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم الفصل">
                 </div>
             </div>
@@ -601,7 +590,6 @@
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
             authDomain: "makkahschool-32961.firebaseapp.com",
@@ -661,11 +649,25 @@
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            targetClasses.forEach((cls) => {
+            targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
-                let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
+                // أزرار التحكم بالترتيب والحذف لكل فصل
+                let moveUpBtn = index > 0 ? `<button class="btn btn-sm text-secondary p-0 mx-1" title="نقل للأعلى" onclick="moveClass(${index}, -1)"><i class="fas fa-arrow-up"></i></button>` : '';
+                let moveDownBtn = index < targetClasses.length - 1 ? `<button class="btn btn-sm text-secondary p-0 mx-1" title="نقل للأسفل" onclick="moveClass(${index}, 1)"><i class="fas fa-arrow-down"></i></button>` : '';
+                let deleteClassBtn = `<button class="btn btn-sm text-danger p-0 mx-1" title="حذف الفصل" onclick="deleteClass('${cls}')"><i class="fas fa-times"></i></button>`;
+
+                let html = `<th class="bg-light" style="vertical-align: middle;">
+                    <div class="class-row-header">
+                        <span class="font-weight-bold">${cls}</span>
+                        <div>
+                            ${moveUpBtn}
+                            ${moveDownBtn}
+                            ${deleteClassBtn}
+                        </div>
+                    </div>
+                </th>`;
                 
                 for(let i = 1; i <= 7; i++) {
                     let baseKey = `${cleanDay}_${cls}_${i}`;
@@ -715,6 +717,49 @@
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
+        }
+
+        // نقل الفصل لأعلى أو أسفل وترتيبه في السحابة
+        async function moveClass(index, direction) {
+            let targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
+            
+            let temp = targetClasses[index];
+            targetClasses[index] = targetClasses[targetIndex];
+            targetClasses[targetIndex] = temp;
+
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses,
+                    activity: activitySettings,
+                    overrides: tempOverrides
+                }, { merge: true });
+
+                renderScheduleTableForDay(activeDayName);
+            } catch (e) {
+                alert("خطأ أثناء تحديث ترتيب الفصول.");
+            }
+        }
+
+        // حذف فصل محدد وحفظ التغيير بالسحابة
+        async function deleteClass(clsName) {
+            if (confirm(`هل أنت متأكد من حذف الفصل ${clsName}؟`)) {
+                targetClasses = targetClasses.filter(c => c !== clsName);
+                try {
+                    await db.collection("schedules").doc("main_schedule").set({
+                        assignments: customAssignments,
+                        classes: targetClasses,
+                        activity: activitySettings,
+                        overrides: tempOverrides
+                    }, { merge: true });
+
+                    renderScheduleTableForDay(activeDayName);
+                    alert("تم حذف الفصل بنجاح.");
+                } catch (e) {
+                    alert("خطأ أثناء حذف الفصل.");
+                }
+            }
         }
 
         function openCellEditModal(day, cls, period, currentCourse, currentTeacher) {
@@ -833,19 +878,6 @@
                 alert("تم حفظ وثبيت الإسناد العام في السحابة بنجاح! ☁️");
             } catch (error) {
                 alert("حدث خطأ أثناء الاتصال بالسحابة.");
-            }
-        }
-
-        async function clearCloudData() {
-            if(confirm("هل أنت متأكد من مسح كافة التعديلات والإسنادات من السحابة؟")) {
-                try {
-                    await db.collection("schedules").doc("main_schedule").delete();
-                    customAssignments = {};
-                    tempOverrides = {};
-                    location.reload();
-                } catch (e) {
-                    alert("حدث خطأ أثناء الحذف.");
-                }
             }
         }
 
@@ -972,27 +1004,6 @@
             document.getElementById('currentWeekText').innerText = "الموافق: 1448/05/08 هـ (2026/10/19 م)";
             renderScheduleTableForDay("الإثنين");
             closeCalendarModal();
-        }
-
-        function filterByTeacher() {
-            const selectedTeacher = document.getElementById('filterTeacherSelect').value;
-            const rows = document.querySelectorAll('#mainScheduleTable tbody tr');
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                let match = false;
-                cells.forEach(cell => {
-                    const teacher = cell.querySelector('[data-teacher]')?.getAttribute('data-teacher');
-                    if (selectedTeacher === 'all' || teacher === selectedTeacher) match = true;
-                });
-                row.style.opacity = (selectedTeacher === 'all' || match) ? '1' : '0.3';
-            });
-        }
-
-        function resetTableFilter() {
-            document.getElementById('filterTeacherSelect').value = 'all';
-            const rows = document.querySelectorAll('#mainScheduleTable tbody tr');
-            rows.forEach(row => row.style.opacity = '1');
         }
 
         function openModalForAdd() {
