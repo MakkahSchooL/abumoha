@@ -433,7 +433,31 @@
         </div>
     </div>
 
-    <!-- نافذة خيارات الترس -->
+    <!-- نافذة إدارة المعلمين (إضافة / حذف) -->
+    <div class="modal-cal" id="teachersManagerModal">
+        <div class="mbox-cal" style="width: min(400px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إدارة قائمة المعلمين</h3>
+                    <button type="button" class="close text-white" onclick="closeTeachersManagerModal()">&times;</button>
+                </div>
+            </div>
+            <div class="mbody-cal">
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" id="newTeacherNameInput" class="form-control bg-dark text-white border-secondary" placeholder="اسم المعلم الجديد">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="button" onclick="addNewTeacher()">إضافة</button>
+                    </div>
+                </div>
+                <div id="teachersListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeTeachersManagerModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة خيارات الترس للفصل -->
     <div class="modal-cal" id="classActionModal">
         <div class="mbox-cal" style="width: min(380px, 95%);">
             <div class="mhead-cal">
@@ -458,17 +482,21 @@
         </div>
     </div>
 
-    <!-- نافذة الإسناد -->
+    <!-- نافذة الإسناد المطورة والمحدثة -->
     <div class="modal-cal" id="assignmentModal">
-        <div class="mbox-cal" style="width: min(500px, 95%);">
+        <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة وتعديل الإسناد العام (للجدول الثابت)</h3>
+                    <h3>إدارة وتعديل الإسناد</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتثبيتها في السحابة</p>
+                <p>حدد الأسبوع، اليوم، الحصة، المعلم والمادة</p>
             </div>
             <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">الأسبوع المستهدف:</label>
+                    <select id="assignWeekSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">اليوم المستهدف:</label>
                     <select id="assignDaySelect" class="form-control form-control-sm bg-dark text-white border-secondary">
@@ -496,12 +524,35 @@
                     </select>
                 </div>
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
+                    <label class="small font-weight-bold text-light">المعلم المسؤول: 
+                        <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()" title="إضافة/حذف معلم"><i class="fas fa-pen"></i></button>
+                    </label>
                     <select id="assignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
-                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="checkCourseIsActivity(this.value)"></select>
+                </div>
+
+                <!-- خيارات متقدمة لحصص النشاط أو التطبيق الشامل -->
+                <div id="activityAdvancedOptions" style="display: none; background: #121E1D; border: 1px dashed #3AAFA5; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                    <label class="small font-weight-bold text-success">إعدادات حصة النشاط:</label>
+                    <select id="actAssignTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary mb-2" onchange="toggleActivityWeeksInput(this.value)">
+                        <option value="ثابتة">حصة نشاط ثابتة (تتكرر كباقي الحصص)</option>
+                        <option value="مرنة">حصة نشاط مرنة (تحديد أسابيع محددة للتعطيل أو التطبيق)</option>
+                    </select>
+                    <div id="excludedWeeksBox" style="display: none;">
+                        <label class="small text-warning">حدد الأسابيع التي **لا** ينطبق عليها هذا النشاط:</label>
+                        <input type="text" id="excludedWeeksInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: الأسبوع الخامس، الأسبوع العاشر">
+                    </div>
+                </div>
+
+                <div class="form-group text-right mt-3" style="background: #1A2B2A; padding: 10px; border-radius: 8px;">
+                    <label class="small font-weight-bold text-warning">نطاق تطبيق هذا الإسناد:</label>
+                    <select id="assignScopeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="this_week">هذا الأسبوع فقط</option>
+                        <option value="all_weeks">كافة الأسابيع (جدول ثابت طوال الفصل)</option>
+                    </select>
                 </div>
             </div>
             <div class="mfoot-cal">
@@ -519,7 +570,6 @@
                     <h3>ضبط حصص وبرامج النشاط</h3>
                     <button type="button" class="close text-white" onclick="closeActivityModal()">&times;</button>
                 </div>
-                <p>تحديد اسم البرنامج، عدد الساعات، الحصة ونوعها</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -530,56 +580,10 @@
                     <label class="small font-weight-bold text-light">عدد ساعات البرنامج:</label>
                     <input type="number" id="actHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="6">
                 </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة (إرشادي):</label>
-                    <select id="actPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="5">الحصة الخامسة (افتراضي)</option>
-                        <option value="1">الحصة 1</option>
-                        <option value="2">الحصة 2</option>
-                        <option value="3">الحصة 3</option>
-                        <option value="4">الحصة 4</option>
-                        <option value="6">الحصة 6</option>
-                        <option value="7">الحصة 7</option>
-                    </select>
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">نوع الحصة:</label>
-                    <select id="actTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="ثابتة">ثابتة</option>
-                        <option value="مرنة">مرنة (قابل للتغيير أسبوعياً)</option>
-                    </select>
-                </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveActivitySettings()">حفظ إعدادات النشاط</button>
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveActivitySettings()">حفظ الإعدادات</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeActivityModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة التعديل المؤقت للأسبوع الحالي -->
-    <div class="modal-cal" id="cellEditModal">
-        <div class="mbox-cal" style="width: min(400px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>تعديل استثنائي (هذا الأسبوع فقط)</h3>
-                    <button type="button" class="close text-white" onclick="closeCellEditModal()">&times;</button>
-                </div>
-                <p id="cellEditSubTitle" class="text-warning"></p>
-            </div>
-            <div class="mbody-cal">
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المادة أو المقرر:</label>
-                    <select id="tempCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المعلم:</label>
-                    <select id="tempTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveTempCellEdit()">حفظ لهذا الأسبوع</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellEditModal()">إلغاء</button>
             </div>
         </div>
     </div>
@@ -650,28 +654,18 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let targetClasses = [
-            "1/أ", "1/ب", "1/ج", "1/د",
-            "2/أ", "2/ب", "2/ج", "2/د",
-            "3/أ", "3/ب", "3/ج", "3/د",
-            "4/أ", "4/ب", "4/ج",
-            "5/أ", "5/ب", "5/ج",
-            "6/أ", "6/ب", "6/ج"
-        ];
-
-        const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
+        let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
+        let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
+        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
         let customAssignments = {};
         let tempOverrides = {};
-        let activitySettings = { name: "نشاط مدرسي", hours: 1, period: "5", type: "ثابتة" };
+        let activitySettings = { name: "نشاط مدرسي", hours: 1 };
         
         let activeDayName = "الإثنين";
         let activeWeekLabel = "الأسبوع الثامن";
-        let currentEditingCellInfo = null;
-        let selectedClassIndexForAction = null;
+        let currentTerm = 1;
 
-        // التقويم الشامل لجميع أسابيع الفصلين الدراسيين 1448هـ
         const CAL_1448 = [
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
             { t: 1, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/02/17 هـ",m:"2026/08/23 م"},{name:"الإثنين",h:"1448/02/18 هـ",m:"2026/08/24 م"},{name:"الثلاثاء",h:"1448/02/19 هـ",m:"2026/08/25 م"},{name:"الأربعاء",h:"1448/02/20 هـ",m:"2026/08/26 م"},{name:"الخميس",h:"1448/02/21 هـ",m:"2026/08/27 م"}]},
@@ -714,24 +708,19 @@
             { t: 2, w: 19, label: "الأسبوع التاسع عشر", event: "نهاية الفصل", days: [{name:"الأحد",h:"1448/12/29 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/13/01 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/13/02 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/13/03 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/13/04 هـ",m:"2027/05/20 م"}]}
         ];
 
-        let currentTerm = 1;
-
         document.addEventListener("DOMContentLoaded", () => {
             loadDataFromCloud();
-            setTodayAutomatically(); // جلب التاريخ الحالي للجهاز وتحديث الجدول تلقائياً
+            setTodayAutomatically();
         });
 
-        // دالة مطابقة تاريخ اليوم الفعلي لجهاز المستخدم مع التقويم وإظهاره تلقائياً
         function setTodayAutomatically() {
             let todayObj = new Date();
             let yyyy = todayObj.getFullYear();
             let mm = String(todayObj.getMonth() + 1).padStart(2, '0');
             let dd = String(todayObj.getDate()).padStart(2, '0');
-            let formattedTodayStr = `${yyyy}/${mm}/${dd}`; // مثال: 2026/10/20
+            let formattedTodayStr = `${yyyy}/${mm}/${dd}`;
 
             let foundMatch = false;
-
-            // البحث في مصفوفة التقويم عن التاريخ المطابق لتاريخ اليوم الميلادي
             for (let wk of CAL_1448) {
                 for (let d of wk.days) {
                     if (d.m.includes(formattedTodayStr)) {
@@ -747,11 +736,9 @@
                 if (foundMatch) break;
             }
 
-            // إذا كان اليوم عطلة نهاية أسبوع أو خارج التقويم، يتم عرض الأسبوع الحالي الافتراضي
             if (!foundMatch) {
                 resetToDefaultToday();
             }
-            closeCalendarModal();
         }
 
         function resetToDefaultToday() {
@@ -769,11 +756,12 @@
                     let data = docRef.data();
                     if (data.assignments) customAssignments = data.assignments;
                     if (data.classes) targetClasses = data.classes;
+                    if (data.teachers) teachersPool = data.teachers;
                     if (data.activity) activitySettings = data.activity;
                     if (data.overrides) tempOverrides = data.overrides;
                 }
             } catch (e) {
-                console.log("جارِ استخدام البيانات...");
+                console.log("جارِ استخدام البيانات المحلية...");
             }
         }
 
@@ -789,8 +777,6 @@
 
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
-                tr.setAttribute('data-row-class', cls);
-                
                 let html = `<th class="bg-light" style="vertical-align: middle;">
                     <div class="class-row-header">
                         <span class="font-weight-bold">${cls}</span>
@@ -822,22 +808,19 @@
                                     <span>${course}</span>
                                 </div>
                                 <div class="teacher-name-badge">${teacher || "نشاط مدرسي"}</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
                             </div>
                         </td>`;
                     } else if (teacher || course) {
                         html += `<td>
-                            <div class="course-cell-box" data-teacher="${teacher}">
+                            <div class="course-cell-box">
                                 <div class="course-name-large">${course}</div>
                                 <div class="teacher-name-badge">${teacher}</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
                             </div>
                         </td>`;
                     } else {
                         html += `<td>
                             <div class="course-cell-box text-center">
                                 <div class="empty-cell-text">فارغ</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '', '')"><i class="fas fa-pen"></i> إسناد</button>
                             </div>
                         </td>`;
                     }
@@ -847,104 +830,114 @@
             });
         }
 
-        function openClassActionModal(index, className) {
-            selectedClassIndexForAction = index;
-            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
-            document.getElementById('classActionModal').classList.add('show');
+        // إدارة المعلمين (إضافة وحذف)
+        function openTeachersManagerModal() {
+            renderTeachersListInManager();
+            document.getElementById('teachersManagerModal').classList.add('show');
+        }
+        function closeTeachersManagerModal() {
+            document.getElementById('teachersManagerModal').classList.remove('show');
+            updateTeacherSelectDropdown();
+        }
+        function renderTeachersListInManager() {
+            const box = document.getElementById('teachersListContainer');
+            box.innerHTML = teachersPool.map((t, idx) => `
+                <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary">
+                    <span class="text-white small">${t}</span>
+                    <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteTeacher(${idx})"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+        async function addNewTeacher() {
+            let name = document.getElementById('newTeacherNameInput').value.trim();
+            if(!name) return;
+            teachersPool.push(name);
+            document.getElementById('newTeacherNameInput').value = '';
+            renderTeachersListInManager();
+            await saveToCloud();
+        }
+        async function deleteTeacher(idx) {
+            teachersPool.splice(idx, 1);
+            renderTeachersListInManager();
+            await saveToCloud();
+        }
+        function updateTeacherSelectDropdown() {
+            const teacherSel = document.getElementById('assignTeacherSelect');
+            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
-        function closeClassActionModal() {
-            document.getElementById('classActionModal').classList.remove('show');
-            selectedClassIndexForAction = null;
-        }
-
-        async function moveSelectedClass(direction) {
-            if (selectedClassIndexForAction === null) return;
-            let targetIndex = selectedClassIndexForAction + direction;
-            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
-
-            let temp = targetClasses[selectedClassIndexForAction];
-            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
-            targetClasses[targetIndex] = temp;
-
-            closeClassActionModal();
-            await saveClassesToCloud();
-        }
-
-        async function deleteSelectedClass() {
-            if (selectedClassIndexForAction === null) return;
-            let className = targetClasses[selectedClassIndexForAction];
-            if (confirm(`هل أنت متأكد من حذف الفصل ${className}؟`)) {
-                targetClasses.splice(selectedClassIndexForAction, 1);
-                closeClassActionModal();
-                await saveClassesToCloud();
-            }
-        }
-
-        async function saveClassesToCloud() {
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                renderScheduleTableForDay(activeDayName);
-            } catch (e) {
-                alert("خطأ أثناء تحديث السحابة.");
-            }
-        }
-
-        function openCellEditModal(day, cls, period, currentCourse, currentTeacher) {
-            currentEditingCellInfo = { day, cls, period };
-            document.getElementById('cellEditSubTitle').innerText = `${activeWeekLabel} - ${day} - الفصل ${cls} - الحصة ${period}`;
+        function openAssignmentModal() {
+            document.getElementById('assignDaySelect').value = activeDayName;
             
-            const courseSel = document.getElementById('tempCourseSelect');
-            courseSel.innerHTML = coursesPool.concat([activitySettings.name]).map(c => `<option value="${c}" ${c === currentCourse ? 'selected' : ''}>${c}</option>`).join('');
+            const weekSel = document.getElementById('assignWeekSelect');
+            weekSel.innerHTML = CAL_1448.map(w => `<option value="${w.label}" ${w.label === activeWeekLabel ? 'selected' : ''}>${w.label} (الفصل ${w.t})</option>`).join('');
 
-            const teacherSel = document.getElementById('tempTeacherSelect');
-            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}" ${t === currentTeacher ? 'selected' : ''}>${t}</option>`).join('');
+            const classSel = document.getElementById('assignClassSelect');
+            classSel.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            document.getElementById('cellEditModal').classList.add('show');
+            updateTeacherSelectDropdown();
+
+            const courseSel = document.getElementById('assignCourseSelect');
+            courseSel.innerHTML = coursesPool.concat([activitySettings.name]).map(co => `<option value="${co}">${co}</option>`).join('');
+
+            document.getElementById('activityAdvancedOptions').style.display = 'none';
+            document.getElementById('assignmentModal').classList.add('show');
         }
 
-        function closeCellEditModal() {
-            document.getElementById('cellEditModal').classList.remove('show');
-            currentEditingCellInfo = null;
+        function closeAssignmentModal() {
+            document.getElementById('assignmentModal').classList.remove('show');
         }
 
-        async function saveTempCellEdit() {
-            if (!currentEditingCellInfo) return;
-            let { day, cls, period } = currentEditingCellInfo;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+        function checkCourseIsActivity(courseVal) {
+            let isAct = courseVal.includes("نشاط");
+            document.getElementById('activityAdvancedOptions').style.display = isAct ? 'block' : 'none';
+        }
 
-            tempOverrides[weekKey] = {
-                course: document.getElementById('tempCourseSelect').value,
-                teacher: document.getElementById('tempTeacherSelect').value
-            };
+        function toggleActivityWeeksInput(val) {
+            document.getElementById('excludedWeeksBox').style.display = (val === 'مرنة') ? 'block' : 'none';
+        }
 
+        async function applyAssignmentChanges() {
+            const week = document.getElementById('assignWeekSelect').value;
+            const day = document.getElementById('assignDaySelect').value;
+            const cls = document.getElementById('assignClassSelect').value;
+            const period = document.getElementById('assignPeriodSelect').value;
+            const teacher = document.getElementById('assignTeacherSelect').value;
+            const course = document.getElementById('assignCourseSelect').value;
+            const scope = document.getElementById('assignScopeSelect').value;
+
+            let baseKey = `${day}_${cls}_${period}`;
+            let weekKey = `${week}_${day}_${cls}_${period}`;
+
+            if (scope === 'all_weeks') {
+                customAssignments[baseKey] = { teacher: teacher, course: course };
+            } else {
+                tempOverrides[weekKey] = { teacher: teacher, course: course };
+            }
+
+            await saveToCloud();
+            closeAssignmentModal();
+            renderScheduleTableForDay(activeDayName);
+            alert("تم تطبيق وحفظ الإسناد بنجاح! ☁️");
+        }
+
+        async function saveToCloud() {
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
                     classes: targetClasses,
+                    teachers: teachersPool,
                     activity: activitySettings,
                     overrides: tempOverrides
                 }, { merge: true });
-
-                closeCellEditModal();
-                renderScheduleTableForDay(activeDayName);
-                alert("تم تعديل الحصة بنجاح لهذا الأسبوع فقط!");
             } catch (e) {
-                alert("حدث خطأ أثناء الحفظ بالسحابة.");
+                alert("خطأ أثناء الحفظ بالسحابة.");
             }
         }
 
         function openActivityModal() {
             document.getElementById('actNameInput').value = activitySettings.name;
             document.getElementById('actHoursInput').value = activitySettings.hours || 1;
-            document.getElementById('actPeriodSelect').value = activitySettings.period;
-            document.getElementById('actTypeSelect').value = activitySettings.type;
             document.getElementById('activitySettingsModal').classList.add('show');
         }
         function closeActivityModal() {
@@ -953,130 +946,53 @@
         async function saveActivitySettings() {
             activitySettings.name = document.getElementById('actNameInput').value || "نشاط مدرسي";
             activitySettings.hours = parseInt(document.getElementById('actHoursInput').value) || 1;
-            activitySettings.period = document.getElementById('actPeriodSelect').value;
-            activitySettings.type = document.getElementById('actTypeSelect').value;
-
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                closeActivityModal();
-                renderScheduleTableForDay(activeDayName);
-                alert("تم تحديث إعدادات النشاط وحفظها في السحابة بنجاح!");
-            } catch (e) {
-                alert("خطأ أثناء الحفظ بالسحابة.");
-            }
-        }
-
-        function openAssignmentModal() {
-            document.getElementById('assignDaySelect').value = activeDayName;
-            
-            const classSel = document.getElementById('assignClassSelect');
-            classSel.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
-
-            const teacherSel = document.getElementById('assignTeacherSelect');
-            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
-
-            const courseSel = document.getElementById('assignCourseSelect');
-            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}">${co}</option>`).join('');
-
-            document.getElementById('assignmentModal').classList.add('show');
-        }
-
-        function closeAssignmentModal() {
-            document.getElementById('assignmentModal').classList.remove('show');
-        }
-
-        async function applyAssignmentChanges() {
-            const day = document.getElementById('assignDaySelect').value;
-            const cls = document.getElementById('assignClassSelect').value;
-            const period = document.getElementById('assignPeriodSelect').value;
-            const teacher = document.getElementById('assignTeacherSelect').value;
-            const course = document.getElementById('assignCourseSelect').value;
-
-            let key = `${day}_${cls}_${period}`;
-            customAssignments[key] = { teacher: teacher, course: course };
-
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                closeAssignmentModal();
-                renderScheduleTableForDay(activeDayName);
-                alert("تم حفظ وتثبيت الإسناد العام في السحابة بنجاح! ☁️");
-            } catch (error) {
-                alert("حدث خطأ أثناء الاتصال بالسحابة.");
-            }
+            await saveToCloud();
+            closeActivityModal();
+            renderScheduleTableForDay(activeDayName);
+            alert("تم حفظ إعدادات النشاط بنجاح!");
         }
 
         function openCalendarModal() {
             document.getElementById('calendarModal').classList.add('show');
             renderWeeksList(currentTerm);
         }
-
         function closeCalendarModal() {
             document.getElementById('calendarModal').classList.remove('show');
         }
-
         function switchTerm(term) {
             currentTerm = term;
             document.getElementById('tabTerm1').classList.toggle('active', term === 1);
             document.getElementById('tabTerm2').classList.toggle('active', term === 2);
             renderWeeksList(term);
         }
-
         function renderWeeksList(term) {
             const container = document.getElementById('weeksListContainer');
             container.innerHTML = '';
-            
-            const filteredWeeks = CAL_1448.filter(w => w.t === term);
-            
-            filteredWeeks.forEach((wk) => {
+            CAL_1448.filter(w => w.t === term).forEach((wk) => {
                 const wkDiv = document.createElement('div');
                 wkDiv.className = 'wk-item';
-                
-                let eventHtml = wk.event ? `<span class="etag-badge">${wk.event}</span>` : '';
-                
-                let daysHtml = '';
-                wk.days.forEach(d => {
-                    daysHtml += `
-                        <div class="day-card-item" onclick="selectDate('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
-                            <b>${d.name}</b> 
-                            <em>${d.h} — ${d.m}</em>
-                        </div>
-                    `;
-                });
-
+                let daysHtml = wk.days.map(d => `
+                    <div class="day-card-item" onclick="selectDate('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
+                        <b>${d.name}</b> <em>${d.h} — ${d.m}</em>
+                    </div>
+                `).join('');
                 wkDiv.innerHTML = `
                     <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
-                        <div><b>${wk.label}</b> ${eventHtml}</div>
+                        <div><b>${wk.label}</b></div>
                         <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
                     </button>
-                    <div class="days-list">
-                        ${daysHtml}
-                    </div>
+                    <div class="days-list">${daysHtml}</div>
                 `;
                 container.appendChild(wkDiv);
             });
         }
-
         function toggleWeekOpen(btn) {
             const item = btn.parentElement;
             const list = item.querySelector('.days-list');
             const isOpen = item.classList.contains('open');
-            
             item.classList.toggle('open', !isOpen);
             list.style.display = isOpen ? 'none' : 'grid';
         }
-
         function selectDate(weekLabel, dayName, dateStr) {
             activeWeekLabel = weekLabel;
             document.getElementById('currentDayText').innerText = `${weekLabel} - ${dayName}`;
@@ -1085,37 +1001,43 @@
             closeCalendarModal();
         }
 
-        function openModalForAdd() {
-            document.getElementById('addClassModal').style.display = 'flex';
+        let selectedClassIndexForAction = null;
+        function openClassActionModal(index, className) {
+            selectedClassIndexForAction = index;
+            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
+            document.getElementById('classActionModal').classList.add('show');
         }
-
-        function closeAddModal() {
-            document.getElementById('addClassModal').style.display = 'none';
+        function closeClassActionModal() {
+            document.getElementById('classActionModal').classList.remove('show');
+            selectedClassIndexForAction = null;
         }
-
+        async function moveSelectedClass(direction) {
+            if (selectedClassIndexForAction === null) return;
+            let targetIndex = selectedClassIndexForAction + direction;
+            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
+            let temp = targetClasses[selectedClassIndexForAction];
+            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
+            targetClasses[targetIndex] = temp;
+            closeClassActionModal();
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
+        }
+        async function deleteSelectedClass() {
+            if (selectedClassIndexForAction === null) return;
+            targetClasses.splice(selectedClassIndexForAction, 1);
+            closeClassActionModal();
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
+        }
+        function openModalForAdd() { document.getElementById('addClassModal').style.display = 'flex'; }
+        function closeAddModal() { document.getElementById('addClassModal').style.display = 'none'; }
         async function addNewClassRow() {
             let className = document.getElementById('newClassNameInput').value.trim();
-            if(!className) {
-                alert("الرجاء إدخال اسم الفصل");
-                return;
-            }
-
+            if(!className) return;
             targetClasses.push(className);
-            
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                renderScheduleTableForDay(activeDayName);
-                closeAddModal();
-                alert("تم إضافة وحفظ الفصل الجديد في السحابة بنجاح!");
-            } catch (e) {
-                alert("خطأ أثناء الحفظ بالسحابة.");
-            }
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
+            closeAddModal();
         }
     </script>
 </body>
