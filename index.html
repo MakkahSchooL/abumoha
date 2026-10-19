@@ -249,7 +249,7 @@
             border-radius: 10px;
             font-size: 0.82rem;
             font-weight: 600;
-            padding: 6px 12px;
+            padding: 8px 16px;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
@@ -337,7 +337,7 @@
         }
         .edit-pen-btn:hover { color: var(--brand); }
 
-        /* تصميم مخصص لبطاقات حصص النشاط المدرسي */
+        /* تصميم موحد لبطاقات النشاط المدرسي */
         .activity-card {
             border-radius: 10px;
             background: #fff;
@@ -520,7 +520,7 @@
                     <h3>ضبط حصص وبرامج النشاط</h3>
                     <button type="button" class="close text-white" onclick="closeActivityModal()">&times;</button>
                 </div>
-                <p>تحديد اسم البرنامج، عدد الحصص ونوعها (ثابتة أو مرنة)</p>
+                <p>تحديد اسم البرنامج، عدد الساعات، الحصة ونوعها</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -528,7 +528,11 @@
                     <input type="text" id="actNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي والاجتماعي">
                 </div>
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة للنشاط:</label>
+                    <label class="small font-weight-bold text-light">عدد ساعات البرنامج:</label>
+                    <input type="number" id="actHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="6">
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة (إرشادي):</label>
                     <select id="actPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
                         <option value="5">الحصة الخامسة (افتراضي)</option>
                         <option value="1">الحصة 1</option>
@@ -581,18 +585,13 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والفرز -->
+    <!-- شريط التحكم الموحد والأنيق -->
     <div class="control-btns-container">
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
-            <div class="d-flex flex-wrap" style="gap: 6px;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap: 8px;">
+            <div class="d-flex flex-wrap" style="gap: 8px;">
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
                 <button class="btn-act btn-act-outline-green" onclick="openActivityModal()"><i class="fas fa-star"></i> ضبط النشاط</button>
-            </div>
-        </div>
-
-        <div class="row align-items-center">
-            <div class="col-md-12 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+                <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             </div>
         </div>
     </div>
@@ -666,7 +665,7 @@
 
         let customAssignments = {};
         let tempOverrides = {};
-        let activitySettings = { name: "نشاط مدرسي", period: "5", type: "ثابتة" };
+        let activitySettings = { name: "نشاط مدرسي", hours: 1, period: "5", type: "ثابتة" };
         
         let activeDayName = "الإثنين";
         let activeWeekLabel = "الأسبوع الثامن";
@@ -703,7 +702,6 @@
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
-                // الترس لتنظيم الخيارات بدلاً من الأزرار الكثيرة
                 let html = `<th class="bg-light" style="vertical-align: middle;">
                     <div class="class-row-header">
                         <span class="font-weight-bold">${cls}</span>
@@ -717,7 +715,6 @@
                     
                     let teacher = "";
                     let course = "";
-                    let isActivityDefault = (i.toString() === activitySettings.period);
 
                     if (tempOverrides[weekKey]) {
                         teacher = tempOverrides[weekKey].teacher;
@@ -725,19 +722,16 @@
                     } else if (customAssignments[baseKey]) {
                         teacher = customAssignments[baseKey].teacher;
                         course = customAssignments[baseKey].course;
-                    } else if (isActivityDefault) {
-                        teacher = "مشرف النشاط";
-                        course = activitySettings.name;
                     }
 
-                    // التحقق مما إذا كانت الحصة نشاطاً (لتوحيد التصميم المنقط)
-                    let isActivityCard = course.includes("نشاط") || isActivityDefault;
+                    // التحقق مما إذا كانت الحصة نشاطاً لتظهر بتنسيق بطاقة النشاط المميزة
+                    let isActivityCard = course && course.includes("نشاط");
 
-                    if (isActivityCard && (teacher || course)) {
+                    if (isActivityCard) {
                         html += `<td>
                             <div class="activity-card">
                                 <div class="activity-header">
-                                    <span>${course || activitySettings.name}</span>
+                                    <span>${course}</span>
                                 </div>
                                 <div class="teacher-name-badge">${teacher || "نشاط مدرسي"}</div>
                                 <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
@@ -746,8 +740,8 @@
                     } else if (teacher || course) {
                         html += `<td>
                             <div class="course-cell-box" data-teacher="${teacher}">
-                                <div class="course-name-large">${course || "—"}</div>
-                                <div class="teacher-name-badge">${teacher || "—"}</div>
+                                <div class="course-name-large">${course}</div>
+                                <div class="teacher-name-badge">${teacher}</div>
                                 <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
                             </div>
                         </td>`;
@@ -765,7 +759,6 @@
             });
         }
 
-        // نافذة التحكم بالقير للفصل
         function openClassActionModal(index, className) {
             selectedClassIndexForAction = index;
             document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
@@ -861,6 +854,7 @@
 
         function openActivityModal() {
             document.getElementById('actNameInput').value = activitySettings.name;
+            document.getElementById('actHoursInput').value = activitySettings.hours || 1;
             document.getElementById('actPeriodSelect').value = activitySettings.period;
             document.getElementById('actTypeSelect').value = activitySettings.type;
             document.getElementById('activitySettingsModal').classList.add('show');
@@ -870,6 +864,7 @@
         }
         async function saveActivitySettings() {
             activitySettings.name = document.getElementById('actNameInput').value || "نشاط مدرسي";
+            activitySettings.hours = parseInt(document.getElementById('actHoursInput').value) || 1;
             activitySettings.period = document.getElementById('actPeriodSelect').value;
             activitySettings.type = document.getElementById('actTypeSelect').value;
 
