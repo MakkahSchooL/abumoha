@@ -915,41 +915,46 @@
             const { day, cls, period } = selectedCellInfo;
             const typeVal = document.getElementById('cellTypeSelect').value;
             
-            let courseName = "";
-            let teacherName = "";
-            let isAct = false;
-            let fieldKey = "";
-
-            if (typeVal === 'course') {
-                courseName = document.getElementById('cellCourseSelect').value;
-                teacherName = document.getElementById('cellTeacherSelect').value;
-            } else if (typeVal === 'activity') {
-                courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط مدرسي";
-                teacherName = document.getElementById('cellTeacherSelect').value;
-                isAct = true;
-                fieldKey = document.getElementById('cellActFieldSelect').value;
-            } else {
-                courseName = "";
-                teacherName = "";
-            }
-
             let baseKey = `${day}_${cls}_${period}`;
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
 
-            // حذف الحصة وإزالتها تماماً وحفظ الفراغ في السحابة
             if (typeVal === 'empty') {
+                // إزالة وتفريغ الحصة نهائياً من الكائن المحلي
                 delete customAssignments[baseKey];
                 delete tempOverrides[weekKey];
+                
+                // تحديث قاعدة البيانات في السحابة لحذف البيانات وتفريغها نهائياً
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    overrides: tempOverrides
+                }, { merge: true });
             } else {
+                let courseName = "";
+                let teacherName = "";
+                let isAct = false;
+                let fieldKey = "";
+
+                if (typeVal === 'course') {
+                    courseName = document.getElementById('cellCourseSelect').value;
+                    teacherName = document.getElementById('cellTeacherSelect').value;
+                } else if (typeVal === 'activity') {
+                    courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط مدرسي";
+                    teacherName = document.getElementById('cellTeacherSelect').value;
+                    isAct = true;
+                    fieldKey = document.getElementById('cellActFieldSelect').value;
+                }
+
                 customAssignments[baseKey] = {
                     course: courseName,
                     teacher: teacherName,
                     isActivity: isAct,
                     fieldKey: fieldKey
                 };
+                delete tempOverrides[weekKey];
+
+                await saveToCloud();
             }
 
-            await saveToCloud();
             closeCellClickModal();
             renderScheduleTableForDay(activeDayName);
         }
