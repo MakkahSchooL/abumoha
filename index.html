@@ -454,7 +454,7 @@
             </div>
         </div>
 
-        <!-- فلاتر البحث -->
+        <!-- فلاتر البحث وإضافة فصل/نشاط -->
         <div class="row align-items-center">
             <div class="col-md-5 mb-2">
                 <div class="d-flex align-items-center">
@@ -483,12 +483,12 @@
                 </div>
             </div>
             <div class="col-md-3 mb-2 text-left">
-                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> تعديل حصة/نشاط</button>
+                <button class="btn btn-sm btn-success font-weight-bold px-3 shadow-sm" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل / تعديل</button>
             </div>
         </div>
     </div>
 
-    <!-- الجدول الرئيسي الشامل -->
+    <!-- الجدول الرئيسي الشامل لـ 21 فصل -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -503,37 +503,99 @@
                     <th>الحصة 7</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- 1/أ -->
-                <tr data-row-class="1/أ">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/أ</th>
-                    <td><div class="course-cell-box" data-teacher="عصام الحازمي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عصام الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسين الرحيلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">حسين الرحيلي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ناصر المزيني"><div class="course-name-large">العربية</div><div class="teacher-name-badge">ناصر المزيني</div></div></td>
-                    <td><div class="activity-card" data-teacher="عائض الجابري"><div class="activity-header"><span>نشاط (الإبداع)</span><span class="activity-type-tag tag-fixed">ثابتة</span></div><div class="teacher-name-badge">عائض الجابري</div><span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ناصر المزيني"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">ناصر المزيني</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="ناصر المزيني"><div class="course-name-large">الحياتية</div><div class="teacher-name-badge">ناصر المزيني</div></div></td>
-                </tr>
-                <!-- 1/ب -->
-                <tr data-row-class="1/ب">
-                    <th class="bg-light font-weight-bold" style="vertical-align: middle;">1/ب</th>
-                    <td><div class="course-cell-box" data-teacher="عبدالاله الصاعدي"><div class="course-name-large">البدنية</div><div class="teacher-name-badge">عبدالاله الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عبدالاله الصاعدي"><div class="course-name-large">العربية</div><div class="teacher-name-badge">عبدالاله الصاعدي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عصام الحازمي"><div class="course-name-large">الرياضيات</div><div class="teacher-name-badge">عصام الحازمي</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="حسين الرحيلي"><div class="course-name-large">العلوم</div><div class="teacher-name-badge">حسين الرحيلي</div></div></td>
-                    <td><div class="activity-card" data-teacher="عائض الجابري"><div class="activity-header"><span>نشاط (رياضي)</span><span class="activity-type-tag tag-flexible">مرنة</span></div><div class="teacher-name-badge">عائض الجابري</div><span class="status-pill status-progress"><i class="fas fa-spinner"></i> جاري التنفيذ</span><div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div></div></td>
-                    <td><div class="course-cell-box" data-teacher="محمد العمري"><div class="course-name-large">الإنجليزية</div><div class="teacher-name-badge">محمد العمري</div></div></td>
-                    <td><div class="course-cell-box" data-teacher="عائض الجابري"><div class="course-name-large">الإسلامية</div><div class="teacher-name-badge">عائض الجابري</div></div></td>
-                </tr>
+            <tbody id="scheduleTableBody">
+                <!-- سيتم تعبئة 21 فصل برمجياً أو افتراضياً -->
             </tbody>
         </table>
     </div>
 
+    <!-- نافذة إضافة وتعديل الفصول والإسناد -->
+    <div class="modal-cal" id="addClassModal" style="display: none;">
+        <div class="mbox-cal" style="width: min(500px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إضافة فصل دراسي وإسناد المعلمين</h3>
+                    <button type="button" class="close text-white" onclick="closeAddModal()">&times;</button>
+                </div>
+                <p>قم بإدخال اسم الفصل الجديد لإضافته للجدول فوراً</p>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 3/ج):</label>
+                    <input type="text" id="newClassNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم الفصل">
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
+                    <input type="text" id="newTeacherInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المعلم">
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
+                    <input type="text" id="newCourseInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المادة أو النشاط">
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة للجدول</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeAddModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // دالة مساعدة لزيادة الأيام للتواريخ الهجرية والميلادية تقريبياً لملء الأيام الخمسة لكل أسبوع بدقة
+        // توليد 21 فصل دراسي افتراضياً
+        const defaultClasses = [
+            "1/أ", "1/ب", "1/ج", "2/أ", "2/ب", "2/ج", 
+            "3/أ", "3/ب", "3/ج", "4/أ", "4/ب", "4/ج", 
+            "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج", 
+            "الأول متوسط", "الثاني متوسط", "الثالث متوسط"
+        ];
+
+        const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
+        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
+
+        function renderScheduleTable() {
+            const tbody = document.getElementById('scheduleTableBody');
+            tbody.innerHTML = '';
+
+            defaultClasses.forEach((cls, index) => {
+                let tr = document.createElement('tr');
+                tr.setAttribute('data-row-class', cls);
+                
+                let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
+                
+                for(let i = 1; i <= 7; i++) {
+                    let teacher = teachersPool[(index + i) % teachersPool.length];
+                    let course = coursesPool[(index + i) % coursesPool.length];
+                    
+                    if(i === 5) {
+                        // إضافة خلية نشاط في الحصة الخامسة كنموذج
+                        html += `<td>
+                            <div class="activity-card" data-teacher="${teacher}">
+                                <div class="activity-header"><span>نشاط مدرسي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
+                                <div class="teacher-name-badge">${teacher}</div>
+                                <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
+                                <div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
+                            </div>
+                        </td>`;
+                    } else {
+                        html += `<td>
+                            <div class="course-cell-box" data-teacher="${teacher}">
+                                <div class="course-name-large">${course}</div>
+                                <div class="teacher-name-badge">${teacher}</div>
+                            </div>
+                        </td>`;
+                    }
+                }
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderScheduleTable();
+        });
+
+        // بيانات التقويم (كما هي تماماً بدون تغيير)
         const CAL_1448 = [
-            // الفصل الدراسي الأول (T1)
             { t: 1, w: 1, label: "الأسبوع الأول", days: [
                 { name: "الأحد", h: "1448/02/10 هـ", m: "2026/08/16 م" },
                 { name: "الإثنين", h: "1448/02/11 هـ", m: "2026/08/17 م" },
@@ -667,8 +729,6 @@
                 { name: "الأربعاء", h: "1448/08/03 هـ", m: "2027/01/06 م" },
                 { name: "الخميس", h: "1448/08/04 هـ", m: "2027/01/07 م" }
             ]},
-
-            // الفصل الدراسي الثاني (T2)
             { t: 2, w: 1, label: "الأسبوع الأول", days: [
                 { name: "الأحد", h: "1448/08/13 هـ", m: "2027/01/10 م" },
                 { name: "الإثنين", h: "1448/08/14 هـ", m: "2027/01/11 م" },
@@ -828,7 +888,7 @@
             
             const filteredWeeks = CAL_1448.filter(w => w.t === term);
             
-            filteredWeeks.forEach((wk, idx) => {
+            filteredWeeks.forEach((wk) => {
                 const wkDiv = document.createElement('div');
                 wkDiv.className = 'wk-item' + (wk.w === 8 && term === 1 ? ' open' : '');
                 
@@ -910,7 +970,18 @@
         }
 
         function editCell(el) {
-            alert("تعديل محتوى الحصة أو النشاط...");
+            let newCourse = prompt("أدخل اسم المادة أو النشاط الجديد:");
+            let newTeacher = prompt("أدخل اسم المعلم:");
+            if(newCourse && newTeacher) {
+                const box = el.closest('td').querySelector('.course-cell-box') || el.closest('td').querySelector('.activity-card');
+                if(box) {
+                    box.setAttribute('data-teacher', newTeacher);
+                    let nameEl = box.querySelector('.course-name-large') || box.querySelector('.activity-header span');
+                    let teacherEl = box.querySelector('.teacher-name-badge');
+                    if(nameEl) nameEl.innerText = newCourse;
+                    if(teacherEl) teacherEl.innerText = newTeacher;
+                }
+            }
         }
 
         function clearCell(el) {
@@ -921,7 +992,42 @@
         }
 
         function openModalForAdd() {
-            alert("نافذة إضافة وتعديل حصة أو برنامج نشاط جديدة.");
+            document.getElementById('addClassModal').style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            document.getElementById('addClassModal').style.display = 'none';
+        }
+
+        function addNewClassRow() {
+            let className = document.getElementById('newClassNameInput').value.trim();
+            let teacherName = document.getElementById('newTeacherInput').value.trim();
+            let courseName = document.getElementById('newCourseInput').value.trim();
+
+            if(!className) {
+                alert("الرجاء إدخال اسم الفصل");
+                return;
+            }
+
+            const tbody = document.getElementById('scheduleTableBody');
+            let tr = document.createElement('tr');
+            tr.setAttribute('data-row-class', className);
+
+            let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${className}</th>`;
+            for(let i = 1; i <= 7; i++) {
+                let t = teacherName || "معلم جديد";
+                let c = courseName || "مادة دراسية";
+                html += `<td>
+                    <div class="course-cell-box" data-teacher="${t}">
+                        <div class="course-name-large">${c}</div>
+                        <div class="teacher-name-badge">${t}</div>
+                    </div>
+                </td>`;
+            }
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+            closeAddModal();
+            alert("تم إضافة الفصل بنجاح إلى الجدول!");
         }
     </script>
 </body>
