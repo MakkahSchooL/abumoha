@@ -257,8 +257,6 @@
         }
         .btn-act-outline-green { border: 1px solid var(--brand); color: var(--brand); background: #fff; }
         .btn-act-outline-green:hover { background: var(--brand); color: #fff; }
-        .btn-act-gray { border: 1px solid var(--line); color: #475569; background: #f8fafc; }
-        .btn-act-gray:hover { background: #e2e8f0; }
         .btn-act-green { background: linear-gradient(135deg, var(--brand), #0891b2); color: #fff; border: none; }
         .btn-act-green:hover { filter: brightness(1.07); color: #fff; }
 
@@ -339,14 +337,25 @@
         }
         .edit-pen-btn:hover { color: var(--brand); }
 
+        /* تصميم مخصص لبطاقات حصص النشاط المدرسي */
         .activity-card {
             border-radius: 10px;
             background: #fff;
-            border: 2px dashed var(--brand);
+            border: 2px dashed #0C6A64;
             padding: 8px;
             text-align: center;
             box-shadow: 0 2px 6px rgba(12,106,100,0.1);
             position: relative;
+        }
+        .activity-header {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #0C6A64;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
 
         .class-row-header {
@@ -354,7 +363,22 @@
             align-items: center;
             justify-content: space-between;
             gap: 4px;
-            padding: 2px 4px;
+            padding: 4px 6px;
+        }
+
+        .gear-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .gear-btn:hover {
+            background: #e2e8f0;
+            color: #0C6A64;
         }
     </style>
 </head>
@@ -406,6 +430,31 @@
             <div class="mfoot-cal">
                 <button type="button" class="btn btn-sm btn-outline-light" onclick="resetToToday()">اليوم الحالي</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeCalendarModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة خيارات الترس (إدارة ترتيب الفصل أو حذفه) -->
+    <div class="modal-cal" id="classActionModal">
+        <div class="mbox-cal" style="width: min(380px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إدارة الفصل</h3>
+                    <button type="button" class="close text-white" onclick="closeClassActionModal()">&times;</button>
+                </div>
+                <p id="actionModalClassName" class="text-info font-weight-bold mb-0"></p>
+            </div>
+            <div class="mbody-cal text-center p-3">
+                <button class="btn btn-outline-light btn-block mb-2 text-right" onclick="moveSelectedClass(-1)">
+                    <i class="fas fa-arrow-up text-success ml-2"></i> نقل الفصل للأعلى
+                </button>
+                <button class="btn btn-outline-light btn-block mb-3 text-right" onclick="moveSelectedClass(1)">
+                    <i class="fas fa-arrow-down text-info ml-2"></i> نقل الفصل للأسفل
+                </button>
+                <hr style="border-color: #2A3D3B;">
+                <button class="btn btn-danger btn-block text-right" onclick="deleteSelectedClass()">
+                    <i class="fas fa-trash-alt ml-2"></i> حذف هذا الفصل
+                </button>
             </div>
         </div>
     </div>
@@ -613,7 +662,7 @@
         ];
 
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
+        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
         let customAssignments = {};
         let tempOverrides = {};
@@ -622,6 +671,7 @@
         let activeDayName = "الإثنين";
         let activeWeekLabel = "الأسبوع الثامن";
         let currentEditingCellInfo = null;
+        let selectedClassIndexForAction = null;
 
         async function loadDataFromCloud() {
             try {
@@ -653,19 +703,11 @@
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
-                // أزرار التحكم بالترتيب والحذف لكل فصل
-                let moveUpBtn = index > 0 ? `<button class="btn btn-sm text-secondary p-0 mx-1" title="نقل للأعلى" onclick="moveClass(${index}, -1)"><i class="fas fa-arrow-up"></i></button>` : '';
-                let moveDownBtn = index < targetClasses.length - 1 ? `<button class="btn btn-sm text-secondary p-0 mx-1" title="نقل للأسفل" onclick="moveClass(${index}, 1)"><i class="fas fa-arrow-down"></i></button>` : '';
-                let deleteClassBtn = `<button class="btn btn-sm text-danger p-0 mx-1" title="حذف الفصل" onclick="deleteClass('${cls}')"><i class="fas fa-times"></i></button>`;
-
+                // الترس لتنظيم الخيارات بدلاً من الأزرار الكثيرة
                 let html = `<th class="bg-light" style="vertical-align: middle;">
                     <div class="class-row-header">
                         <span class="font-weight-bold">${cls}</span>
-                        <div>
-                            ${moveUpBtn}
-                            ${moveDownBtn}
-                            ${deleteClassBtn}
-                        </div>
+                        <button class="gear-btn" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل"><i class="fas fa-cog"></i></button>
                     </div>
                 </th>`;
                 
@@ -675,25 +717,29 @@
                     
                     let teacher = "";
                     let course = "";
-                    let isActivity = (i.toString() === activitySettings.period);
+                    let isActivityDefault = (i.toString() === activitySettings.period);
 
                     if (tempOverrides[weekKey]) {
                         teacher = tempOverrides[weekKey].teacher;
                         course = tempOverrides[weekKey].course;
-                        isActivity = false;
                     } else if (customAssignments[baseKey]) {
                         teacher = customAssignments[baseKey].teacher;
                         course = customAssignments[baseKey].course;
-                    } else if (isActivity) {
+                    } else if (isActivityDefault) {
                         teacher = "مشرف النشاط";
                         course = activitySettings.name;
                     }
 
-                    if (isActivity && !tempOverrides[weekKey] && !customAssignments[baseKey]) {
+                    // التحقق مما إذا كانت الحصة نشاطاً (لتوحيد التصميم المنقط)
+                    let isActivityCard = course.includes("نشاط") || isActivityDefault;
+
+                    if (isActivityCard && (teacher || course)) {
                         html += `<td>
                             <div class="activity-card">
-                                <div class="activity-header"><span>${activitySettings.name}</span><span class="activity-type-tag tag-fixed">${activitySettings.type}</span></div>
-                                <div class="teacher-name-badge">نشاط مدرسي</div>
+                                <div class="activity-header">
+                                    <span>${course || activitySettings.name}</span>
+                                </div>
+                                <div class="teacher-name-badge">${teacher || "نشاط مدرسي"}</div>
                                 <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
                             </div>
                         </td>`;
@@ -719,15 +765,42 @@
             });
         }
 
-        // نقل الفصل لأعلى أو أسفل وترتيبه في السحابة
-        async function moveClass(index, direction) {
-            let targetIndex = index + direction;
+        // نافذة التحكم بالقير للفصل
+        function openClassActionModal(index, className) {
+            selectedClassIndexForAction = index;
+            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
+            document.getElementById('classActionModal').classList.add('show');
+        }
+
+        function closeClassActionModal() {
+            document.getElementById('classActionModal').classList.remove('show');
+            selectedClassIndexForAction = null;
+        }
+
+        async function moveSelectedClass(direction) {
+            if (selectedClassIndexForAction === null) return;
+            let targetIndex = selectedClassIndexForAction + direction;
             if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
-            
-            let temp = targetClasses[index];
-            targetClasses[index] = targetClasses[targetIndex];
+
+            let temp = targetClasses[selectedClassIndexForAction];
+            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
             targetClasses[targetIndex] = temp;
 
+            closeClassActionModal();
+            await saveClassesToCloud();
+        }
+
+        async function deleteSelectedClass() {
+            if (selectedClassIndexForAction === null) return;
+            let className = targetClasses[selectedClassIndexForAction];
+            if (confirm(`هل أنت متأكد من حذف الفصل ${className}؟`)) {
+                targetClasses.splice(selectedClassIndexForAction, 1);
+                closeClassActionModal();
+                await saveClassesToCloud();
+            }
+        }
+
+        async function saveClassesToCloud() {
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
@@ -738,27 +811,7 @@
 
                 renderScheduleTableForDay(activeDayName);
             } catch (e) {
-                alert("خطأ أثناء تحديث ترتيب الفصول.");
-            }
-        }
-
-        // حذف فصل محدد وحفظ التغيير بالسحابة
-        async function deleteClass(clsName) {
-            if (confirm(`هل أنت متأكد من حذف الفصل ${clsName}؟`)) {
-                targetClasses = targetClasses.filter(c => c !== clsName);
-                try {
-                    await db.collection("schedules").doc("main_schedule").set({
-                        assignments: customAssignments,
-                        classes: targetClasses,
-                        activity: activitySettings,
-                        overrides: tempOverrides
-                    }, { merge: true });
-
-                    renderScheduleTableForDay(activeDayName);
-                    alert("تم حذف الفصل بنجاح.");
-                } catch (e) {
-                    alert("خطأ أثناء حذف الفصل.");
-                }
+                alert("خطأ أثناء تحديث السحابة.");
             }
         }
 
@@ -800,7 +853,7 @@
 
                 closeCellEditModal();
                 renderScheduleTableForDay(activeDayName);
-                alert("تم تعديل الحصة بنجاح لهذا الأسبوع فقط ولن تؤثر على الأسابيع الأخرى!");
+                alert("تم تعديل الحصة بنجاح لهذا الأسبوع فقط!");
             } catch (e) {
                 alert("حدث خطأ أثناء الحفظ بالسحابة.");
             }
@@ -875,7 +928,7 @@
 
                 closeAssignmentModal();
                 renderScheduleTableForDay(activeDayName);
-                alert("تم حفظ وثبيت الإسناد العام في السحابة بنجاح! ☁️");
+                alert("تم حفظ وتثبيت الإسناد العام في السحابة بنجاح! ☁️");
             } catch (error) {
                 alert("حدث خطأ أثناء الاتصال بالسحابة.");
             }
