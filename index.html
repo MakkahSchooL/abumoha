@@ -420,7 +420,7 @@
                     <h3>تقويم مكة المكرمة والمدينة المنورة وجدة والطائف</h3>
                     <button type="button" class="close text-white" onclick="closeCalendarModal()">&times;</button>
                 </div>
-                <p>اختر الأسبوع ثم اليوم للانتقال المباشر إلى الجدول المدرسي</p>
+                <p>اختر الأسبوع ثم اليوم لعرض جدول الحصص الخاص به</p>
                 <div class="mtabs-cal">
                     <button class="mtab-btn active" id="tabTerm1" onclick="switchTerm(1)">الفصل الدراسي الأول</button>
                     <button class="mtab-btn" id="tabTerm2" onclick="switchTerm(2)">الفصل الدراسي الثاني</button>
@@ -488,7 +488,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي الشامل لـ 21 فصل -->
+    <!-- الجدول الرئيسي الشامل لـ 21 فصل المتغير حسب اليوم -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -504,7 +504,7 @@
                 </tr>
             </thead>
             <tbody id="scheduleTableBody">
-                <!-- سيتم تعبئة الـ 21 فصلاً المطلوبة برمجياً -->
+                <!-- يتم تعبئة الجدول برمجياً بحسب اليوم المختار -->
             </tbody>
         </table>
     </div>
@@ -541,7 +541,7 @@
     </div>
 
     <script>
-        // قائمة الـ 21 فصلاً المطابقة تماماً لطلبك
+        // الـ 21 فصل المحددة بدقة
         const targetClasses = [
             "1/أ", "1/ب", "1/ج", "1/د",
             "2/أ", "2/ب", "2/ج", "2/د",
@@ -554,9 +554,18 @@
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
         const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
 
-        function renderScheduleTable() {
+        // دالة توليد الجدول بناءً على اليوم (لتغيير المواد والحصص لكل يوم بشكل مختلف)
+        function renderScheduleTableForDay(dayName) {
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
+
+            // استخدام اسم اليوم كـ مفتاح لتوليد تنوع في الجدول لكل يوم
+            let dayOffset = 0;
+            if(dayName.includes("الأحد")) dayOffset = 1;
+            else if(dayName.includes("الإثنين")) dayOffset = 2;
+            else if(dayName.includes("الثلاثاء")) dayOffset = 3;
+            else if(dayName.includes("الأربعاء")) dayOffset = 4;
+            else if(dayName.includes("الخميس")) dayOffset = 5;
 
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
@@ -565,13 +574,13 @@
                 let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
                 
                 for(let i = 1; i <= 7; i++) {
-                    let teacher = teachersPool[(index + i) % teachersPool.length];
-                    let course = coursesPool[(index + i) % coursesPool.length];
+                    let teacher = teachersPool[(index + i + dayOffset) % teachersPool.length];
+                    let course = coursesPool[(index + i * dayOffset) % coursesPool.length];
                     
                     if(i === 5) {
                         html += `<td>
                             <div class="activity-card" data-teacher="${teacher}">
-                                <div class="activity-header"><span>نشاط مدرسي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
+                                <div class="activity-header"><span>نشاط (${dayName.split(' - ')[1] || 'اليوم'})</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
                                 <div class="teacher-name-badge">${teacher}</div>
                                 <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
                                 <div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
@@ -591,11 +600,7 @@
             });
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            renderScheduleTable();
-        });
-
-        // بيانات التقويم كما هي تماماً دون أي تغيير
+        // بيانات التقويم
         const CAL_1448 = [
             { t: 1, w: 1, label: "الأسبوع الأول", days: [
                 { name: "الأحد", h: "1448/02/10 هـ", m: "2026/08/16 م" },
@@ -867,6 +872,11 @@
 
         let currentTerm = 1;
 
+        document.addEventListener("DOMContentLoaded", () => {
+            // تحميل جدول يوم الإثنين افتراضياً
+            renderScheduleTableForDay("الإثنين");
+        });
+
         function openCalendarModal() {
             document.getElementById('calendarModal').classList.add('show');
             renderWeeksList(currentTerm);
@@ -930,12 +940,16 @@
         function selectDate(dayName, dateStr) {
             document.getElementById('currentDayText').innerText = dayName;
             document.getElementById('currentWeekText').innerText = `الموافق: ${dateStr}`;
+            
+            // تحديث الجدول المدرسي بناءً على اليوم المختار (مثل الإثنين، الثلاثاء، إلخ)
+            renderScheduleTableForDay(dayName);
             closeCalendarModal();
         }
 
         function resetToToday() {
             document.getElementById('currentDayText').innerText = "الإثنين 8 جمادى الأولى 1448هـ";
             document.getElementById('currentWeekText').innerText = "الموافق: 1448/05/08 هـ (2026/10/19 م)";
+            renderScheduleTableForDay("الإثنين");
             closeCalendarModal();
         }
 
