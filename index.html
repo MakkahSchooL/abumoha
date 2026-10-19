@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف 1448هـ</title>
 
+    <!-- المكتبات الخطية والتنسيقية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -285,7 +286,6 @@
             padding: 8px;
             text-align: center;
             transition: all 0.2s;
-            position: relative;
         }
         .course-cell-box:hover {
             border-color: var(--brand);
@@ -293,50 +293,21 @@
         }
 
         .course-name-large {
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .teacher-name-badge {
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #047857;
             background: #ecfdf5;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 6px;
             display: inline-block;
             width: 100%;
-        }
-
-        .empty-cell-text {
-            color: #94a3b8;
-            font-size: 0.82rem;
-            padding: 10px 0;
-        }
-
-        .edit-pen-btn {
-            background: none;
-            border: none;
-            color: #64748b;
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-top: 4px;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .edit-pen-btn:hover { color: var(--brand); }
-
-        .activity-card {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed var(--brand);
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(12,106,100,0.1);
-            position: relative;
         }
     </style>
 </head>
@@ -392,15 +363,15 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الإسناد الأساسية -->
+    <!-- نافذة إدارة الإسناد بالقوائم المنسدلة -->
     <div class="modal-cal" id="assignmentModal">
         <div class="mbox-cal" style="width: min(500px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة وتعديل الإسناد العام (للجدول الثابت)</h3>
+                    <h3>إدارة وتعديل الإسناد (السحابة)</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتثبيتها في السحابة</p>
+                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث السحابة مباشرة</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -445,81 +416,11 @@
         </div>
     </div>
 
-    <!-- نافذة ضبط النشاط المدرسي -->
-    <div class="modal-cal" id="activitySettingsModal">
-        <div class="mbox-cal" style="width: min(450px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>ضبط حصص وبرامج النشاط</h3>
-                    <button type="button" class="close text-white" onclick="closeActivityModal()">&times;</button>
-                </div>
-                <p>تحديد اسم البرنامج، عدد الحصص ونوعها (ثابتة أو مرنة)</p>
-            </div>
-            <div class="mbody-cal">
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">اسم برنامج النشاط:</label>
-                    <input type="text" id="actNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي والاجتماعي">
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة للنشاط:</label>
-                    <select id="actPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="5">الحصة الخامسة (افتراضي)</option>
-                        <option value="1">الحصة 1</option>
-                        <option value="2">الحصة 2</option>
-                        <option value="3">الحصة 3</option>
-                        <option value="4">الحصة 4</option>
-                        <option value="6">الحصة 6</option>
-                        <option value="7">الحصة 7</option>
-                    </select>
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">نوع الحصة:</label>
-                    <select id="actTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="ثابتة">ثابتة</option>
-                        <option value="مرنة">مرنة (قابل للتغيير أسبوعياً)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveActivitySettings()">حفظ إعدادات النشاط</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeActivityModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة التعديل المؤقت للأسبوع الحالي (القلم) -->
-    <div class="modal-cal" id="cellEditModal">
-        <div class="mbox-cal" style="width: min(400px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>تعديل استثنائي (هذا الأسبوع فقط)</h3>
-                    <button type="button" class="close text-white" onclick="closeCellEditModal()">&times;</button>
-                </div>
-                <p id="cellEditSubTitle" class="text-warning"></p>
-            </div>
-            <div class="mbody-cal">
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المادة أو المقرر:</label>
-                    <select id="tempCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المعلم:</label>
-                    <select id="tempTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveTempCellEdit()">حفظ لهذا الأسبوع</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellEditModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
     <!-- شريط التحكم والفرز وزر الإسناد -->
     <div class="control-btns-container">
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
             <div class="d-flex flex-wrap" style="gap: 6px;">
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
-                <button class="btn-act btn-act-outline-green" onclick="openActivityModal()"><i class="fas fa-star"></i> ضبط النشاط</button>
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
                 <button class="btn-act btn-act-gray text-danger" onclick="clearCloudData()"><i class="fas fa-trash-alt"></i> إعادة ضبط السحابة</button>
@@ -591,7 +492,7 @@
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بمشروعك
+        // إعدادات Firebase الخاصة بمشروعك makkahschool-32961
         const firebaseConfig = {
             apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
             authDomain: "makkahschool-32961.firebaseapp.com",
@@ -602,6 +503,7 @@
             measurementId: "G-HMQSMFF391"
         };
 
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -615,16 +517,12 @@
         ];
 
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
+        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
-        let customAssignments = {}; // الإسناد الثابت العام لكل أسبوع
-        let tempOverrides = {};     // التعديلات الاستثنائية للأسبوع المحدد فقط عبر القلم
-        let activitySettings = { name: "نشاط مدرسي", period: "5", type: "ثابتة" };
-        
+        let customAssignments = {};
         let activeDayName = "الإثنين";
-        let activeWeekLabel = "الأسبوع الثامن";
-        let currentEditingCellInfo = null;
 
+        // تحميل البيانات من سحابة Firebase عند فتح الصفحة
         async function loadDataFromCloud() {
             try {
                 let docRef = await db.collection("schedules").doc("main_schedule").get();
@@ -632,11 +530,9 @@
                     let data = docRef.data();
                     if (data.assignments) customAssignments = data.assignments;
                     if (data.classes) targetClasses = data.classes;
-                    if (data.activity) activitySettings = data.activity;
-                    if (data.overrides) tempOverrides = data.overrides;
                 }
             } catch (e) {
-                console.log("جارِ استخدام البيانات...");
+                console.log("جارِ استخدام البيانات الافتراضية...");
             }
             renderScheduleTableForDay("الإثنين");
         }
@@ -651,141 +547,41 @@
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            targetClasses.forEach((cls) => {
+            let dayOffset = 0;
+            if(cleanDay === "الأحد") dayOffset = 1;
+            else if(cleanDay === "الإثنين") dayOffset = 2;
+            else if(cleanDay === "الثلاثاء") dayOffset = 3;
+            else if(cleanDay === "الأربعاء") dayOffset = 4;
+            else if(cleanDay === "الخميس") dayOffset = 5;
+
+            targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
                 let html = `<th class="bg-light font-weight-bold" style="vertical-align: middle;">${cls}</th>`;
                 
                 for(let i = 1; i <= 7; i++) {
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
-                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`; // لتعديل أسبوع محدد بالقلم
-                    
-                    let teacher = "";
-                    let course = "";
-                    let isActivity = (i.toString() === activitySettings.period);
+                    let key = `${cleanDay}_${cls}_${i}`;
+                    let teacher, course;
 
-                    // 1. هل يوجد تعديل استثنائي لهذا الأسبوع المحدد بالقلم؟
-                    if (tempOverrides[weekKey]) {
-                        teacher = tempOverrides[weekKey].teacher;
-                        course = tempOverrides[weekKey].course;
-                        isActivity = false;
-                    } 
-                    // 2. هل يوجد إسناد عام ثابت في السحابة؟
-                    else if (customAssignments[baseKey]) {
-                        teacher = customAssignments[baseKey].teacher;
-                        course = customAssignments[baseKey].course;
-                    } 
-                    // 3. إذا كان حصة نشاط افتراضية ولم تسند بعد
-                    else if (isActivity) {
-                        teacher = "مشرف النشاط";
-                        course = activitySettings.name;
-                    }
-
-                    if (isActivity && !tempOverrides[weekKey] && !customAssignments[baseKey]) {
-                        html += `<td>
-                            <div class="activity-card">
-                                <div class="activity-header"><span>${activitySettings.name}</span><span class="activity-type-tag tag-fixed">${activitySettings.type}</span></div>
-                                <div class="teacher-name-badge">نشاط مدرسي</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
-                            </div>
-                        </td>`;
-                    } else if (teacher || course) {
-                        html += `<td>
-                            <div class="course-cell-box" data-teacher="${teacher}">
-                                <div class="course-name-large">${course || "—"}</div>
-                                <div class="teacher-name-badge">${teacher || "—"}</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '${course}', '${teacher}')"><i class="fas fa-pen"></i> تعديل</button>
-                            </div>
-                        </td>`;
+                    if (customAssignments[key]) {
+                        teacher = customAssignments[key].teacher;
+                        course = customAssignments[key].course;
                     } else {
-                        html += `<td>
-                            <div class="course-cell-box text-center">
-                                <div class="empty-cell-text">فارغ</div>
-                                <button class="edit-pen-btn" onclick="openCellEditModal('${cleanDay}', '${cls}', ${i}, '', '')"><i class="fas fa-pen"></i> إسناد</button>
-                            </div>
-                        </td>`;
+                        teacher = teachersPool[(index + i + dayOffset) % teachersPool.length];
+                        course = coursesPool[(index + i * dayOffset) % coursesPool.length];
                     }
+                    
+                    html += `<td>
+                        <div class="course-cell-box" data-teacher="${teacher}">
+                            <div class="course-name-large">${course}</div>
+                            <div class="teacher-name-badge">${teacher}</div>
+                        </div>
+                    </td>`;
                 }
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
-        }
-
-        // فتح نافذة القلم للتعديل المؤقت لهذا الأسبوع فقط
-        function openCellEditModal(day, cls, period, currentCourse, currentTeacher) {
-            currentEditingCellInfo = { day, cls, period };
-            document.getElementById('cellEditSubTitle.innerText = `${activeWeekLabel} - ${day} - الفصل ${cls} - الحصة ${period}`;
-            
-            const courseSel = document.getElementById('tempCourseSelect');
-            courseSel.innerHTML = coursesPool.concat([activitySettings.name]).map(c => `<option value="${c}" ${c === currentCourse ? 'selected' : ''}>${c}</option>`).join('');
-
-            const teacherSel = document.getElementById('tempTeacherSelect');
-            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}" ${t === currentTeacher ? 'selected' : ''}>${t}</option>`).join('');
-
-            document.getElementById('cellEditModal').classList.add('show');
-        }
-
-        function closeCellEditModal() {
-            document.getElementById('cellEditModal').classList.remove('show');
-            currentEditingCellInfo = null;
-        }
-
-        async function saveTempCellEdit() {
-            if (!currentEditingCellInfo) return;
-            let { day, cls, period } = currentEditingCellInfo;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-
-            tempOverrides[weekKey] = {
-                course: document.getElementById('tempCourseSelect').value,
-                teacher: document.getElementById('tempTeacherSelect').value
-            };
-
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                closeCellEditModal();
-                renderScheduleTableForDay(activeDayName);
-                alert("تم تعديل الحصة بنجاح لهذا الأسبوع فقط ولن تؤثر على الأسابيع الأخرى!");
-            } catch (e) {
-                alert("حدث خطأ أثناء الحفظ بالسحابة.");
-            }
-        }
-
-        // ضبط النشاط
-        function openActivityModal() {
-            document.getElementById('actNameInput').value = activitySettings.name;
-            document.getElementById('actPeriodSelect').value = activitySettings.period;
-            document.getElementById('actTypeSelect').value = activitySettings.type;
-            document.getElementById('activitySettingsModal').classList.add('show');
-        }
-        function closeActivityModal() {
-            document.getElementById('activitySettingsModal').classList.remove('show');
-        }
-        async function saveActivitySettings() {
-            activitySettings.name = document.getElementById('actNameInput').value || "نشاط مدرسي";
-            activitySettings.period = document.getElementById('actPeriodSelect').value;
-            activitySettings.type = document.getElementById('actTypeSelect').value;
-
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
-                }, { merge: true });
-
-                closeActivityModal();
-                renderScheduleTableForDay(activeDayName);
-                alert("تم تحديث إعدادات النشاط وحفظها في السحابة بنجاح!");
-            } catch (e) {
-                alert("خطأ أثناء الحفظ بالسحابة.");
-            }
         }
 
         function openAssignmentModal() {
@@ -807,6 +603,7 @@
             document.getElementById('assignmentModal').classList.remove('show');
         }
 
+        // حفظ التعديلات في سحابة Firebase مباشرة
         async function applyAssignmentChanges() {
             const day = document.getElementById('assignDaySelect').value;
             const cls = document.getElementById('assignClassSelect').value;
@@ -820,25 +617,24 @@
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
+                    classes: targetClasses
                 }, { merge: true });
 
                 closeAssignmentModal();
                 renderScheduleTableForDay(activeDayName);
-                alert("تم حفظ وثبيت الإسناد العام في السحابة بنجاح! ☁️");
+                alert("تم حفظ وتثبيت الإسناد في السحابة بنجاح! ☁️");
             } catch (error) {
+                console.error("خطأ في الحفظ بالسحابة: ", error);
                 alert("حدث خطأ أثناء الاتصال بالسحابة.");
             }
         }
 
+        // مسح وإعادة ضبط البيانات من السحابة
         async function clearCloudData() {
-            if(confirm("هل أنت متأكد من مسح كافة التعديلات والإسنادات من السحابة؟")) {
+            if(confirm("هل أنت متأكد من مسح كافة التعديلات من السحابة واستعادة الجدول الافتراضي؟")) {
                 try {
                     await db.collection("schedules").doc("main_schedule").delete();
                     customAssignments = {};
-                    tempOverrides = {};
                     location.reload();
                 } catch (e) {
                     alert("حدث خطأ أثناء الحذف.");
@@ -853,13 +649,6 @@
                 { name: "الثلاثاء", h: "1448/05/09 هـ", m: "2026/10/20 م" },
                 { name: "الأربعاء", h: "1448/05/10 هـ", m: "2026/10/21 م" },
                 { name: "الخميس", h: "1448/05/11 هـ", m: "2026/10/22 م" }
-            ]},
-            { t: 1, w: 9, label: "الأسبوع التاسع", days: [
-                { name: "الأحد", h: "1448/05/14 هـ", m: "2026/10/25 م" },
-                { name: "الإثنين", h: "1448/05/15 هـ", m: "2026/10/26 م" },
-                { name: "الثلاثاء", h: "1448/05/16 هـ", m: "2026/10/27 م" },
-                { name: "الأربعاء", h: "1448/05/17 هـ", m: "2026/10/28 م" },
-                { name: "الخميس", h: "1448/05/18 هـ", m: "2026/10/29 م" }
             ]}
         ];
 
@@ -896,7 +685,7 @@
                 let daysHtml = '';
                 wk.days.forEach(d => {
                     daysHtml += `
-                        <div class="day-card-item" onclick="selectDate('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
+                        <div class="day-card-item" onclick="selectDate('${wk.label} - ${d.name}', '${d.h} (${d.m})')">
                             <b>${d.name}</b> 
                             <em>${d.h} — ${d.m}</em>
                         </div>
@@ -911,17 +700,15 @@
             });
         }
 
-        function selectDate(weekLabel, dayName, dateStr) {
-            activeWeekLabel = weekLabel;
-            document.getElementById('currentDayText').innerText = `${weekLabel} - ${dayName}`;
+        function selectDate(dayName, dateStr) {
+            document.getElementById('currentDayText').innerText = dayName;
             document.getElementById('currentWeekText').innerText = `الموافق: ${dateStr}`;
             renderScheduleTableForDay(dayName);
             closeCalendarModal();
         }
 
         function resetToToday() {
-            activeWeekLabel = "الأسبوع الثامن";
-            document.getElementById('currentDayText').innerText = "الأسبوع الثامن - الإثنين";
+            document.getElementById('currentDayText').innerText = "الإثنين - الأسبوع الثامن";
             document.getElementById('currentWeekText').innerText = "الموافق: 1448/05/08 هـ (2026/10/19 م)";
             renderScheduleTableForDay("الإثنين");
             closeCalendarModal();
@@ -968,9 +755,7 @@
             try {
                 await db.collection("schedules").doc("main_schedule").set({
                     assignments: customAssignments,
-                    classes: targetClasses,
-                    activity: activitySettings,
-                    overrides: tempOverrides
+                    classes: targetClasses
                 }, { merge: true });
 
                 renderScheduleTableForDay(activeDayName);
