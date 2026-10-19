@@ -104,7 +104,7 @@
             font-weight: 600;
         }
 
-        /* نافذة التقويم المودال (الداكنة كالصورة تماماً) */
+        /* نافذة التقويم المودال */
         .modal-cal {
             position: fixed;
             inset: 0;
@@ -200,7 +200,6 @@
         }
         .wk-item.open .days-list { display: grid; }
 
-        /* البطاقات الداخلية للأيام مطابق للتصميم المعروض */
         .day-card-item {
             display: flex;
             justify-content: space-between;
@@ -225,7 +224,6 @@
         .day-info b { font-size: 0.92rem; font-weight: 700; color: #FFFFFF; min-width: 55px; }
         .day-info em { font-style: normal; font-size: 0.82rem; color: #9AB0AC; direction: ltr; display: inline-block; }
         
-        /* النص العائم الخاص بالحدث/الإجازة على اليسار بلون أورانج داكن */
         .day-event-text {
             font-size: 0.82rem;
             font-weight: 600;
@@ -533,7 +531,6 @@
     </div>
 
     <script>
-        // بيانات التقويم المطابقة تماماً لتفاصيل الصورة المرفقة
         const CAL_1448 = [
             // الفصل الدراسي الأول (T1)
             { t: 1, w: 1, label: "الأسبوع الأول", start: "03/17 - 03/21هـ", end: "3/9 - 30/8م", days: [
@@ -558,9 +555,9 @@
                 { name: "الخميس", h: "1448/04/06 هـ", m: "2026/09/17 م" }
             ]},
             { t: 1, w: 4, label: "الأسبوع الرابع", start: "04/09 - 04/13هـ", end: "20/9 - 24/9م", days: [
-                { name: "الأحد", h: "1448/04/09 هـ", m: "2026/09/20 م", event: "قبل بداية" },
-                { name: "الإثنين", h: "1448/04/10 هـ", m: "2026/09/21 م", event: "قبل بداية" },
-                { name: "الثلاثاء", h: "1448/04/11 هـ", m: "2026/09/22 م", event: "قبل بداية" },
+                { name: "الأحد", h: "1448/04/09 هـ", m: "2026/09/20 م" },
+                { name: "الإثنين", h: "1448/04/10 هـ", m: "2026/09/21 م" },
+                { name: "الثلاثاء", h: "1448/04/11 هـ", m: "2026/09/22 م" },
                 { name: "الأربعاء", h: "1448/04/12 هـ", m: "2026/09/23 م", event: "إجازة اليوم الوطني" },
                 { name: "الخميس", h: "1448/04/13 هـ", m: "2026/09/24 م", event: "إجازة اليوم الوطني" }
             ]},
@@ -620,7 +617,7 @@
             
             filteredWeeks.forEach((wk) => {
                 const wkDiv = document.createElement('div');
-                wkDiv.className = 'wk-item' + (wk.w === 4 && term === 1 ? ' open' : ''); // مفتوح على الأسبوع الرابع كما في الصورة
+                wkDiv.className = 'wk-item' + (wk.w === 4 && term === 1 ? ' open' : '');
                 
                 let daysHtml = '';
                 wk.days.forEach(d => {
@@ -629,7 +626,7 @@
                         <div class="day-card-item" onclick="selectDate('${wk.label} - ${d.name}', '${d.h} / ${d.m}')">
                             ${eventHtml}
                             <div class="day-info">
-                                <em>${d.m} 1448/0${wk.w + 1 < 10 ? '0' + (wk.w + 1) : wk.w + 1}</em>
+                                <em>${d.m} ${d.h}</em>
                                 <b>${d.name}</b>
                             </div>
                         </div>
