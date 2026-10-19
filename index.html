@@ -104,7 +104,7 @@
             font-weight: 600;
         }
 
-        /* نافذة التقويم المودال */
+        /* نافذة التقويم والمودال العامة */
         .modal-cal {
             position: fixed;
             inset: 0;
@@ -438,6 +438,43 @@
         </div>
     </div>
 
+    <!-- نافذة تعديل الحصة (قوائم منسدلة للمعلم، الصف، والمادة) -->
+    <div class="modal-cal" id="editCellModal">
+        <div class="mbox-cal" style="width: min(420px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>تعديل إسناد الحصة</h3>
+                    <button type="button" class="close text-white" onclick="closeEditModal()">&times;</button>
+                </div>
+                <p>قم بتحديد الخيارات المناسبة ثم اضغط تثبيت</p>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">الصف / الفصل:</label>
+                    <select id="editClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <!-- تعبئة برمجية -->
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
+                    <select id="editTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <!-- تعبئة برمجية -->
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
+                    <select id="editCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <!-- تعبئة برمجية -->
+                    </select>
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellEdit()">تثبيت الإسناد</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeEditModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <!-- شريط التحكم والفرز -->
     <div class="control-btns-container">
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid var(--line); gap: 8px;">
@@ -552,14 +589,15 @@
         ];
 
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
+        const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
-        // دالة توليد الجدول بناءً على اليوم (لتغيير المواد والحصص لكل يوم بشكل مختلف)
+        let currentEditingCell = null;
+
+        // دالة توليد الجدول بناءً على اليوم
         function renderScheduleTableForDay(dayName) {
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            // استخدام اسم اليوم كـ مفتاح لتوليد تنوع في الجدول لكل يوم
             let dayOffset = 0;
             if(dayName.includes("الأحد")) dayOffset = 1;
             else if(dayName.includes("الإثنين")) dayOffset = 2;
@@ -580,10 +618,10 @@
                     if(i === 5) {
                         html += `<td>
                             <div class="activity-card" data-teacher="${teacher}">
-                                <div class="activity-header"><span>نشاط (${dayName.split(' - ')[1] || 'اليوم'})</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
+                                <div class="activity-header"><span>نشاط مدرسي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
                                 <div class="teacher-name-badge">${teacher}</div>
                                 <span class="status-pill status-done"><i class="fas fa-check"></i> منفذ</span>
-                                <div class="cell-actions"><i class="fas fa-edit" onclick="editCell(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
+                                <div class="cell-actions"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
                             </div>
                         </td>`;
                     } else {
@@ -591,6 +629,7 @@
                             <div class="course-cell-box" data-teacher="${teacher}">
                                 <div class="course-name-large">${course}</div>
                                 <div class="teacher-name-badge">${teacher}</div>
+                                <div class="cell-actions mt-1"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
                             </div>
                         </td>`;
                     }
@@ -598,6 +637,64 @@
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
+        }
+
+        // فتح نافذة التعديل وتعبئة القوائم المنسدلة
+        function openEditModal(el) {
+            currentEditingCell = el.closest('td');
+            
+            // تعبئة قائمة الصفوف/الفصول
+            const classSelect = document.getElementById('editClassSelect');
+            classSelect.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
+            const rowClass = currentEditingCell.closest('tr').getAttribute('data-row-class');
+            classSelect.value = rowClass || targetClasses[0];
+
+            // تعبئة قائمة المعلمين
+            const teacherSelect = document.getElementById('editTeacherSelect');
+            teacherSelect.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
+            const currentTeacher = currentEditingCell.querySelector('[data-teacher]')?.getAttribute('data-teacher') || teachersPool[0];
+            teacherSelect.value = currentTeacher;
+
+            // تعبئة قائمة المواد والأنشطة
+            const courseSelect = document.getElementById('editCourseSelect');
+            courseSelect.innerHTML = coursesPool.map(co => `<option value="${co}">${co}</option>`).join('');
+            const currentCourse = currentEditingCell.querySelector('.course-name-large')?.innerText || coursesPool[0];
+            courseSelect.value = currentCourse;
+
+            document.getElementById('editCellModal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editCellModal').classList.remove('show');
+            currentEditingCell = null;
+        }
+
+        // حفظ وتثبيت التعديلات من نافذة القوائم المنسدلة
+        function saveCellEdit() {
+            if (!currentEditingCell) return;
+
+            const selectedClass = document.getElementById('editClassSelect').value;
+            const selectedTeacher = document.getElementById('editTeacherSelect').value;
+            const selectedCourse = document.getElementById('editCourseSelect').value;
+
+            // تحديث الصف إذا تغير
+            const currentRow = currentEditingCell.closest('tr');
+            if (currentRow.getAttribute('data-row-class') !== selectedClass) {
+                currentRow.setAttribute('data-row-class', selectedClass);
+                currentRow.querySelector('th').innerText = selectedClass;
+            }
+
+            // تحديث محتوى الخلية (المعلم والمادة)
+            let box = currentEditingCell.querySelector('.course-cell-box') || currentEditingCell.querySelector('.activity-card');
+            if (box) {
+                box.setAttribute('data-teacher', selectedTeacher);
+                let nameEl = box.querySelector('.course-name-large') || box.querySelector('.activity-header span');
+                let teacherEl = box.querySelector('.teacher-name-badge');
+                if (nameEl) nameEl.innerText = selectedCourse;
+                if (teacherEl) teacherEl.innerText = selectedTeacher;
+            }
+
+            closeEditModal();
         }
 
         // بيانات التقويم
@@ -873,7 +970,6 @@
         let currentTerm = 1;
 
         document.addEventListener("DOMContentLoaded", () => {
-            // تحميل جدول يوم الإثنين افتراضياً
             renderScheduleTableForDay("الإثنين");
         });
 
@@ -940,8 +1036,6 @@
         function selectDate(dayName, dateStr) {
             document.getElementById('currentDayText').innerText = dayName;
             document.getElementById('currentWeekText').innerText = `الموافق: ${dateStr}`;
-            
-            // تحديث الجدول المدرسي بناءً على اليوم المختار (مثل الإثنين، الثلاثاء، إلخ)
             renderScheduleTableForDay(dayName);
             closeCalendarModal();
         }
@@ -984,21 +1078,6 @@
             });
         }
 
-        function editCell(el) {
-            let newCourse = prompt("أدخل اسم المادة أو النشاط الجديد:");
-            let newTeacher = prompt("أدخل اسم المعلم:");
-            if(newCourse && newTeacher) {
-                const box = el.closest('td').querySelector('.course-cell-box') || el.closest('td').querySelector('.activity-card');
-                if(box) {
-                    box.setAttribute('data-teacher', newTeacher);
-                    let nameEl = box.querySelector('.course-name-large') || box.querySelector('.activity-header span');
-                    let teacherEl = box.querySelector('.teacher-name-badge');
-                    if(nameEl) nameEl.innerText = newCourse;
-                    if(teacherEl) teacherEl.innerText = newTeacher;
-                }
-            }
-        }
-
         function clearCell(el) {
             if(confirm("هل أنت متأكد من مسح محتوى هذه الخلية؟")) {
                 const box = el.closest('td');
@@ -1036,6 +1115,7 @@
                     <div class="course-cell-box" data-teacher="${t}">
                         <div class="course-name-large">${c}</div>
                         <div class="teacher-name-badge">${t}</div>
+                        <div class="cell-actions mt-1"><i class="fas fa-edit" onclick="openEditModal(this)"></i><i class="fas fa-trash del" onclick="clearCell(this)"></i></div>
                     </div>
                 </td>`;
             }
