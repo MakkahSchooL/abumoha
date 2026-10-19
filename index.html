@@ -188,16 +188,6 @@
         .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
         .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
 
-        .etag-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #E0A43A;
-            border: 1px solid #E0A43A;
-            border-radius: 4px;
-            padding: 1px 6px;
-            margin-inline-start: 6px;
-        }
-
         .days-list {
             display: none;
             gap: 6px;
@@ -279,11 +269,34 @@
             vertical-align: middle !important;
         }
 
+        /* تحسين شكل خانات الفصول بالجدول */
+        .class-col-header {
+            width: 95px !important;
+            max-width: 95px !important;
+            background: #f1f5f9;
+            vertical-align: middle !important;
+            padding: 6px 4px !important;
+        }
+        .class-row-header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+        .class-title-text {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
         .wc-main-table td {
             border-color: #edf0f5 !important;
             padding: 10px 8px !important;
             vertical-align: middle !important;
-            min-width: 140px;
+            min-width: 135px;
         }
 
         .course-cell-box {
@@ -294,10 +307,22 @@
             text-align: center;
             transition: all 0.2s;
             position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .course-cell-box:hover {
             border-color: var(--brand);
             box-shadow: 0 2px 8px rgba(12,106,100,0.15);
+        }
+
+        /* تصميم الحصة الفاضية خالية ونظيفة */
+        .empty-cell-box {
+            background: #ffffff;
+            border: 1px dashed #e2e8f0;
+            border-radius: 10px;
+            min-height: 60px;
         }
 
         .course-name-large {
@@ -318,25 +343,6 @@
             width: 100%;
         }
 
-        .empty-cell-text {
-            color: #94a3b8;
-            font-size: 0.82rem;
-            padding: 10px 0;
-        }
-
-        .edit-pen-btn {
-            background: none;
-            border: none;
-            color: #64748b;
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-top: 4px;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .edit-pen-btn:hover { color: var(--brand); }
-
         .activity-card {
             border-radius: 10px;
             background: #fff;
@@ -345,34 +351,26 @@
             text-align: center;
             box-shadow: 0 2px 6px rgba(12,106,100,0.1);
             position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .activity-header {
             font-size: 0.88rem;
             font-weight: 800;
             color: #0C6A64;
             margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .class-row-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 4px;
-            padding: 4px 6px;
         }
 
         .gear-btn {
             background: none;
             border: none;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 6px;
+            padding: 2px 4px;
+            border-radius: 4px;
             transition: all 0.2s;
         }
         .gear-btn:hover {
@@ -406,7 +404,7 @@
                 <i class="fas fa-calendar-alt"></i> اختر التاريخ / الأسبوع
             </button>
             <div class="selected-date-badge" id="selectedDateDisplay">
-                <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">جاري تحديد اليوم...</span> - <span id="currentWeekText">الموافق: —</span>
+                <i class="fas fa-clock text-warning ml-1"></i> <span id="currentDayText">جاري جلب بيانات اليوم...</span> - <span id="currentWeekText">الموافق: —</span>
             </div>
         </div>
     </div>
@@ -482,12 +480,12 @@
         </div>
     </div>
 
-    <!-- نافذة الإسناد المطورة والمحدثة -->
+    <!-- نافذة إسناد الحصص الدراسية العامة -->
     <div class="modal-cal" id="assignmentModal">
         <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة وتعديل الإسناد</h3>
+                    <h3>إدارة وإسناد الحصص الدراسية</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
                 <p>حدد الأسبوع، اليوم، الحصة، المعلم والمادة</p>
@@ -525,33 +523,20 @@
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المعلم المسؤول: 
-                        <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()" title="إضافة/حذف معلم"><i class="fas fa-pen"></i></button>
+                        <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()"><i class="fas fa-pen"></i></button>
                     </label>
                     <select id="assignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
-                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="checkCourseIsActivity(this.value)"></select>
-                </div>
-
-                <!-- خيارات متقدمة لحصص النشاط أو التطبيق الشامل -->
-                <div id="activityAdvancedOptions" style="display: none; background: #121E1D; border: 1px dashed #3AAFA5; padding: 10px; border-radius: 8px; margin-top: 10px;">
-                    <label class="small font-weight-bold text-success">إعدادات حصة النشاط:</label>
-                    <select id="actAssignTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary mb-2" onchange="toggleActivityWeeksInput(this.value)">
-                        <option value="ثابتة">حصة نشاط ثابتة (تتكرر كباقي الحصص)</option>
-                        <option value="مرنة">حصة نشاط مرنة (تحديد أسابيع محددة للتعطيل أو التطبيق)</option>
-                    </select>
-                    <div id="excludedWeeksBox" style="display: none;">
-                        <label class="small text-warning">حدد الأسابيع التي **لا** ينطبق عليها هذا النشاط:</label>
-                        <input type="text" id="excludedWeeksInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: الأسبوع الخامس، الأسبوع العاشر">
-                    </div>
+                    <label class="small font-weight-bold text-light">المادة الدراسية:</label>
+                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
 
                 <div class="form-group text-right mt-3" style="background: #1A2B2A; padding: 10px; border-radius: 8px;">
                     <label class="small font-weight-bold text-warning">نطاق تطبيق هذا الإسناد:</label>
                     <select id="assignScopeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <option value="this_week">هذا الأسبوع فقط</option>
                         <option value="all_weeks">كافة الأسابيع (جدول ثابت طوال الفصل)</option>
+                        <option value="this_week">هذا الأسبوع فقط</option>
                     </select>
                 </div>
             </div>
@@ -562,38 +547,80 @@
         </div>
     </div>
 
-    <!-- نافذة ضبط النشاط -->
-    <div class="modal-cal" id="activitySettingsModal">
-        <div class="mbox-cal" style="width: min(450px, 95%);">
+    <!-- نافذة مستقلة لإسناد حصص وبرامج النشاط -->
+    <div class="modal-cal" id="activityAssignModal">
+        <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>ضبط حصص وبرامج النشاط</h3>
-                    <button type="button" class="close text-white" onclick="closeActivityModal()">&times;</button>
+                    <h3>إسناد حصص وبرامج النشاط المدرسي 🌟</h3>
+                    <button type="button" class="close text-white" onclick="closeActivityAssignModal()">&times;</button>
                 </div>
+                <p>إسناد برامج ورش العمل، الأنشطة والفعاليات للفصول</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">اسم برنامج النشاط:</label>
-                    <input type="text" id="actNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي والاجتماعي">
+                    <input type="text" id="actAssignNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: النشاط الثقافي والاجتماعي">
                 </div>
                 <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">عدد ساعات البرنامج:</label>
-                    <input type="number" id="actHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="6">
+                    <label class="small font-weight-bold text-light">المعلم المسؤول عن النشاط:</label>
+                    <select id="actAssignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">الأسبوع المستهدف:</label>
+                    <select id="actAssignWeekSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">اليوم المستهدف:</label>
+                    <select id="actAssignDaySelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="الأحد">الأحد</option>
+                        <option value="الإثنين">الإثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">الفصل / الصف:</label>
+                    <select id="actAssignClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">رقم الحصة المخصصة للنشاط:</label>
+                    <select id="actAssignPeriodSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="5">الحصة 5</option>
+                        <option value="1">الحصة 1</option>
+                        <option value="2">الحصة 2</option>
+                        <option value="3">الحصة 3</option>
+                        <option value="4">الحصة 4</option>
+                        <option value="6">الحصة 6</option>
+                        <option value="7">الحصة 7</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">عدد الساعات / الحصص:</label>
+                    <input type="number" id="actAssignHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="5">
+                </div>
+                <div class="form-group text-right" style="background: #121E1D; border: 1px dashed #3AAFA5; padding: 10px; border-radius: 8px;">
+                    <label class="small font-weight-bold text-success">نوع حصة النشاط ونطاقها:</label>
+                    <select id="actAssignScopeSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <option value="all_weeks">حصة نشاط ثابتة (لكافة الأسابيع)</option>
+                        <option value="this_week">حصة نشاط مرنة (لهذا الأسبوع فقط)</option>
+                    </select>
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="saveActivitySettings()">حفظ الإعدادات</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeActivityModal()">إلغاء</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="applyActivityAssignment()">حفظ وإسناد النشاط ☁️</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeActivityAssignModal()">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- شريط التحكم -->
+    <!-- شريط التحكم الموحد والأنيق -->
     <div class="control-btns-container">
         <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap: 8px;">
             <div class="d-flex flex-wrap" style="gap: 8px;">
-                <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
-                <button class="btn-act btn-act-outline-green" onclick="openActivityModal()"><i class="fas fa-star"></i> ضبط النشاط</button>
+                <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد الدراسي</button>
+                <button class="btn-act btn-act-outline-green" onclick="openActivityAssignModal()"><i class="fas fa-star"></i> إسناد النشاط 🌟</button>
                 <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             </div>
         </div>
@@ -604,7 +631,7 @@
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
                 <tr>
-                    <th>الفصل / الحصة</th>
+                    <th class="class-col-header">الفصل</th>
                     <th>الحصة 1</th>
                     <th>الحصة 2</th>
                     <th>الحصة 3</th>
@@ -656,13 +683,12 @@
 
         let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
+        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات"];
 
         let customAssignments = {};
         let tempOverrides = {};
-        let activitySettings = { name: "نشاط مدرسي", hours: 1 };
         
-        let activeDayName = "الإثنين";
+        let activeDayName = "الثلاثاء";
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
 
@@ -685,33 +711,28 @@
             { t: 1, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/07/08 هـ",m:"2026/12/13 م"},{name:"الإثنين",h:"1448/07/09 هـ",m:"2026/12/14 م"},{name:"الثلاثاء",h:"1448/07/10 هـ",m:"2026/12/15 م"},{name:"الأربعاء",h:"1448/07/11 هـ",m:"2026/12/16 م"},{name:"الخميس",h:"1448/07/12 هـ",m:"2026/12/17 م"}]},
             { t: 1, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/07/15 هـ",m:"2026/12/20 م"},{name:"الإثنين",h:"1448/07/16 هـ",m:"2026/12/21 م"},{name:"الثلاثاء",h:"1448/07/17 هـ",m:"2026/12/22 م"},{name:"الأربعاء",h:"1448/07/18 هـ",m:"2026/12/23 م"},{name:"الخميس",h:"1448/07/19 هـ",m:"2026/12/24 م"}]},
             { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/07/22 هـ",m:"2026/12/27 م"},{name:"الإثنين",h:"1448/07/23 هـ",m:"2026/12/28 م"},{name:"الثلاثاء",h:"1448/07/24 هـ",m:"2026/12/29 م"},{name:"الأربعاء",h:"1448/07/25 هـ",m:"2026/12/30 م"},{name:"الخميس",h:"1448/07/26 هـ",m:"2026/12/31 م"}]},
-            { t: 1, w: 19, label: "الأسبوع التاسع عشر", event: "اختبارات ونهاية الفصل", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
-
-            { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/13 هـ",m:"2027/01/10 م"},{name:"الإثنين",h:"1448/08/14 هـ",m:"2027/01/11 م"},{name:"الثلاثاء",h:"1448/08/15 هـ",m:"2027/01/12 م"},{name:"الأربعاء",h:"1448/08/16 هـ",m:"2027/01/13 م"},{name:"الخميس",h:"1448/08/17 هـ",m:"2027/01/14 م"}]},
-            { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/20 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/21 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/22 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/23 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/24 هـ",m:"2027/01/21 م"}]},
-            { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/27 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/28 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/29 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/09/01 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/09/02 هـ",m:"2027/01/28 م"}]},
-            { t: 2, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/09/05 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/09/06 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/07 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/08 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/09 هـ",m:"2027/02/04 م"}]},
-            { t: 2, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/09/12 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/13 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/14 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/15 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/16 هـ",m:"2027/02/11 م"}]},
-            { t: 2, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/09/19 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/20 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/21 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/22 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/23 هـ",m:"2027/02/18 م"}]},
-            { t: 2, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/10/03 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/10/04 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/10/05 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/10/06 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/10/07 هـ",m:"2027/02/25 م"}]},
-            { t: 2, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/10/10 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/10/11 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/10/12 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/13 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/14 هـ",m:"2027/03/04 م"}]},
-            { t: 2, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/10/17 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/18 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/19 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/20 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/21 هـ",m:"2027/03/11 م"}]},
-            { t: 2, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/10/24 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/25 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/26 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/27 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/28 هـ",m:"2027/03/18 م"}]},
-            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/11/01 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/11/02 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/11/03 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/11/04 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/11/05 هـ",m:"2027/03/25 م"}]},
-            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/11/08 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/11/09 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/11/10 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/11/11 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/12 هـ",m:"2027/04/01 م"}]},
-            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/11/15 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/16 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/17 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/18 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/19 هـ",m:"2027/04/08 م"}]},
-            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/11/22 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/23 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/24 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/25 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/26 هـ",m:"2027/04/15 م"}]},
-            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/12/01 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/12/02 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/12/03 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/12/04 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/12/05 هـ",m:"2027/04/22 م"}]},
-            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/12/08 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/12/09 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/12/10 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/12/11 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/12/12 هـ",m:"2027/04/29 م"}]},
-            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/12/15 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/16 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/17 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/18 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/19 هـ",m:"2027/05/06 م"}]},
-            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/12/22 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/23 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/24 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/25 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/26 هـ",m:"2027/05/13 م"}]},
-            { t: 2, w: 19, label: "الأسبوع التاسع عشر", event: "نهاية الفصل", days: [{name:"الأحد",h:"1448/12/29 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/13/01 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/13/02 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/13/03 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/13/04 هـ",m:"2027/05/20 م"}]}
+            { t: 1, w: 19, label: "الأسبوع التاسع عشر", event: "اختبارات ونهاية الفصل", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]}
         ];
 
-        document.addEventListener("DOMContentLoaded", () => {
-            loadDataFromCloud();
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadDataFromCloud();
             setTodayAutomatically();
         });
+
+        async function loadDataFromCloud() {
+            try {
+                let docRef = await db.collection("schedules").doc("main_schedule").get();
+                if (docRef.exists) {
+                    let data = docRef.data();
+                    if (data.assignments) customAssignments = data.assignments;
+                    if (data.classes) targetClasses = data.classes;
+                    if (data.teachers) teachersPool = data.teachers;
+                    if (data.overrides) tempOverrides = data.overrides;
+                }
+            } catch (e) {
+                console.log("جارِ استخدام البيانات المحلية...");
+            }
+        }
 
         function setTodayAutomatically() {
             let todayObj = new Date();
@@ -749,22 +770,6 @@
             renderScheduleTableForDay("الثلاثاء");
         }
 
-        async function loadDataFromCloud() {
-            try {
-                let docRef = await db.collection("schedules").doc("main_schedule").get();
-                if (docRef.exists) {
-                    let data = docRef.data();
-                    if (data.assignments) customAssignments = data.assignments;
-                    if (data.classes) targetClasses = data.classes;
-                    if (data.teachers) teachersPool = data.teachers;
-                    if (data.activity) activitySettings = data.activity;
-                    if (data.overrides) tempOverrides = data.overrides;
-                }
-            } catch (e) {
-                console.log("جارِ استخدام البيانات المحلية...");
-            }
-        }
-
         function renderScheduleTableForDay(dayStr) {
             let cleanDay = "الثلاثاء";
             ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(d => {
@@ -777,9 +782,11 @@
 
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
-                let html = `<th class="bg-light" style="vertical-align: middle;">
-                    <div class="class-row-header">
-                        <span class="font-weight-bold">${cls}</span>
+                
+                // تحسين شكل خيار الفصل والترس
+                let html = `<th class="class-col-header">
+                    <div class="class-row-header-box">
+                        <span class="class-title-text">${cls}</span>
                         <button class="gear-btn" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل"><i class="fas fa-cog"></i></button>
                     </div>
                 </th>`;
@@ -792,11 +799,11 @@
                     let course = "";
 
                     if (tempOverrides[weekKey]) {
-                        teacher = tempOverrides[weekKey].teacher;
-                        course = tempOverrides[weekKey].course;
+                        teacher = tempOverrides[weekKey].teacher || "";
+                        course = tempOverrides[weekKey].course || "";
                     } else if (customAssignments[baseKey]) {
-                        teacher = customAssignments[baseKey].teacher;
-                        course = customAssignments[baseKey].course;
+                        teacher = customAssignments[baseKey].teacher || "";
+                        course = customAssignments[baseKey].course || "";
                     }
 
                     let isActivityCard = course && course.includes("نشاط");
@@ -804,24 +811,21 @@
                     if (isActivityCard) {
                         html += `<td>
                             <div class="activity-card">
-                                <div class="activity-header">
-                                    <span>${course}</span>
-                                </div>
+                                <div class="activity-header">${course}</div>
                                 <div class="teacher-name-badge">${teacher || "نشاط مدرسي"}</div>
                             </div>
                         </td>`;
-                    } else if (teacher || course) {
+                    } else if (course) {
                         html += `<td>
                             <div class="course-cell-box">
                                 <div class="course-name-large">${course}</div>
-                                <div class="teacher-name-badge">${teacher}</div>
+                                <div class="teacher-name-badge">${teacher || "—"}</div>
                             </div>
                         </td>`;
                     } else {
+                        // حصة خالية تماماً بدون كلمة فارغ
                         html += `<td>
-                            <div class="course-cell-box text-center">
-                                <div class="empty-cell-text">فارغ</div>
-                            </div>
+                            <div class="empty-cell-box"></div>
                         </td>`;
                     }
                 }
@@ -830,7 +834,6 @@
             });
         }
 
-        // إدارة المعلمين (إضافة وحذف)
         function openTeachersManagerModal() {
             renderTeachersListInManager();
             document.getElementById('teachersManagerModal').classList.add('show');
@@ -863,9 +866,14 @@
         }
         function updateTeacherSelectDropdown() {
             const teacherSel = document.getElementById('assignTeacherSelect');
-            teacherSel.innerHTML = teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
+            const actTeacherSel = document.getElementById('actAssignTeacherSelect');
+            
+            let html = `<option value="">— تفريغ المعلم —</option>` + teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
+            teacherSel.innerHTML = html;
+            if(actTeacherSel) actTeacherSel.innerHTML = html;
         }
 
+        // إسناد الحصص الدراسية العامة
         function openAssignmentModal() {
             document.getElementById('assignDaySelect').value = activeDayName;
             
@@ -878,23 +886,13 @@
             updateTeacherSelectDropdown();
 
             const courseSel = document.getElementById('assignCourseSelect');
-            courseSel.innerHTML = coursesPool.concat([activitySettings.name]).map(co => `<option value="${co}">${co}</option>`).join('');
+            courseSel.innerHTML = `<option value="">— تفريغ الحصة (خالي) —</option>` + coursesPool.map(co => `<option value="${co}">${co}</option>`).join('');
 
-            document.getElementById('activityAdvancedOptions').style.display = 'none';
             document.getElementById('assignmentModal').classList.add('show');
         }
 
         function closeAssignmentModal() {
             document.getElementById('assignmentModal').classList.remove('show');
-        }
-
-        function checkCourseIsActivity(courseVal) {
-            let isAct = courseVal.includes("نشاط");
-            document.getElementById('activityAdvancedOptions').style.display = isAct ? 'block' : 'none';
-        }
-
-        function toggleActivityWeeksInput(val) {
-            document.getElementById('excludedWeeksBox').style.display = (val === 'مرنة') ? 'block' : 'none';
         }
 
         async function applyAssignmentChanges() {
@@ -911,6 +909,7 @@
 
             if (scope === 'all_weeks') {
                 customAssignments[baseKey] = { teacher: teacher, course: course };
+                delete tempOverrides[weekKey];
             } else {
                 tempOverrides[weekKey] = { teacher: teacher, course: course };
             }
@@ -918,7 +917,50 @@
             await saveToCloud();
             closeAssignmentModal();
             renderScheduleTableForDay(activeDayName);
-            alert("تم تطبيق وحفظ الإسناد بنجاح! ☁️");
+            alert("تم حفظ وتحديث الإسناد بالسحابة بنجاح! ☁️");
+        }
+
+        // نافذة مستقلة لإسناد النشاط المدرسي
+        function openActivityAssignModal() {
+            document.getElementById('actAssignDaySelect').value = activeDayName;
+            
+            const weekSel = document.getElementById('actAssignWeekSelect');
+            weekSel.innerHTML = CAL_1448.map(w => `<option value="${w.label}" ${w.label === activeWeekLabel ? 'selected' : ''}>${w.label} (الفصل ${w.t})</option>`).join('');
+
+            const classSel = document.getElementById('actAssignClassSelect');
+            classSel.innerHTML = targetClasses.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            updateTeacherSelectDropdown();
+            document.getElementById('activityAssignModal').classList.add('show');
+        }
+
+        function closeActivityAssignModal() {
+            document.getElementById('activityAssignModal').classList.remove('show');
+        }
+
+        async function applyActivityAssignment() {
+            const actName = document.getElementById('actAssignNameInput').value.trim() || "نشاط مدرسي";
+            const teacher = document.getElementById('actAssignTeacherSelect').value;
+            const week = document.getElementById('actAssignWeekSelect').value;
+            const day = document.getElementById('actAssignDaySelect').value;
+            const cls = document.getElementById('actAssignClassSelect').value;
+            const period = document.getElementById('actAssignPeriodSelect').value;
+            const scope = document.getElementById('actAssignScopeSelect').value;
+
+            let baseKey = `${day}_${cls}_${period}`;
+            let weekKey = `${week}_${day}_${cls}_${period}`;
+
+            if (scope === 'all_weeks') {
+                customAssignments[baseKey] = { teacher: teacher, course: actName };
+                delete tempOverrides[weekKey];
+            } else {
+                tempOverrides[weekKey] = { teacher: teacher, course: actName };
+            }
+
+            await saveToCloud();
+            closeActivityAssignModal();
+            renderScheduleTableForDay(activeDayName);
+            alert("تم إسناد وحفظ برنامج النشاط بنجاح! 🌟");
         }
 
         async function saveToCloud() {
@@ -927,29 +969,11 @@
                     assignments: customAssignments,
                     classes: targetClasses,
                     teachers: teachersPool,
-                    activity: activitySettings,
                     overrides: tempOverrides
                 }, { merge: true });
             } catch (e) {
                 alert("خطأ أثناء الحفظ بالسحابة.");
             }
-        }
-
-        function openActivityModal() {
-            document.getElementById('actNameInput').value = activitySettings.name;
-            document.getElementById('actHoursInput').value = activitySettings.hours || 1;
-            document.getElementById('activitySettingsModal').classList.add('show');
-        }
-        function closeActivityModal() {
-            document.getElementById('activitySettingsModal').classList.remove('show');
-        }
-        async function saveActivitySettings() {
-            activitySettings.name = document.getElementById('actNameInput').value || "نشاط مدرسي";
-            activitySettings.hours = parseInt(document.getElementById('actHoursInput').value) || 1;
-            await saveToCloud();
-            closeActivityModal();
-            renderScheduleTableForDay(activeDayName);
-            alert("تم حفظ إعدادات النشاط بنجاح!");
         }
 
         function openCalendarModal() {
