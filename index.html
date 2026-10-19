@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
+    <!-- مكتبات Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --paper: #EEF3F2;
@@ -22,9 +26,6 @@
             --line: #D3DEDB;
             --brand: #0C6A64;
             --brand-ink: #FFFFFF;
-            --open: #17804A;
-            --soon: #9C6200;
-            --ended: #8C9896;
             --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
         }
 
@@ -37,7 +38,6 @@
             padding: 15px;
         }
 
-        /* ترويسة الصفحة */
         .page-header-card {
             background: #fff;
             border: 1px solid var(--line);
@@ -64,7 +64,6 @@
             box-shadow: 0 6px 18px -6px rgba(12,106,100,.45);
         }
 
-        /* شريط اختيار التقويم العائم */
         .cal-nav-bar {
             background: #111827;
             color: #fff;
@@ -104,7 +103,6 @@
             font-weight: 600;
         }
 
-        /* نافذة المودال العامة */
         .modal-cal {
             position: fixed;
             inset: 0;
@@ -190,16 +188,6 @@
         .wk-head-btn:hover { background: #253A38; }
         .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
         .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
-
-        .etag-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #E0A43A;
-            border: 1px solid #E0A43A;
-            border-radius: 4px;
-            padding: 1px 6px;
-            margin-inline-start: 6px;
-        }
 
         .days-list {
             display: none;
@@ -380,10 +368,10 @@
         <div class="mbox-cal" style="width: min(500px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة وتعديل الإسناد</h3>
+                    <h3>إدارة وتعديل الإسناد (السحابة)</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث الجدول وحفظه</p>
+                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث السحابة مباشرة</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -422,7 +410,7 @@
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="applyAssignmentChanges()">حفظ وتثبيت الإسناد</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="applyAssignmentChanges()">حفظ وتثبيت بالسحابة ☁️</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeAssignmentModal()">إلغاء</button>
             </div>
         </div>
@@ -435,7 +423,7 @@
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
-                <button class="btn-act btn-act-gray text-danger" onclick="clearAllSavedData()"><i class="fas fa-trash-alt"></i> إعادة ضبط الجدول</button>
+                <button class="btn-act btn-act-gray text-danger" onclick="clearCloudData()"><i class="fas fa-trash-alt"></i> إعادة ضبط السحابة</button>
             </div>
         </div>
 
@@ -462,7 +450,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي الشامل لـ 21 فصل -->
+    <!-- الجدول الرئيسي -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -486,7 +474,7 @@
         <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إضافة فصل دراسي جديد</h3>
+                    <h3>إضافة فصل دراسي جديد للسحابة</h3>
                     <button type="button" class="close text-white" onclick="closeAddModal()">&times;</button>
                 </div>
             </div>
@@ -497,14 +485,29 @@
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة</button>
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة وحفظ بالسحابة</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeAddModal()">إلغاء</button>
             </div>
         </div>
     </div>
 
     <script>
-        let targetClasses = JSON.parse(localStorage.getItem('saved_classes')) || [
+        // إعدادات Firebase الخاصة بمشروعك makkahschool-32961
+        const firebaseConfig = {
+            apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
+            authDomain: "makkahschool-32961.firebaseapp.com",
+            projectId: "makkahschool-32961",
+            storageBucket: "makkahschool-32961.firebasestorage.app",
+            messagingSenderId: "502489720942",
+            appId: "1:502489720942:web:9738bda6457aec5904de7f",
+            measurementId: "G-HMQSMFF391"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let targetClasses = [
             "1/أ", "1/ب", "1/ج", "1/د",
             "2/أ", "2/ب", "2/ج", "2/د",
             "3/أ", "3/ب", "3/ج", "3/د",
@@ -516,9 +519,23 @@
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
         const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
-        // استرجاع الإسنادات المحفوظة مسبقاً من متصفح المستخدم
-        let customAssignments = JSON.parse(localStorage.getItem('saved_assignments')) || {};
+        let customAssignments = {};
         let activeDayName = "الإثنين";
+
+        // تحميل البيانات من سحابة Firebase عند فتح الصفحة
+        async function loadDataFromCloud() {
+            try {
+                let docRef = await db.collection("schedules").doc("main_schedule").get();
+                if (docRef.exists) {
+                    let data = docRef.data();
+                    if (data.assignments) customAssignments = data.assignments;
+                    if (data.classes) targetClasses = data.classes;
+                }
+            } catch (e) {
+                console.log("جارِ استخدام البيانات الافتراضية...");
+            }
+            renderScheduleTableForDay("الإثنين");
+        }
 
         function renderScheduleTableForDay(dayStr) {
             let cleanDay = "الإثنين";
@@ -586,8 +603,8 @@
             document.getElementById('assignmentModal').classList.remove('show');
         }
 
-        // حفظ التعديلات وتثبيتها محلياً وتحديث الجدول فوراً
-        function applyAssignmentChanges() {
+        // حفظ التعديلات في سحابة Firebase مباشرة
+        async function applyAssignmentChanges() {
             const day = document.getElementById('assignDaySelect').value;
             const cls = document.getElementById('assignClassSelect').value;
             const period = document.getElementById('assignPeriodSelect').value;
@@ -597,25 +614,34 @@
             let key = `${day}_${cls}_${period}`;
             customAssignments[key] = { teacher: teacher, course: course };
 
-            // **التثبيت الدائم في ذاكرة المتصفح**
-            localStorage.setItem('saved_assignments', JSON.stringify(customAssignments));
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses
+                }, { merge: true });
 
-            closeAssignmentModal();
-            renderScheduleTableForDay(activeDayName);
-            alert("تم حفظ وتثبيت الإسناد بنجاح ولن يضيع بعد الآن!");
-        }
-
-        // مسح وحذف التعديلات المحفوظة واستعادة الافتراضي
-        function clearAllSavedData() {
-            if(confirm("هل أنت متأكد من مسح كافة التعديلات المحفوظة واستعادة الجدول الافتراضي؟")) {
-                localStorage.removeItem('saved_assignments');
-                localStorage.removeItem('saved_classes');
-                customAssignments = {};
-                location.reload();
+                closeAssignmentModal();
+                renderScheduleTableForDay(activeDayName);
+                alert("تم حفظ وتثبيت الإسناد في السحابة بنجاح! ☁️");
+            } catch (error) {
+                console.error("خطأ في الحفظ بالسحابة: ", error);
+                alert("حدث خطأ أثناء الاتصال بالسحابة.");
             }
         }
 
-        // بيانات التقويم
+        // مسح وإعادة ضبط البيانات من السحابة
+        async function clearCloudData() {
+            if(confirm("هل أنت متأكد من مسح كافة التعديلات من السحابة واستعادة الجدول الافتراضي؟")) {
+                try {
+                    await db.collection("schedules").doc("main_schedule").delete();
+                    customAssignments = {};
+                    location.reload();
+                } catch (e) {
+                    alert("حدث خطأ أثناء الحذف.");
+                }
+            }
+        }
+
         const CAL_1448 = [
             { t: 1, w: 8, label: "الأسبوع الثامن", days: [
                 { name: "الأحد", h: "1448/05/07 هـ", m: "2026/10/18 م" },
@@ -629,7 +655,7 @@
         let currentTerm = 1;
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderScheduleTableForDay("الإثنين");
+            loadDataFromCloud();
         });
 
         function openCalendarModal() {
@@ -717,7 +743,7 @@
             document.getElementById('addClassModal').style.display = 'none';
         }
 
-        function addNewClassRow() {
+        async function addNewClassRow() {
             let className = document.getElementById('newClassNameInput').value.trim();
             if(!className) {
                 alert("الرجاء إدخال اسم الفصل");
@@ -725,10 +751,19 @@
             }
 
             targetClasses.push(className);
-            localStorage.setItem('saved_classes', JSON.stringify(targetClasses));
-            renderScheduleTableForDay(activeDayName);
-            closeAddModal();
-            alert("تم إضافة وحفظ الفصل الجديد بنجاح!");
+            
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses
+                }, { merge: true });
+
+                renderScheduleTableForDay(activeDayName);
+                closeAddModal();
+                alert("تم إضافة وحفظ الفصل الجديد في السحابة بنجاح!");
+            } catch (e) {
+                alert("خطأ أثناء الحفظ بالسحابة.");
+            }
         }
     </script>
 </body>
