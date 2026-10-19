@@ -504,7 +504,7 @@
                 </tr>
             </thead>
             <tbody id="scheduleTableBody">
-                <!-- سيتم تعبئة 21 فصل برمجياً أو افتراضياً -->
+                <!-- سيتم تعبئة الـ 21 فصلاً المطلوبة برمجياً -->
             </tbody>
         </table>
     </div>
@@ -541,12 +541,14 @@
     </div>
 
     <script>
-        // توليد 21 فصل دراسي افتراضياً
-        const defaultClasses = [
-            "1/أ", "1/ب", "1/ج", "2/أ", "2/ب", "2/ج", 
-            "3/أ", "3/ب", "3/ج", "4/أ", "4/ب", "4/ج", 
-            "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج", 
-            "الأول متوسط", "الثاني متوسط", "الثالث متوسط"
+        // قائمة الـ 21 فصلاً المطابقة تماماً لطلبك
+        const targetClasses = [
+            "1/أ", "1/ب", "1/ج", "1/د",
+            "2/أ", "2/ب", "2/ج", "2/د",
+            "3/أ", "3/ب", "3/ج", "3/د",
+            "4/أ", "4/ب", "4/ج",
+            "5/أ", "5/ب", "5/ج",
+            "6/أ", "6/ب", "6/ج"
         ];
 
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
@@ -556,7 +558,7 @@
             const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            defaultClasses.forEach((cls, index) => {
+            targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
                 tr.setAttribute('data-row-class', cls);
                 
@@ -567,7 +569,6 @@
                     let course = coursesPool[(index + i) % coursesPool.length];
                     
                     if(i === 5) {
-                        // إضافة خلية نشاط في الحصة الخامسة كنموذج
                         html += `<td>
                             <div class="activity-card" data-teacher="${teacher}">
                                 <div class="activity-header"><span>نشاط مدرسي</span><span class="activity-type-tag tag-fixed">ثابتة</span></div>
@@ -594,7 +595,7 @@
             renderScheduleTable();
         });
 
-        // بيانات التقويم (كما هي تماماً بدون تغيير)
+        // بيانات التقويم كما هي تماماً دون أي تغيير
         const CAL_1448 = [
             { t: 1, w: 1, label: "الأسبوع الأول", days: [
                 { name: "الأحد", h: "1448/02/10 هـ", m: "2026/08/16 م" },
