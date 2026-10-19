@@ -321,43 +321,6 @@
             display: inline-block;
             width: 100%;
         }
-
-        .activity-card {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed var(--brand);
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(12,106,100,0.1);
-        }
-
-        .activity-header {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .activity-type-tag {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-        .tag-fixed { background: #dbeafe; color: #1d4ed8; }
-
-        .status-pill {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .status-done { background: #dcfce7; color: #15803d; }
     </style>
 </head>
 <body>
@@ -420,7 +383,7 @@
                     <h3>إدارة وتعديل الإسناد</h3>
                     <button type="button" class="close text-white" onclick="closeAssignmentModal()">&times;</button>
                 </div>
-                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث الجدول مباشرة</p>
+                <p>اختر اليوم، الفصل، الحصة، المعلم والمادة لتحديث الجدول وحفظه</p>
             </div>
             <div class="mbody-cal">
                 <div class="form-group text-right">
@@ -435,9 +398,7 @@
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">الفصل / الصف:</label>
-                    <select id="assignClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <!-- تعبئة برمجية -->
-                    </select>
+                    <select id="assignClassSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">رقم الحصة:</label>
@@ -453,15 +414,11 @@
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المعلم المسؤول:</label>
-                    <select id="assignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <!-- تعبئة برمجية -->
-                    </select>
+                    <select id="assignTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
                 <div class="form-group text-right">
                     <label class="small font-weight-bold text-light">المادة أو النشاط:</label>
-                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                        <!-- تعبئة برمجية -->
-                    </select>
+                    <select id="assignCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
             </div>
             <div class="mfoot-cal">
@@ -478,6 +435,7 @@
                 <button class="btn-act btn-act-green" onclick="openAssignmentModal()"><i class="fas fa-tasks"></i> الإسناد</button>
                 <button class="btn-act btn-act-outline-green" onclick="filterByTeacher()"><i class="fas fa-highlighter"></i> تحديد حصص المعلم</button>
                 <button class="btn-act btn-act-gray" onclick="resetTableFilter()"><i class="fas fa-eraser"></i> مسح الفرز</button>
+                <button class="btn-act btn-act-gray text-danger" onclick="clearAllSavedData()"><i class="fas fa-trash-alt"></i> إعادة ضبط الجدول</button>
             </div>
         </div>
 
@@ -546,7 +504,7 @@
     </div>
 
     <script>
-        const targetClasses = [
+        let targetClasses = JSON.parse(localStorage.getItem('saved_classes')) || [
             "1/أ", "1/ب", "1/ج", "1/د",
             "2/أ", "2/ب", "2/ج", "2/د",
             "3/أ", "3/ب", "3/ج", "3/د",
@@ -558,12 +516,11 @@
         const teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
         const coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الحياتية", "الاجتماعيات", "نشاط مدرسي"];
 
-        // كائن لحفظ التعديلات المسندة لكل يوم
-        let customAssignments = {};
+        // استرجاع الإسنادات المحفوظة مسبقاً من متصفح المستخدم
+        let customAssignments = JSON.parse(localStorage.getItem('saved_assignments')) || {};
         let activeDayName = "الإثنين";
 
         function renderScheduleTableForDay(dayStr) {
-            // استخلاص اسم اليوم الصريح (مثل: الإثنين، الأحد، إلخ) للبحث والفلترة بدقة
             let cleanDay = "الإثنين";
             ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(d => {
                 if (dayStr.includes(d)) cleanDay = d;
@@ -590,7 +547,6 @@
                     let key = `${cleanDay}_${cls}_${i}`;
                     let teacher, course;
 
-                    // إذا كان هناك إسناد محفوظ مسبقاً، يتم اعتماده فوراً
                     if (customAssignments[key]) {
                         teacher = customAssignments[key].teacher;
                         course = customAssignments[key].course;
@@ -611,7 +567,6 @@
             });
         }
 
-        // فتح نافذة الإسناد وتعبئة الخيارات
         function openAssignmentModal() {
             document.getElementById('assignDaySelect').value = activeDayName;
             
@@ -631,7 +586,7 @@
             document.getElementById('assignmentModal').classList.remove('show');
         }
 
-        // تطبيق التعديلات وانعكاسها فوراً على الجدول
+        // حفظ التعديلات وتثبيتها محلياً وتحديث الجدول فوراً
         function applyAssignmentChanges() {
             const day = document.getElementById('assignDaySelect').value;
             const cls = document.getElementById('assignClassSelect').value;
@@ -642,11 +597,22 @@
             let key = `${day}_${cls}_${period}`;
             customAssignments[key] = { teacher: teacher, course: course };
 
-            closeAssignmentModal();
+            // **التثبيت الدائم في ذاكرة المتصفح**
+            localStorage.setItem('saved_assignments', JSON.stringify(customAssignments));
 
-            // إعادة رسم الجدول باليوم النشط حالياً لتظهر التعديلات فوراً
+            closeAssignmentModal();
             renderScheduleTableForDay(activeDayName);
-            alert("تم تحديث الجدول وتثبيت الإسناد بنجاح!");
+            alert("تم حفظ وتثبيت الإسناد بنجاح ولن يضيع بعد الآن!");
+        }
+
+        // مسح وحذف التعديلات المحفوظة واستعادة الافتراضي
+        function clearAllSavedData() {
+            if(confirm("هل أنت متأكد من مسح كافة التعديلات المحفوظة واستعادة الجدول الافتراضي؟")) {
+                localStorage.removeItem('saved_assignments');
+                localStorage.removeItem('saved_classes');
+                customAssignments = {};
+                location.reload();
+            }
         }
 
         // بيانات التقويم
@@ -759,9 +725,10 @@
             }
 
             targetClasses.push(className);
+            localStorage.setItem('saved_classes', JSON.stringify(targetClasses));
             renderScheduleTableForDay(activeDayName);
             closeAddModal();
-            alert("تم إضافة الفصل الجديد بنجاح!");
+            alert("تم إضافة وحفظ الفصل الجديد بنجاح!");
         }
     </script>
 </body>
