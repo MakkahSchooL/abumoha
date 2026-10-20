@@ -919,17 +919,6 @@
             if (typeVal === 'empty') {
                 delete customAssignments[baseKey];
                 delete tempOverrides[weekKey];
-
-                // حذف العنصر تماماً من قاعدة البيانات السحابية باستخدام FieldValue.delete() لضمان عدم عودته عند التحديث
-                try {
-                    await db.collection("schedules").doc("main_schedule").update({
-                        [`assignments.${baseKey}`]: firebase.firestore.FieldValue.delete(),
-                        [`overrides.${weekKey}`]: firebase.firestore.FieldValue.delete()
-                    });
-                } catch (e) {
-                    // في حال لم يكن الحقل موجوداً بالسحابة مسبقاً، نقوم بتحديث السحابة ككل
-                    await saveToCloud();
-                }
             } else {
                 let courseName = "";
                 let teacherName = "";
@@ -953,9 +942,10 @@
                     fieldKey: fieldKey
                 };
                 delete tempOverrides[weekKey];
-
-                await saveToCloud();
             }
+
+            // إرسال الكائن المحدث بالكامل (بما في ذلك الحذف) للسحابة لحفظ الحالة فوراً ودون رجعة
+            await saveToCloud();
 
             closeCellClickModal();
             renderScheduleTableForDay(activeDayName);
@@ -1004,7 +994,7 @@
                     classes: targetClasses,
                     teachers: teachersPool,
                     overrides: tempOverrides
-                }, { merge: true });
+                });
             } catch (e) {
                 alert("خطأ أثناء الحفظ بالسحابة.");
             }
