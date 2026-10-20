@@ -693,7 +693,7 @@
 
                     <div class="form-group text-right mb-2" id="customProgramNameBox" style="display:none;">
                         <label class="small font-weight-bold text-warning">اسم البرنامج / المسابقة الجديدة:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط" oninput="updateHoursTrackerDisplay()">
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط">
                     </div>
 
                     <div class="row">
@@ -708,15 +708,10 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">عدد الحصص المحددة:</label>
-                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="30" oninput="updateHoursTrackerDisplay()">
+                                <label class="small font-weight-bold text-success">عدد حصص البرنامج:</label>
+                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="30">
                             </div>
                         </div>
-                    </div>
-
-                    <div class="p-2 mb-2 rounded bg-dark border border-secondary text-right" id="programHoursTrackerBox" style="font-size: 0.78rem;">
-                        <span class="text-info font-weight-bold">متابعة حصص البرنامج (بنفس المعلم ونفس الصف):</span><br>
-                        إجمالي حصص البرنامج: <b id="lblTotalHours">0</b> | الحصص المُسندة بالجدول: <b id="lblExecutedHours" class="text-success">0</b> | الحصص المتبقية: <b id="lblRemainingHours" class="text-warning">0</b>
                     </div>
 
                     <div class="form-group text-right mb-0">
@@ -729,7 +724,7 @@
                     <label class="small font-weight-bold text-light">المعلم المسؤول: 
                         <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()"><i class="fas fa-pen"></i> إضافة/حذف معلم</button>
                     </label>
-                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="updateHoursTrackerDisplay()"></select>
+                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
             </div>
             <div class="mfoot-cal">
@@ -804,7 +799,6 @@
                     <th>فترة التنفيذ / الحصة</th>
                     <th>طبيعة الحصة</th>
                     <th>عدد حصص البرنامج</th>
-                    <th>المتبقي من البرنامج</th>
                     <th>آلية تقديم النشاط</th>
                     <th>المعلم المنفذ</th>
                 </tr>
@@ -1149,50 +1143,6 @@
             updateFieldCounters(cleanDay);
         }
 
-        // احتساب الحصص المُسندة للبرنامج شرط أن يكون لنفس المعلم ونفس الصف
-        function countExecutedProgramHours(progName, teacherName, clsName, excludeKey = null) {
-            let count = 0;
-            for (let k in customAssignments) {
-                if (k === excludeKey) continue;
-                let item = customAssignments[k];
-                if (item && item.isActivity && item.course === progName && item.teacher === teacherName && k.includes(`_${clsName}_`)) {
-                    count += (parseInt(item.hours) || 1);
-                }
-            }
-            for (let k in tempOverrides) {
-                if (k === excludeKey) continue;
-                let item = tempOverrides[k];
-                if (item && item.isActivity && item.course === progName && item.teacher === teacherName && k.includes(`_${clsName}_`)) {
-                    count += (parseInt(item.hours) || 1);
-                }
-            }
-            return count;
-        }
-
-        function updateHoursTrackerDisplay() {
-            if (!selectedCellInfo) return;
-            let progName = "";
-            let presetVal = document.getElementById('cellActPresetSelect').value;
-            if (presetVal === 'NEW_CUSTOM') {
-                progName = document.getElementById('cellActNameInput').value.trim();
-            } else {
-                progName = presetVal;
-            }
-
-            let teacherName = document.getElementById('cellTeacherSelect').value;
-            let clsName = selectedCellInfo.cls;
-            let currentKey = `${activeWeekLabel}_${selectedCellInfo.day}_${clsName}_${selectedCellInfo.period}`;
-
-            let plannedTotal = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-            let executed = countExecutedProgramHours(progName, teacherName, clsName, currentKey);
-            let remaining = plannedTotal - executed;
-            if (remaining < 0) remaining = 0;
-
-            document.getElementById('lblTotalHours').innerText = plannedTotal;
-            document.getElementById('lblExecutedHours').innerText = executed;
-            document.getElementById('lblRemainingHours').innerText = remaining;
-        }
-
         function onFieldChange(fieldKey) {
             let sel = document.getElementById('cellActPresetSelect');
             sel.innerHTML = '';
@@ -1226,7 +1176,6 @@
                     hoursInput.value = found.hours;
                 }
             }
-            updateHoursTrackerDisplay();
         }
 
         /* دوال الطباعة */
@@ -1259,9 +1208,6 @@
                         let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
                         let flexText = cellData.flexibility || "ثابتة";
                         let hrs = cellData.hours || 1;
-                        let executed = countExecutedProgramHours(cellData.course, cellData.teacher, cls, weekKey);
-                        let rem = hrs - executed;
-                        if (rem < 0) rem = 0;
 
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1272,7 +1218,6 @@
                             <td>الحصة ${i}</td>
                             <td>${flexText}</td>
                             <td>${hrs} حصص</td>
-                            <td>متبقي ${rem} ح</td>
                             <td>${barcodeCellContent}</td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
@@ -1282,7 +1227,7 @@
             });
 
             if (count === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
             }
 
             document.body.className = "print-activities-only";
@@ -1333,7 +1278,6 @@
             document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
             document.getElementById('cellBarcodeFileInput').value = '';
             handleCellTypeChange(cellTypeSel.value);
-            updateHoursTrackerDisplay();
 
             document.getElementById('cellClickModal').classList.add('show');
         }
