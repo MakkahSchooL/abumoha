@@ -436,27 +436,64 @@
         }
         .gear-btn:hover { background: #e2e8f0; color: #0C6A64; }
 
-        /* تنسيقات خاصة للطباعة */
+        /* منطقة التقرير التنفيذي للأنشطة (تظهر عند الطباعة المخصصة للأنشطة) */
+        #activityReportPrintArea {
+            display: none;
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .act-report-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .act-report-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-top: 10px;
+            color: #0f172a;
+        }
+        .act-report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .act-report-table th, .act-report-table td {
+            border: 1px solid #000;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        .act-report-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+        }
+        .act-signatures-box {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* تنسيقات الطباعة */
         @media print {
-            .page-header-card, .cal-nav-bar, .control-btns-container, .gear-btn {
-                display: none !important;
-            }
-            body {
-                background-color: #fff !important;
-                padding: 0 !important;
-            }
-            .table-responsive {
-                overflow: visible !important;
-            }
-            .wc-main-table {
-                box-shadow: none !important;
-                border: 1px solid #000 !important;
-            }
-            .hide-for-activity-print {
-                visibility: hidden !important;
-                background: transparent !important;
-                border: none !important;
-            }
+            body { background: #fff !important; padding: 0 !important; }
+            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal { display: none !important; }
+            
+            /* الوضع الطبيعي لطباعة الجدول الكامل */
+            body.print-full-schedule .table-responsive { display: block !important; }
+            body.print-full-schedule #activityReportPrintArea { display: none !important; }
+            
+            /* الوضع الخاص لطباعة تقرير الأنشطة الطلابية */
+            body.print-activities-only .table-responsive { display: none !important; }
+            body.print-activities-only #activityReportPrintArea { display: block !important; }
         }
     </style>
 </head>
@@ -634,7 +671,7 @@
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
             <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             <button class="btn-act btn-act-outline-green" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
-            <button class="btn-act btn-act-outline-green" onclick="printActivitiesOnly()"><i class="fas fa-star"></i> طباعة الأنشطة فقط</button>
+            <button class="btn-act btn-act-outline-green" onclick="printActivitiesOnly()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
         </div>
         
         <div class="fields-bar-container">
@@ -665,6 +702,54 @@
             </thead>
             <tbody id="scheduleTableBody"></tbody>
         </table>
+    </div>
+
+    <!-- تقرير طباعة الأنشطة الطلابية التنفيذي المستقل -->
+    <div id="activityReportPrintArea">
+        <div class="act-report-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div style="font-size: 0.9rem; font-weight: 700;">
+                    <div>الإدارة العامة للتعليم بمنطقة مكة المكرمة</div>
+                    <div>المدرسة: ....................................</div>
+                </div>
+                <div>
+                    <strong style="font-size: 1.1rem; color: #0C6A64;">وزارة التعليم</strong>
+                </div>
+            </div>
+            <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 4px;" id="actReportSubTitle">العام الدراسي 1448هـ</div>
+        </div>
+
+        <table class="act-report-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">م</th>
+                    <th>اسم البرنامج / النشاط</th>
+                    <th>المجال</th>
+                    <th>الصفوف المستهدفة</th>
+                    <th>فترة التنفيذ / الحصة</th>
+                    <th>آلية تقديم النشاط</th>
+                    <th>المعلم المنفذ</th>
+                </tr>
+            </thead>
+            <tbody id="actReportTableBody"></tbody>
+        </table>
+
+        <div class="act-signatures-box">
+            <div>
+                <div>رائد النشاط</div>
+                <div style="margin-top: 25px;">الاسم: ..........................</div>
+                <div>التوقيع: ........................</div>
+            </div>
+            <div>
+                <div>ختم المدرسة</div>
+            </div>
+            <div>
+                <div>مدير المدرسة</div>
+                <div style="margin-top: 25px;">الاسم: ..........................</div>
+                <div>التوقيع: ........................</div>
+            </div>
+        </div>
     </div>
 
     <!-- نافذة إضافة فصل جديد -->
@@ -876,14 +961,14 @@
                             </div>
                         </td>`;
                     } else if (cellData && cellData.course) {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})" class="normal-course-cell">
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
                             <div class="course-cell-box">
                                 <div class="course-name-large">${cellData.course}</div>
                                 <div class="teacher-name-badge">${cellData.teacher || "—"}</div>
                             </div>
                         </td>`;
                     } else {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})" class="normal-course-cell">
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
                             <div class="empty-cell-box"></div>
                         </td>`;
                     }
@@ -895,19 +980,52 @@
 
         /* دوال الطباعة */
         function printFullSchedule() {
+            document.body.className = "print-full-schedule";
             window.print();
         }
 
         function printActivitiesOnly() {
-            let courseCells = document.querySelectorAll('.normal-course-cell');
-            courseCells.forEach(cell => cell.classList.add('hide-for-activity-print'));
-            
-            window.print();
+            let cur = ALL_DAYS_FLAT[currentFlatIndex];
+            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} الموافق ${cur.hDate} هـ (${cur.mDate} م)`;
 
-            // إرجاع الخلايا كما كانت بعد الانتهاء من الطباعة
-            setTimeout(() => {
-                courseCells.forEach(cell => cell.classList.remove('hide-for-activity-print'));
-            }, 500);
+            let tbody = document.getElementById('actReportTableBody');
+            tbody.innerHTML = '';
+
+            let count = 0;
+            let cleanDay = activeDayName;
+
+            targetClasses.forEach(cls => {
+                for(let i = 1; i <= 7; i++) {
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
+                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
+                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+
+                    if (cellData && cellData.isActivity) {
+                        count++;
+                        let fKey = cellData.fieldKey || "citizenship";
+                        let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${count}</td>
+                            <td style="font-weight: 700;">${cellData.course}</td>
+                            <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
+                            <td>فصل ${cls}</td>
+                            <td>الحصة ${i}</td>
+                            <td>ترشيح من المدرسة / رائد النشاط</td>
+                            <td>${cellData.teacher || "غير محدد"}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+                }
+            });
+
+            if (count === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
+            }
+
+            document.body.className = "print-activities-only";
+            window.print();
         }
 
         function openCellClickModal(day, cls, period) {
