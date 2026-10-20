@@ -297,21 +297,22 @@
             gap: 10px;
         }
 
-        /* تعديل الأزرار لتأخذ نفس تصميم زر التاريخ والتقويم */
+        /* تصغير الخط في الأزرار الثلاثة العلويات لضمان ملاءمتها للمساحة */
         .btn-custom-dark {
             background: linear-gradient(135deg, var(--brand), #0891b2);
             color: #fff;
             border: none;
             border-radius: 10px;
-            padding: 8px 16px;
+            padding: 7px 12px;
             font-weight: 700;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(12,106,100,0.2);
+            white-space: nowrap;
         }
         .btn-custom-dark:hover {
             opacity: 0.95;
@@ -421,7 +422,7 @@
             position: relative;
         }
         .activity-header-custom {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 800;
             margin-bottom: 2px;
         }
@@ -431,8 +432,33 @@
             color: #fff;
             border-radius: 4px;
             padding: 1px 5px;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             display: inline-block;
+        }
+
+        /* تنسيق المربعات الجديدة قبل وبعد اسم النشاط */
+        .activity-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68rem;
+            font-weight: 700;
+            margin-top: 2px;
+            gap: 4px;
+        }
+        .activity-flexibility-box {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 1px 4px;
+            border-radius: 4px;
+            color: #334155;
+        }
+        .activity-hours-box {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #047857;
+            padding: 1px 5px;
+            border-radius: 4px;
         }
 
         .gear-btn {
@@ -486,8 +512,8 @@
         }
 
         .qr-code-img {
-            max-width: 75px;
-            max-height: 75px;
+            max-width: 70px;
+            max-height: 70px;
             display: block;
             margin: 0 auto;
         }
@@ -654,9 +680,26 @@
                         <label class="small font-weight-bold text-success">اسم برنامج النشاط:</label>
                         <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: ورشة الفنون والابتكار">
                     </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group text-right mb-2">
+                                <label class="small font-weight-bold text-success">طبيعة الحصة:</label>
+                                <select id="cellActFlexSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                                    <option value="ثابتة">ثابتة</option>
+                                    <option value="مرنة">مرنة</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group text-right mb-2">
+                                <label class="small font-weight-bold text-success">عدد الحصص:</label>
+                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="5">
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">عدد الحصص / الساعات:</label>
-                        <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="5">
+                        <label class="small font-weight-bold text-success">إرفاق باركود خاص بهذا النشاط:</label>
+                        <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
                     </div>
                 </div>
 
@@ -674,38 +717,12 @@
         </div>
     </div>
 
-    <!-- نافذة الاستفسار عن إرفاق باركود قبل الطباعة -->
-    <div class="modal-cal" id="barcodePromptModal">
-        <div class="mbox-cal" style="width: min(420px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>إرفاق باركود لآلية التقديم 📱</h3>
-                    <button type="button" class="close text-white" onclick="closeBarcodeModal()">&times;</button>
-                </div>
-                <p>اختر صورة الباركود لإدراجها داخل خانة آلية تقديم النشاط:</p>
-            </div>
-            <div class="mbody-cal text-right">
-                <div class="form-group">
-                    <label class="small font-weight-bold text-light">رفع صورة الباركود من الجهاز:</label>
-                    <input type="file" id="barcodeFileInput" accept="image/*" class="form-control-file text-white small" onchange="previewSelectedBarcode(this)">
-                </div>
-                <div id="barcodePreviewBox" class="text-center my-2" style="display:none;">
-                    <img id="barcodeImgPreview" src="" style="max-width: 90px; max-height: 90px; border: 1px solid #3AAFA5; border-radius: 6px; padding: 2px; background: #fff;">
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success font-weight-bold" onclick="proceedToPrintWithBarcode(true)">طباعة بالباركود 🖨️</button>
-                <button type="button" class="btn btn-sm btn-outline-light" onclick="proceedToPrintWithBarcode(false)">طباعة بدون باركود</button>
-            </div>
-        </div>
-    </div>
-
     <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
-        <div class="d-flex align-items-center gap-2" style="gap: 10px;">
-            <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
+            <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل</button>
             <button class="btn-custom-dark" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
-            <button class="btn-custom-dark" onclick="promptBarcodeBeforePrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
+            <button class="btn-custom-dark" onclick="executeActivitiesPrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
         </div>
         
         <div class="fields-bar-container">
@@ -828,7 +845,6 @@
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
         let selectedCellInfo = null;
-        let selectedBarcodeSrc = null;
 
         const CAL_1448 = [
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
@@ -972,10 +988,16 @@
                     if (cellData && cellData.isActivity) {
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+                        let flexibility = cellData.flexibility || "ثابتة";
+                        let hoursCount = cellData.hours || 1;
 
                         html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
                             <div class="activity-card-custom" style="border-color: ${fConf.color};">
                                 <span class="field-tag-badge" style="background: ${fConf.color};">${fConf.title}</span>
+                                <div class="activity-meta-row px-1">
+                                    <span class="activity-flexibility-box">${flexibility}</span>
+                                    <span class="activity-hours-box">${hoursCount} حصص</span>
+                                </div>
                                 <div class="activity-header-custom" style="color: ${fConf.color};">${cellData.course}</div>
                                 <div class="teacher-name-badge">${cellData.teacher || "نشاط مدرسي"}</div>
                             </div>
@@ -998,41 +1020,10 @@
             });
         }
 
-        /* دوال الطباعة والباركود */
+        /* دوال الطباعة */
         function printFullSchedule() {
             document.body.className = "print-full-schedule";
             window.print();
-        }
-
-        function promptBarcodeBeforePrint() {
-            document.getElementById('barcodeFileInput').value = '';
-            document.getElementById('barcodePreviewBox').style.display = 'none';
-            selectedBarcodeSrc = null;
-            document.getElementById('barcodePromptModal').classList.add('show');
-        }
-
-        function closeBarcodeModal() {
-            document.getElementById('barcodePromptModal').classList.remove('show');
-        }
-
-        function previewSelectedBarcode(input) {
-            if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedBarcodeSrc = e.target.result;
-                    document.getElementById('barcodeImgPreview').src = selectedBarcodeSrc;
-                    document.getElementById('barcodePreviewBox').style.display = 'block';
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function proceedToPrintWithBarcode(useBarcode) {
-            if (!useBarcode) {
-                selectedBarcodeSrc = null;
-            }
-            closeBarcodeModal();
-            executeActivitiesPrint();
         }
 
         function executeActivitiesPrint() {
@@ -1056,7 +1047,7 @@
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
 
-                        let barcodeCellContent = selectedBarcodeSrc ? `<img src="${selectedBarcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
+                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
 
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1099,6 +1090,8 @@
                 cellTypeSel.value = "activity";
                 document.getElementById('cellActNameInput').value = cellData.course || "نشاط مدرسي";
                 document.getElementById('cellActFieldSelect').value = cellData.fieldKey || "citizenship";
+                document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
+                document.getElementById('cellActHoursInput').value = cellData.hours || 1;
             } else if (cellData.course) {
                 cellTypeSel.value = "course";
             } else {
@@ -1106,6 +1099,7 @@
             }
 
             document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
+            document.getElementById('cellBarcodeFileInput').value = '';
             handleCellTypeChange(cellTypeSel.value);
 
             document.getElementById('cellClickModal').classList.add('show');
@@ -1131,6 +1125,8 @@
             let baseKey = `${day}_${cls}_${period}`;
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
 
+            let existingData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+
             if (typeVal === 'empty') {
                 delete customAssignments[baseKey];
                 delete tempOverrides[weekKey];
@@ -1139,6 +1135,9 @@
                 let teacherName = "";
                 let isAct = false;
                 let fieldKey = "";
+                let flexibility = "ثابتة";
+                let hours = 1;
+                let barcodeSrc = existingData.barcodeSrc || null;
 
                 if (typeVal === 'course') {
                     courseName = document.getElementById('cellCourseSelect').value;
@@ -1148,13 +1147,30 @@
                     teacherName = document.getElementById('cellTeacherSelect').value;
                     isAct = true;
                     fieldKey = document.getElementById('cellActFieldSelect').value;
+                    flexibility = document.getElementById('cellActFlexSelect').value;
+                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
+
+                    let fileInput = document.getElementById('cellBarcodeFileInput');
+                    if (fileInput.files && fileInput.files[0]) {
+                        await new Promise((resolve) => {
+                            let reader = new FileReader();
+                            reader.onload = function(e) {
+                                barcodeSrc = e.target.result;
+                                resolve();
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        });
+                    }
                 }
 
                 customAssignments[baseKey] = {
                     course: courseName,
                     teacher: teacherName,
                     isActivity: isAct,
-                    fieldKey: fieldKey
+                    fieldKey: fieldKey,
+                    flexibility: flexibility,
+                    hours: hours,
+                    barcodeSrc: barcodeSrc
                 };
                 delete tempOverrides[weekKey];
             }
