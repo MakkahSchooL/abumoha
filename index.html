@@ -500,9 +500,9 @@
         }
         .act-report-table th, .act-report-table td {
             border: 1px solid #000;
-            padding: 10px 8px;
+            padding: 8px 6px;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             vertical-align: middle;
         }
         .act-report-table th {
@@ -648,7 +648,7 @@
 
     <!-- النافذة التفاعلية لإسناد وتعديل الحصة -->
     <div class="modal-cal" id="cellClickModal">
-        <div class="mbox-cal" style="width: min(480px, 95%);">
+        <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
                     <h3 id="cellModalTitle">تعديل وإسناد الحصة</h3>
@@ -674,7 +674,7 @@
                 <div id="activityFieldsGroup" style="display: none; background: #121E1D; border: 1px dashed #0C6A64; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
                     <div class="form-group text-right mb-2">
                         <label class="small font-weight-bold text-success">المجال / الفعالية:</label>
-                        <select id="cellActFieldSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        <select id="cellActFieldSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="onFieldChange(this.value)">
                             <option value="citizenship">المواطنة والحياة</option>
                             <option value="culture">الثقافة والفنون</option>
                             <option value="science">العلوم والتقنية</option>
@@ -684,10 +684,18 @@
                             <option value="competitions">المسابقات المدرسية</option>
                         </select>
                     </div>
+
                     <div class="form-group text-right mb-2">
-                        <label class="small font-weight-bold text-success">اسم برنامج النشاط:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: ورشة الفنون والابتكار">
+                        <label class="small font-weight-bold text-success">اختر برنامج النشاط:</label>
+                        <select id="cellActPresetSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="onPresetProgramSelect(this.value)">
+                        </select>
                     </div>
+
+                    <div class="form-group text-right mb-2" id="customProgramNameBox" style="display:none;">
+                        <label class="small font-weight-bold text-warning">اسم البرنامج / المسابقة الجديدة:</label>
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط">
+                    </div>
+
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group text-right mb-2">
@@ -700,11 +708,17 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">عدد الحصص:</label>
-                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="5">
+                                <label class="small font-weight-bold text-success">عدد الحصص المحددة يدوياً:</label>
+                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="15">
                             </div>
                         </div>
                     </div>
+
+                    <div class="p-2 mb-2 rounded bg-dark border border-secondary text-right" id="programHoursTrackerBox" style="font-size: 0.78rem;">
+                        <span class="text-info font-weight-bold">حالة التخطيط والتنفيذ للبرنامج:</span><br>
+                        إجمالي الحصص للبرنامج: <b id="lblTotalHours">0</b> | الحصص المنفذة حتى الآن: <b id="lblExecutedHours" class="text-success">0</b> | الحصص المتبقية: <b id="lblRemainingHours" class="text-warning">0</b>
+                    </div>
+
                     <div class="form-group text-right mb-0">
                         <label class="small font-weight-bold text-success">إرفاق باركود خاص بهذا النشاط:</label>
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
@@ -783,11 +797,14 @@
         <table class="act-report-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">م</th>
+                    <th style="width: 35px;">م</th>
                     <th>اسم البرنامج / النشاط</th>
                     <th>المجال</th>
                     <th>الصفوف المستهدفة</th>
                     <th>فترة التنفيذ / الحصة</th>
+                    <th>طبيعة الحصة</th>
+                    <th>عدد الساعات/الحصص</th>
+                    <th>المتبقي من البرنامج</th>
                     <th>آلية تقديم النشاط</th>
                     <th>المعلم المنفذ</th>
                 </tr>
@@ -852,6 +869,92 @@
             "competitions": { title: "المسابقات", color: "#9b59b6" }
         };
 
+        // قائمة برامج النشاط والمسابقات المستخرجة تلقائياً من الصورة المرفقة مع إمكانية التعديل والإضافة اليدوية
+        const PRESET_PROGRAMS = {
+            "citizenship": [
+                { name: "التطوع الطلابي", hours: 4 },
+                { name: "مهارات طموحة", hours: 6 },
+                { name: "نموذج الأمم المتحدة", hours: 8 },
+                { name: "إرث وطموح", hours: 4 },
+                { name: "ريادة الأعمال", hours: 5 },
+                { name: "السيرة النبوية", hours: 4 }
+            ],
+            "culture": [
+                { name: "الفن السابع (السينما)", hours: 8 },
+                { name: "الفنون البصرية والتشكيلية", hours: 6 },
+                { name: "الأزياء السعودية", hours: 4 },
+                { name: "الثقافة الإعلامية", hours: 4 },
+                { name: "الفن التراثي المعاصر", hours: 5 },
+                { name: "الفنون المسرحية", hours: 8 },
+                { name: "الفنون الصوتية أو الموسيقية", hours: 8 },
+                { name: "حكايات مرئية (أنمي / ستوديو)", hours: 6 },
+                { name: "مهارات اللغة والتواصل الثقافي", hours: 5 },
+                { name: "الكتابة الإبداعية والأدبية", hours: 4 },
+                { name: "الحرف والمهن", hours: 4 },
+                { name: "الخط العربي", hours: 4 }
+            ],
+            "science": [
+                { name: "برامج وتطبيقات STEM", hours: 3 },
+                { name: "التصميم والابتكار التقني", hours: 2 },
+                { name: "الفضاء والاستكشاف العلمي", hours: 3 },
+                { name: "الاستدامة وجودة الحياة", hours: 3 },
+                { name: "الذكاء الاصطناعي", hours: 10 },
+                { name: "إنترنت الأشياء", hours: 3 },
+                { name: "الأمن السيبراني", hours: 4 },
+                { name: "البحث العلمي", hours: 4 },
+                { name: "حوكمة البيانات", hours: 3 }
+            ],
+            "sports": [
+                { name: "منافسات المهارات الرياضية الجماعية", hours: 6 },
+                { name: "منافسات المهارات الرياضية الفردية", hours: 8 },
+                { name: "منافسات مهارات رياضات الدفاع عن النفس", hours: 8 },
+                { name: "الرياضة والترفيه الإلكتروني", hours: 8 },
+                { name: "الرياضة الذهنية", hours: 6 },
+                { name: "الأولمبياد الرياضي", hours: 6 },
+                { name: "الإسعافات الأولية", hours: 3 },
+                { name: "اللياقة والصحة البدنية", hours: 2 },
+                { name: "مهارات التحكيم الرياضي (أنا حكم)", hours: 3 },
+                { name: " صحتي في بيئتي", hours: 3 }
+            ],
+            "scout": [
+                { name: "خيمتي الجميلة", hours: 3 },
+                { name: "براعم البيئة والمجتمع", hours: 2 },
+                { name: "بصمتي الكشفية", hours: 2 },
+                { name: "براعم النور", hours: 2 },
+                { name: "بوصلة الاستكشاف", hours: 3 },
+                { name: "عاداتي الصحية الكشفية", hours: 2 },
+                { name: "مهاراتي ومستقبلي الكشفي", hours: 2 },
+                { name: "أشارك مجتمعي وأزرع بيئتي", hours: 3 },
+                { name: "خشبة وحبل كشفي", hours: 4 },
+                { name: "خيمة التجارب المسلية", hours: 2 },
+                { name: "صافرة واصطفاف كشفي", hours: 2 },
+                { name: "طهي كشفي", hours: 3 },
+                { name: "كنوز الصفار", hours: 2 },
+                { name: "وطني في قلبي", hours: 3 }
+            ],
+            "days": [
+                { name: "اليوم الوطني", hours: 4 },
+                { name: "يوم المعلم", hours: 2 },
+                { name: "يوم التسامح", hours: 2 },
+                { name: "اليوم العالمي للطفل", hours: 2 },
+                { name: "اليوم العالمي لذوي الإعاقة", hours: 2 },
+                { name: "يوم اللغة العربية العالمي", hours: 2 },
+                { name: "اليوم العالمي للتعليم", hours: 2 },
+                { name: "يوم التأسيس", hours: 4 },
+                { name: "يوم العلم السعودي", hours: 3 },
+                { name: "يوم السعودية الخضراء", hours: 2 },
+                { name: "يوم الصحة العالمي", hours: 2 },
+                { name: "اليوم الدولي الأسرة", hours: 2 }
+            ],
+            "competitions": [
+                { name: "مسابقة النشاط الكشفي", hours: 4 },
+                { name: "مسابقة الابتكار والعلوم", hours: 6 },
+                { name: "مسابقة المهارات الرياضية", hours: 4 },
+                { name: "مسابقة القرآن الكريم والسنة", hours: 5 },
+                { name: "مسابقة تحدي القراءة", hours: 4 }
+            ]
+        };
+
         let customAssignments = {};
         let tempOverrides = {};
         
@@ -879,27 +982,7 @@
             { t: 1, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/07/08 هـ",m:"2026/12/13 م"},{name:"الإثنين",h:"1448/07/09 هـ",m:"2026/12/14 م"},{name:"الثلاثاء",h:"1448/07/10 هـ",m:"2026/12/15 م"},{name:"الأربعاء",h:"1448/07/11 هـ",m:"2026/12/16 م"},{name:"الخميس",h:"1448/07/12 هـ",m:"2026/12/17 م"}]},
             { t: 1, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/07/15 هـ",m:"2026/12/20 م"},{name:"الإثنين",h:"1448/07/16 هـ",m:"2026/12/21 م"},{name:"الثلاثاء",h:"1448/07/17 هـ",m:"2026/12/22 م"},{name:"الأربعاء",h:"1448/07/18 هـ",m:"2026/12/23 م"},{name:"الخميس",h:"1448/07/19 هـ",m:"2026/12/24 م"}]},
             { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/07/22 هـ",m:"2026/12/27 م"},{name:"الإثنين",h:"1448/07/23 هـ",m:"2026/12/28 م"},{name:"الثلاثاء",h:"1448/07/24 هـ",m:"2026/12/29 م"},{name:"الأربعاء",h:"1448/07/25 هـ",m:"2026/12/30 م"},{name:"الخميس",h:"1448/07/26 هـ",m:"2026/12/31 م"}]},
-            { t: 1, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
-
-            { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/13 هـ",m:"2027/01/10 م"},{name:"الإثنين",h:"1448/08/14 هـ",m:"2027/01/11 م"},{name:"الثلاثاء",h:"1448/08/15 هـ",m:"2027/01/12 م"},{name:"الأربعاء",h:"1448/08/16 هـ",m:"2027/01/13 م"},{name:"الخميس",h:"1448/08/17 هـ",m:"2027/01/14 م"}]},
-            { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/20 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/21 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/22 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/23 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/24 هـ",m:"2027/01/21 م"}]},
-            { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/27 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/28 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/29 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/09/01 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/09/02 هـ",m:"2027/01/28 م"}]},
-            { t: 2, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/09/05 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/09/06 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/07 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/08 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/09 هـ",m:"2027/02/04 م"}]},
-            { t: 2, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/09/12 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/13 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/14 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/15 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/16 هـ",m:"2027/02/11 م"}]},
-            { t: 2, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/09/19 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/20 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/21 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/22 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/23 هـ",m:"2027/02/18 م"}]},
-            { t: 2, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/10/03 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/10/04 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/10/05 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/10/06 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/10/07 هـ",m:"2027/02/25 م"}]},
-            { t: 2, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/10/10 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/10/11 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/10/12 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/13 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/14 هـ",m:"2027/03/04 م"}]},
-            { t: 2, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/10/17 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/18 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/19 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/20 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/21 هـ",m:"2027/03/11 م"}]},
-            { t: 2, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/10/24 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/25 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/26 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/27 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/28 هـ",m:"2027/03/18 م"}]},
-            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/11/01 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/11/02 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/11/03 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/11/04 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/11/05 هـ",m:"2027/03/25 م"}]},
-            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/11/08 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/11/09 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/11/10 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/11/11 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/12 هـ",m:"2027/04/01 م"}]},
-            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/11/15 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/16 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/17 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/18 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/19 هـ",m:"2027/04/08 م"}]},
-            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/11/22 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/23 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/24 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/25 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/26 هـ",m:"2027/04/15 م"}]},
-            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/12/01 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/12/02 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/12/03 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/12/04 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/12/05 هـ",m:"2027/04/22 م"}]},
-            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/12/08 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/12/09 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/12/10 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/12/11 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/12/12 هـ",m:"2027/04/29 م"}]},
-            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/12/15 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/16 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/17 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/18 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/19 هـ",m:"2027/05/06 م"}]},
-            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/12/22 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/23 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/24 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/25 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/26 هـ",m:"2027/05/13 م"}]},
-            { t: 2, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/12/29 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/13/01 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/13/02 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/13/03 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/13/04 هـ",m:"2027/05/20 م"}]}
+            { t: 1, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/05/20 م"}]}
         ];
 
         let ALL_DAYS_FLAT = [];
@@ -1068,6 +1151,73 @@
             updateFieldCounters(cleanDay);
         }
 
+        // إحصاء وتتبع كم حصة أضيفت في الجدول لهذا البرنامج
+        function countExecutedProgramHours(progName) {
+            let count = 0;
+            for (let k in customAssignments) {
+                let item = customAssignments[k];
+                if (item && item.isActivity && item.course === progName) {
+                    count += (parseInt(item.hours) || 1);
+                }
+            }
+            return count;
+        }
+
+        function updateHoursTrackerDisplay() {
+            let progName = "";
+            let presetVal = document.getElementById('cellActPresetSelect').value;
+            if (presetVal === 'NEW_CUSTOM') {
+                progName = document.getElementById('cellActNameInput').value.trim();
+            } else {
+                progName = presetVal;
+            }
+
+            let plannedTotal = parseInt(document.getElementById('cellActHoursInput').value) || 1;
+            let executed = countExecutedProgramHours(progName);
+            let remaining = plannedTotal - executed;
+            if (remaining < 0) remaining = 0;
+
+            document.getElementById('lblTotalHours').innerText = plannedTotal;
+            document.getElementById('lblExecutedHours').innerText = executed;
+            document.getElementById('lblRemainingHours').innerText = remaining;
+        }
+
+        function onFieldChange(fieldKey) {
+            let sel = document.getElementById('cellActPresetSelect');
+            sel.innerHTML = '';
+            let list = PRESET_PROGRAMS[fieldKey] || [];
+            list.forEach(p => {
+                sel.innerHTML += `<option value="${p.name}" data-hours="${p.hours}">${p.name} (${p.hours} حصص)</option>`;
+            });
+            sel.innerHTML += `<option value="NEW_CUSTOM">+ إضافة برنامج / مسابقة جديدة...</option>`;
+
+            if (list.length > 0) {
+                sel.value = list[0].name;
+                onPresetProgramSelect(list[0].name);
+            } else {
+                onPresetProgramSelect('NEW_CUSTOM');
+            }
+        }
+
+        function onPresetProgramSelect(val) {
+            let customBox = document.getElementById('customProgramNameBox');
+            let hoursInput = document.getElementById('cellActHoursInput');
+            if (val === 'NEW_CUSTOM') {
+                customBox.style.display = 'block';
+                document.getElementById('cellActNameInput').value = '';
+            } else {
+                customBox.style.display = 'none';
+                document.getElementById('cellActNameInput').value = val;
+                let fieldKey = document.getElementById('cellActFieldSelect').value;
+                let list = PRESET_PROGRAMS[fieldKey] || [];
+                let found = list.find(p => p.name === val);
+                if (found) {
+                    hoursInput.value = found.hours;
+                }
+            }
+            updateHoursTrackerDisplay();
+        }
+
         /* دوال الطباعة */
         function printFullSchedule() {
             document.body.className = "print-full-schedule";
@@ -1095,8 +1245,12 @@
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
 
-                        // جلب الباركود المستقل الخاص بكل نشاط
                         let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
+                        let flexText = cellData.flexibility || "ثابتة";
+                        let hrs = cellData.hours || 1;
+                        let executed = countExecutedProgramHours(cellData.course);
+                        let rem = hrs - executed;
+                        if (rem < 0) rem = 0;
 
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1105,6 +1259,9 @@
                             <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                             <td>فصل ${cls}</td>
                             <td>الحصة ${i}</td>
+                            <td>${flexText}</td>
+                            <td>${hrs} حصص</td>
+                            <td>متبقي ${rem} ح</td>
                             <td>${barcodeCellContent}</td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
@@ -1114,7 +1271,7 @@
             });
 
             if (count === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
             }
 
             document.body.className = "print-activities-only";
@@ -1137,19 +1294,35 @@
             const cellTypeSel = document.getElementById('cellTypeSelect');
             if (cellData.isActivity) {
                 cellTypeSel.value = "activity";
-                document.getElementById('cellActNameInput').value = cellData.course || "نشاط مدرسي";
-                document.getElementById('cellActFieldSelect').value = cellData.fieldKey || "citizenship";
+                let fKey = cellData.fieldKey || "citizenship";
+                document.getElementById('cellActFieldSelect').value = fKey;
+                onFieldChange(fKey);
+
+                if (cellData.course) {
+                    let sel = document.getElementById('cellActPresetSelect');
+                    if ([...sel.options].some(o => o.value === cellData.course)) {
+                        sel.value = cellData.course;
+                        onPresetProgramSelect(cellData.course);
+                    } else {
+                        sel.value = 'NEW_CUSTOM';
+                        onPresetProgramSelect('NEW_CUSTOM');
+                        document.getElementById('cellActNameInput').value = cellData.course;
+                    }
+                }
+
                 document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
                 document.getElementById('cellActHoursInput').value = cellData.hours || 1;
             } else if (cellData.course) {
                 cellTypeSel.value = "course";
             } else {
                 cellTypeSel.value = "empty";
+                onFieldChange("citizenship");
             }
 
             document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
             document.getElementById('cellBarcodeFileInput').value = '';
             handleCellTypeChange(cellTypeSel.value);
+            updateHoursTrackerDisplay();
 
             document.getElementById('cellClickModal').classList.add('show');
         }
@@ -1165,7 +1338,6 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        // دالة مساعدة لضغط صورة الباركود لحجم صغير جداً لضمان عدم اختفائها عند التحديث
         function compressImage(file, maxWidth = 180, maxHeight = 180, quality = 0.6) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
@@ -1227,7 +1399,13 @@
                     courseName = document.getElementById('cellCourseSelect').value;
                     teacherName = document.getElementById('cellTeacherSelect').value;
                 } else if (typeVal === 'activity') {
-                    courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط مدرسي";
+                    let presetVal = document.getElementById('cellActPresetSelect').value;
+                    if (presetVal === 'NEW_CUSTOM') {
+                        courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط جديد";
+                    } else {
+                        courseName = presetVal;
+                    }
+
                     teacherName = document.getElementById('cellTeacherSelect').value;
                     isAct = true;
                     fieldKey = document.getElementById('cellActFieldSelect').value;
