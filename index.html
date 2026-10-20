@@ -693,7 +693,7 @@
 
                     <div class="form-group text-right mb-2" id="customProgramNameBox" style="display:none;">
                         <label class="small font-weight-bold text-warning">اسم البرنامج / المسابقة الجديدة:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط">
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط" oninput="updateHoursTrackerDisplay()">
                     </div>
 
                     <div class="row">
@@ -708,15 +708,15 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">عدد الحصص المحددة يدوياً:</label>
-                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="15">
+                                <label class="small font-weight-bold text-success">عدد الحصص المحددة:</label>
+                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="30" oninput="updateHoursTrackerDisplay()">
                             </div>
                         </div>
                     </div>
 
                     <div class="p-2 mb-2 rounded bg-dark border border-secondary text-right" id="programHoursTrackerBox" style="font-size: 0.78rem;">
-                        <span class="text-info font-weight-bold">حالة التخطيط والتنفيذ للبرنامج:</span><br>
-                        إجمالي الحصص للبرنامج: <b id="lblTotalHours">0</b> | الحصص المنفذة حتى الآن: <b id="lblExecutedHours" class="text-success">0</b> | الحصص المتبقية: <b id="lblRemainingHours" class="text-warning">0</b>
+                        <span class="text-info font-weight-bold">متابعة حصص البرنامج (بنفس المعلم ونفس الصف):</span><br>
+                        إجمالي حصص البرنامج: <b id="lblTotalHours">0</b> | الحصص المُسندة بالجدول: <b id="lblExecutedHours" class="text-success">0</b> | الحصص المتبقية: <b id="lblRemainingHours" class="text-warning">0</b>
                     </div>
 
                     <div class="form-group text-right mb-0">
@@ -729,7 +729,7 @@
                     <label class="small font-weight-bold text-light">المعلم المسؤول: 
                         <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()"><i class="fas fa-pen"></i> إضافة/حذف معلم</button>
                     </label>
-                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="updateHoursTrackerDisplay()"></select>
                 </div>
             </div>
             <div class="mfoot-cal">
@@ -803,7 +803,7 @@
                     <th>الصفوف المستهدفة</th>
                     <th>فترة التنفيذ / الحصة</th>
                     <th>طبيعة الحصة</th>
-                    <th>عدد الساعات/الحصص</th>
+                    <th>عدد حصص البرنامج</th>
                     <th>المتبقي من البرنامج</th>
                     <th>آلية تقديم النشاط</th>
                     <th>المعلم المنفذ</th>
@@ -869,7 +869,6 @@
             "competitions": { title: "المسابقات", color: "#9b59b6" }
         };
 
-        // قائمة برامج النشاط والمسابقات المستخرجة تلقائياً من الصورة المرفقة مع إمكانية التعديل والإضافة اليدوية
         const PRESET_PROGRAMS = {
             "citizenship": [
                 { name: "التطوع الطلابي", hours: 4 },
@@ -914,7 +913,7 @@
                 { name: "الإسعافات الأولية", hours: 3 },
                 { name: "اللياقة والصحة البدنية", hours: 2 },
                 { name: "مهارات التحكيم الرياضي (أنا حكم)", hours: 3 },
-                { name: " صحتي في بيئتي", hours: 3 }
+                { name: "صحتي في بيئتي", hours: 3 }
             ],
             "scout": [
                 { name: "خيمتي الجميلة", hours: 3 },
@@ -1056,7 +1055,6 @@
             }
         }
 
-        // دالة العداد الديناميكي للمجالات
         function updateFieldCounters(cleanDay) {
             let counts = {
                 citizenship: 0,
@@ -1151,12 +1149,20 @@
             updateFieldCounters(cleanDay);
         }
 
-        // إحصاء وتتبع كم حصة أضيفت في الجدول لهذا البرنامج
-        function countExecutedProgramHours(progName) {
+        // احتساب الحصص المُسندة للبرنامج شرط أن يكون لنفس المعلم ونفس الصف
+        function countExecutedProgramHours(progName, teacherName, clsName, excludeKey = null) {
             let count = 0;
             for (let k in customAssignments) {
+                if (k === excludeKey) continue;
                 let item = customAssignments[k];
-                if (item && item.isActivity && item.course === progName) {
+                if (item && item.isActivity && item.course === progName && item.teacher === teacherName && k.includes(`_${clsName}_`)) {
+                    count += (parseInt(item.hours) || 1);
+                }
+            }
+            for (let k in tempOverrides) {
+                if (k === excludeKey) continue;
+                let item = tempOverrides[k];
+                if (item && item.isActivity && item.course === progName && item.teacher === teacherName && k.includes(`_${clsName}_`)) {
                     count += (parseInt(item.hours) || 1);
                 }
             }
@@ -1164,6 +1170,7 @@
         }
 
         function updateHoursTrackerDisplay() {
+            if (!selectedCellInfo) return;
             let progName = "";
             let presetVal = document.getElementById('cellActPresetSelect').value;
             if (presetVal === 'NEW_CUSTOM') {
@@ -1172,8 +1179,12 @@
                 progName = presetVal;
             }
 
+            let teacherName = document.getElementById('cellTeacherSelect').value;
+            let clsName = selectedCellInfo.cls;
+            let currentKey = `${activeWeekLabel}_${selectedCellInfo.day}_${clsName}_${selectedCellInfo.period}`;
+
             let plannedTotal = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-            let executed = countExecutedProgramHours(progName);
+            let executed = countExecutedProgramHours(progName, teacherName, clsName, currentKey);
             let remaining = plannedTotal - executed;
             if (remaining < 0) remaining = 0;
 
@@ -1248,7 +1259,7 @@
                         let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
                         let flexText = cellData.flexibility || "ثابتة";
                         let hrs = cellData.hours || 1;
-                        let executed = countExecutedProgramHours(cellData.course);
+                        let executed = countExecutedProgramHours(cellData.course, cellData.teacher, cls, weekKey);
                         let rem = hrs - executed;
                         if (rem < 0) rem = 0;
 
