@@ -435,6 +435,29 @@
             transition: all 0.2s;
         }
         .gear-btn:hover { background: #e2e8f0; color: #0C6A64; }
+
+        /* تنسيقات خاصة للطباعة */
+        @media print {
+            .page-header-card, .cal-nav-bar, .control-btns-container, .gear-btn {
+                display: none !important;
+            }
+            body {
+                background-color: #fff !important;
+                padding: 0 !important;
+            }
+            .table-responsive {
+                overflow: visible !important;
+            }
+            .wc-main-table {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+            .hide-for-activity-print {
+                visibility: hidden !important;
+                background: transparent !important;
+                border: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -606,9 +629,13 @@
         </div>
     </div>
 
-    <!-- شريط التحكم -->
+    <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
-        <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
+            <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+            <button class="btn-act btn-act-outline-green" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
+            <button class="btn-act btn-act-outline-green" onclick="printActivitiesOnly()"><i class="fas fa-star"></i> طباعة الأنشطة فقط</button>
+        </div>
         
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (10)</span>
@@ -849,14 +876,14 @@
                             </div>
                         </td>`;
                     } else if (cellData && cellData.course) {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})" class="normal-course-cell">
                             <div class="course-cell-box">
                                 <div class="course-name-large">${cellData.course}</div>
                                 <div class="teacher-name-badge">${cellData.teacher || "—"}</div>
                             </div>
                         </td>`;
                     } else {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})" class="normal-course-cell">
                             <div class="empty-cell-box"></div>
                         </td>`;
                     }
@@ -864,6 +891,23 @@
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
+        }
+
+        /* دوال الطباعة */
+        function printFullSchedule() {
+            window.print();
+        }
+
+        function printActivitiesOnly() {
+            let courseCells = document.querySelectorAll('.normal-course-cell');
+            courseCells.forEach(cell => cell.classList.add('hide-for-activity-print'));
+            
+            window.print();
+
+            // إرجاع الخلايا كما كانت بعد الانتهاء من الطباعة
+            setTimeout(() => {
+                courseCells.forEach(cell => cell.classList.remove('hide-for-activity-print'));
+            }, 500);
         }
 
         function openCellClickModal(day, cls, period) {
@@ -944,7 +988,6 @@
                 delete tempOverrides[weekKey];
             }
 
-            // إرسال الكائن المحدث بالكامل (بما في ذلك الحذف) للسحابة لحفظ الحالة فوراً ودون رجعة
             await saveToCloud();
 
             closeCellClickModal();
