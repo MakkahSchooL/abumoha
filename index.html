@@ -482,16 +482,23 @@
             font-size: 0.95rem;
         }
 
+        .qr-code-img {
+            max-width: 65px;
+            max-height: 65px;
+            margin-top: 4px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         /* تنسيقات الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal { display: none !important; }
             
-            /* الوضع الطبيعي لطباعة الجدول الكامل */
             body.print-full-schedule .table-responsive { display: block !important; }
             body.print-full-schedule #activityReportPrintArea { display: none !important; }
             
-            /* الوضع الخاص لطباعة تقرير الأنشطة الطلابية */
             body.print-activities-only .table-responsive { display: none !important; }
             body.print-activities-only #activityReportPrintArea { display: block !important; }
         }
@@ -507,7 +514,7 @@
             </div>
             <div>
                 <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وتقويم المسابقات والأنشطة 1448هـ</div>
-                <div style="font-size: 0.8rem; color: #64748b;">مدارس مكة المكرمة والمدينة المنورة وجدة والطائف</div>
+                <div style="font-size: 0.8rem; color: #64748b;">الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية</div>
             </div>
         </div>
         <div>
@@ -666,12 +673,40 @@
         </div>
     </div>
 
+    <!-- نافذة الاستفسار عن إرفاق باركود قبل الطباعة -->
+    <div class="modal-cal" id="barcodePromptModal">
+        <div class="mbox-cal" style="width: min(420px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إرفاق باركود لآلية التقديم 📱</h3>
+                    <button type="button" class="close text-white" onclick="closeBarcodeModal()">&times;</button>
+                </div>
+                <p>هل ترغب في إضافة باركود داخل خانة آلية تقديم النشاط بالتقرير؟</p>
+            </div>
+            <div class="mbody-cal text-right">
+                <div class="form-group">
+                    <label class="small font-weight-bold text-light">اختر صورة الباركود من جهازك:</label>
+                    <input type="file" id="barcodeFileInput" accept="image/*" class="form-control-file text-white small">
+                </div>
+                <div class="text-center my-2 text-muted">— أو —</div>
+                <div class="form-group">
+                    <label class="small font-weight-bold text-light">أدخل رابط صورة الباركود (URL):</label>
+                    <input type="text" id="barcodeUrlInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="https://...">
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success font-weight-bold" onclick="proceedToPrintWithBarcode(true)">طباعة بالباركود 🖨️</button>
+                <button type="button" class="btn btn-sm btn-outline-light" onclick="proceedToPrintWithBarcode(false)">طباعة بدون باركود</button>
+            </div>
+        </div>
+    </div>
+
     <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
             <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
             <button class="btn-act btn-act-outline-green" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
-            <button class="btn-act btn-act-outline-green" onclick="printActivitiesOnly()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
+            <button class="btn-act btn-act-outline-green" onclick="promptBarcodeBeforePrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
         </div>
         
         <div class="fields-bar-container">
@@ -708,9 +743,10 @@
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div class="d-flex justify-content-between align-items-center">
-                <div style="font-size: 0.9rem; font-weight: 700;">
-                    <div>الإدارة العامة للتعليم بمنطقة مكة المكرمة</div>
-                    <div>المدرسة: ....................................</div>
+                <div style="font-size: 0.9rem; font-weight: 700; text-align: right;">
+                    <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
+                    <div>مدرسة مكة المكرمة الابتدائية</div>
+                    <div>النشاط الطلابي</div>
                 </div>
                 <div>
                     <strong style="font-size: 1.1rem; color: #0C6A64;">وزارة التعليم</strong>
@@ -738,7 +774,7 @@
         <div class="act-signatures-box">
             <div>
                 <div>رائد النشاط</div>
-                <div style="margin-top: 25px;">الاسم: ..........................</div>
+                <div style="margin-top: 20px;">الاسم: عواد محمد العوفي</div>
                 <div>التوقيع: ........................</div>
             </div>
             <div>
@@ -746,7 +782,7 @@
             </div>
             <div>
                 <div>مدير المدرسة</div>
-                <div style="margin-top: 25px;">الاسم: ..........................</div>
+                <div style="margin-top: 20px;">الاسم: متعب حسن السحيمي</div>
                 <div>التوقيع: ........................</div>
             </div>
         </div>
@@ -809,6 +845,7 @@
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
         let selectedCellInfo = null;
+        let selectedBarcodeSrc = null;
 
         const CAL_1448 = [
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
@@ -978,13 +1015,50 @@
             });
         }
 
-        /* دوال الطباعة */
+        /* دوال الطباعة وإرفاق الباركود */
         function printFullSchedule() {
             document.body.className = "print-full-schedule";
             window.print();
         }
 
-        function printActivitiesOnly() {
+        function promptBarcodeBeforePrint() {
+            document.getElementById('barcodeFileInput').value = '';
+            document.getElementById('barcodeUrlInput').value = '';
+            document.getElementById('barcodePromptModal').classList.add('show');
+        }
+
+        function closeBarcodeModal() {
+            document.getElementById('barcodePromptModal').classList.remove('show');
+        }
+
+        function proceedToPrintWithBarcode(useBarcode) {
+            if (useBarcode) {
+                let fileInput = document.getElementById('barcodeFileInput');
+                let urlInput = document.getElementById('barcodeUrlInput').value.trim();
+
+                if (fileInput.files && fileInput.files[0]) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        selectedBarcodeSrc = e.target.result;
+                        closeBarcodeModal();
+                        executeActivitiesPrint();
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                    return;
+                } else if (urlInput !== "") {
+                    selectedBarcodeSrc = urlInput;
+                } else {
+                    selectedBarcodeSrc = null;
+                }
+            } else {
+                selectedBarcodeSrc = null;
+            }
+
+            closeBarcodeModal();
+            executeActivitiesPrint();
+        }
+
+        function executeActivitiesPrint() {
             let cur = ALL_DAYS_FLAT[currentFlatIndex];
             document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} الموافق ${cur.hDate} هـ (${cur.mDate} م)`;
 
@@ -1005,6 +1079,8 @@
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
 
+                        let barcodeHtml = selectedBarcodeSrc ? `<img src="${selectedBarcodeSrc}" class="qr-code-img" alt="باركود">` : '';
+
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${count}</td>
@@ -1012,7 +1088,10 @@
                             <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                             <td>فصل ${cls}</td>
                             <td>الحصة ${i}</td>
-                            <td>ترشيح من المدرسة / رائد النشاط</td>
+                            <td>
+                                <div>ترشيح من المدرسة / رائد النشاط</div>
+                                ${barcodeHtml}
+                            </td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
                         tbody.appendChild(tr);
