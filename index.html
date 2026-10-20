@@ -2,697 +2,1337 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطة ونشاط حصص النشاط الطلابي 1448 هـ</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- JsBarcode JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.min.js"></script>
-    <!-- Firebase SDK (Version 9 Compatibility or Modern modular via compat CDN) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف 1448هـ</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
-        
+        :root {
+            --paper: #EEF3F2;
+            --surface: #FFFFFF;
+            --surface2: #F6F9F8;
+            --ink: #13302E;
+            --muted: #5A6F6C;
+            --line: #D3DEDB;
+            --brand: #0C6A64;
+            --brand-ink: #FFFFFF;
+            --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+
+            /* ألوان المجالات */
+            --color-citizenship: #2a9d8f;
+            --color-culture: #e06d9f;
+            --color-science: #4a90e2;
+            --color-sports: #52b788;
+            --color-scout: #c0a02d;
+            --color-days: #e76f51;
+            --color-competitions: #9b59b6;
+        }
+
         body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #f1f5f9;
+            font-family: var(--font);
+            background-color: #f8fafc;
+            color: var(--ink);
+            direction: rtl;
+            text-align: right;
+            padding: 15px;
+        }
+
+        .page-header-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px 22px;
+            box-shadow: 0 1px 2px rgba(15,23,42,.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .header-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--brand), #0891b2);
+            color: #fff;
+            font-size: 1.2rem;
+            box-shadow: 0 6px 18px -6px rgba(12,106,100,.45);
+        }
+
+        .cal-nav-bar {
+            background: #111827;
+            color: #fff;
+            border-radius: 16px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        }
+
+        .btn-open-cal {
+            background: linear-gradient(135deg, var(--brand), #0891b2);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-open-cal:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .selected-date-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-arrow-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nav-arrow-btn:hover { background: var(--brand); }
+
+        .modal-cal {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,26,26,.6);
+            z-index: 1050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-cal.show { display: flex; }
+
+        .mbox-cal {
+            background: #152322;
+            color: #E2ECEA;
+            width: min(580px, 95%);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            border: 1px solid #2A3D3B;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .mhead-cal {
+            padding: 16px 20px 10px;
+            border-bottom: 1px solid #2A3D3B;
+        }
+        .mhead-cal h3 { margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff; }
+        .mhead-cal p { margin: 4px 0 0; color: #9AB0AC; font-size: 0.82rem; }
+
+        .mtabs-cal {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .mtab-btn {
+            flex: 1;
+            background: #1A2B2A;
+            border: 1px solid #2A3D3B;
+            color: #9AB0AC;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .mtab-btn.active {
+            background: #3AAFA5;
+            color: #06201E;
+            border-color: #3AAFA5;
+        }
+
+        .mbody-cal {
+            overflow-y: auto;
+            padding: 14px 16px;
+            max-height: 60vh;
+        }
+
+        .wk-item {
+            border: 1px solid #2A3D3B;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            background: #1A2B2A;
+        }
+        .wk-head-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: #1A2B2A;
+            border: 0;
+            padding: 10px 14px;
+            cursor: pointer;
+            text-align: start;
+            color: #E2ECEA;
+            transition: background 0.2s;
+        }
+        .wk-head-btn:hover { background: #253A38; }
+        .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
+        .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
+
+        .days-list {
+            display: none;
+            gap: 6px;
+            padding: 8px 10px 12px;
+            background: #121E1D;
+            border-top: 1px solid #2A3D3B;
+        }
+        .wk-item.open .days-list { display: grid; }
+
+        .day-card-item {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #2A3D3B;
+            background: #152322;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            text-align: start;
+            color: #E2ECEA;
+            transition: all 0.15s;
+        }
+        .day-card-item:hover {
+            border-color: #3AAFA5;
+            background: rgba(58,175,165,0.15);
+        }
+        .day-card-item b { font-size: 0.88rem; font-weight: 700; }
+        .day-card-item em { font-style: normal; font-size: 0.78rem; color: #3AAFA5; font-weight: 600; }
+
+        .mfoot-cal {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid #2A3D3B;
+            background: #152322;
+        }
+
+        .fields-bar-container {
+            background: #1b262c;
+            border-radius: 20px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            border: 1px solid #2d3748;
+        }
+        .field-pill {
+            background: #232d36;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .control-btns-container {
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 16px;
+            padding: 12px 16px !important;
+            box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-custom-dark {
+            background: linear-gradient(135deg, var(--brand), #0891b2);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(12,106,100,0.2);
+            white-space: nowrap;
+        }
+        .btn-custom-dark:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .wc-main-table {
+            box-shadow: 0 4px 24px -4px rgba(15,23,42,.10);
+            border-radius: 16px;
+            overflow: hidden;
+            font-size: 0.9rem;
+            background: #fff;
+            border: none !important;
+        }
+
+        .wc-main-table thead th {
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            border-bottom: 2px solid var(--line) !important;
+            padding: 12px 8px !important;
+            vertical-align: middle !important;
+        }
+
+        .class-col-header {
+            width: 95px !important;
+            max-width: 95px !important;
+            background: #f1f5f9;
+            vertical-align: middle !important;
+            padding: 6px 4px !important;
+        }
+        .class-row-header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+        .class-title-text {
+            font-size: 0.88rem;
+            font-weight: 800;
             color: #0f172a;
         }
 
-        /* Continuous subtle animations */
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.9; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
+        .wc-main-table td {
+            border-color: #edf0f5 !important;
+            padding: 8px !important;
+            vertical-align: middle !important;
+            min-width: 135px;
+            cursor: pointer;
+        }
+        .wc-main-table td:hover { background-color: #f1f5f9; }
+
+        .course-cell-box {
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            min-height: 62px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .badge-pulse {
-            animation: pulseGlow 2.5s infinite ease-in-out;
+        .empty-cell-box {
+            background: #ffffff;
+            border: 1px dashed #e2e8f0;
+            border-radius: 10px;
+            min-height: 62px;
         }
 
-        /* Print Media Styling */
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                background: white !important;
-                color: black !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .print-container {
-                box-shadow: none !important;
-                border: none !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            .page-break {
-                page-break-before: always;
-            }
-            table {
-                border-collapse: collapse !important;
-                width: 100% !important;
-            }
-            th, td {
-                border: 1px solid #cbd5e1 !important;
-            }
+        .course-name-large {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
         }
 
-        /* Glassmorphism visual tweaks */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+        .teacher-name-badge {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 2px 6px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 100%;
         }
 
-        /* Custom scrollbar for better UI */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        .activity-card-custom {
+            border-radius: 10px;
+            background: #fff;
+            border: 2px dashed #0C6A64;
+            padding: 4px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            min-height: 62px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+        .activity-header-custom {
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin: 2px 0;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        .field-tag-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
             border-radius: 4px;
+            padding: 1px 4px;
+            display: inline-block;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+
+        .activity-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.62rem;
+            font-weight: 700;
+            margin-top: 2px;
+            gap: 2px;
+        }
+        .activity-flexibility-box {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0px 3px;
+            border-radius: 3px;
+            color: #334155;
+            line-height: 1.2;
+        }
+        .activity-hours-box {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #047857;
+            padding: 0px 3px;
+            border-radius: 3px;
+            line-height: 1.2;
+        }
+
+        .gear-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.82rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .gear-btn:hover { background: #e2e8f0; color: #0C6A64; }
+
+        /* منطقة التقرير التنفيذي للأنشطة */
+        #activityReportPrintArea {
+            display: none;
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .act-report-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .act-report-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-top: 10px;
+            color: #0f172a;
+        }
+        .act-report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .act-report-table th, .act-report-table td {
+            border: 1px solid #000;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        .act-report-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+        }
+
+        .act-names-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 35px;
+            padding: 0 40px;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        .qr-code-img {
+            max-width: 70px;
+            max-height: 70px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* تنسيقات الطباعة */
+        @media print {
+            body { background: #fff !important; padding: 0 !important; }
+            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal { display: none !important; }
+            
+            body.print-full-schedule .table-responsive { display: block !important; }
+            body.print-full-schedule #activityReportPrintArea { display: none !important; }
+            
+            body.print-activities-only .table-responsive { display: none !important; }
+            body.print-activities-only #activityReportPrintArea { display: block !important; }
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-12">
+<body>
 
-    <!-- Header / Navbar Controls -->
-    <header class="no-print bg-slate-900 text-white shadow-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3 space-x-reverse">
-                <i class="fa-solid fa-shapes text-emerald-400 text-2xl"></i>
-                <h1 class="font-extrabold text-lg md:text-xl tracking-wide">نظام إدارة حصص النشاط الطلابي <span class="text-emerald-400 text-sm font-normal">1448 هـ</span></h1>
+    <!-- Header Section -->
+    <div class="page-header-card">
+        <div class="d-flex align-items-center" style="gap: 12px;">
+            <div class="header-icon-box">
+                <i class="fas fa-calendar-check"></i>
             </div>
+            <div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وتقويم المسابقات والأنشطة 1448هـ</div>
+                <div style="font-size: 0.8rem; color: #64748b;">الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية</div>
+            </div>
+        </div>
+        <div>
+            <span class="badge badge-light border p-2" style="font-size: 0.85rem;"><i class="fas fa-school text-success ml-1"></i> العام الدراسي 1448 هـ</span>
+        </div>
+    </div>
+
+    <!-- شريط اختيار اليوم والتقويم مع أسهم التنقل -->
+    <div class="cal-nav-bar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn-open-cal" onclick="openCalendarModal()">
+                <i class="fas fa-calendar-alt"></i> اختر التاريخ / الأسبوع
+            </button>
             
-            <div class="flex flex-wrap items-center gap-2">
-                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow">
-                    <i class="fa-solid fa-print"></i> طباعة الخطة
-                </button>
-                <button onclick="openActivityModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow">
-                    <i class="fa-solid fa-plus"></i> إدراج برنامج نشاط
-                </button>
-                <button onclick="syncDataToFirebase()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> حفظ سحابي
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-2 sm:px-4 mt-6">
-
-        <!-- Top Header Card (Printable) -->
-        <div class="print-container glass-card rounded-2xl p-6 mb-6 shadow-sm border border-slate-200">
-            <div class="flex flex-col md:flex-row justify-between items-center border-b border-slate-200 pb-4 mb-4 gap-4">
-                <div class="text-center md:text-right">
-                    <h2 class="text-xl font-bold text-slate-800">المملكة العربية السعودية</h2>
-                    <p class="text-sm text-slate-600">وزارة التعليم - إدارة التعليم</p>
-                    <p class="text-sm font-semibold text-emerald-700">مدرسة النشاط النوعي الممتاز</p>
-                </div>
-                <div class="text-center">
-                    <h2 class="text-2xl font-black text-slate-900 tracking-wide">خطة حصص وبرامج النشاط الطلابي</h2>
-                    <p class="text-xs font-semibold text-slate-500 mt-1">العام الدراسي 1448 هـ</p>
-                </div>
-                <div class="text-center md:text-left text-sm text-slate-700">
-                    <p><span class="font-bold text-slate-900">رائد النشاط:</span> عواد محمد العوفي</p>
-                    <p><span class="font-bold text-slate-900">مدير المدرسة:</span> متعب حسن السحيمي</p>
-                </div>
-            </div>
-
-            <!-- Dynamic Fields Stats Bar (المجالات السبعة) -->
-            <div class="mb-4">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 no-print flex items-center gap-1">
-                    <i class="fa-solid fa-chart-pie text-indigo-500"></i> العداد الديناميكي للمجالات السبعة للنشاط:
-                </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 text-center text-xs">
-                    <div class="bg-indigo-50 border border-indigo-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">المواطنة والحياة</span>
-                        <span id="cnt-citizenship" class="font-extrabold text-indigo-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">الثقافة والفنون</span>
-                        <span id="cnt-culture" class="font-extrabold text-emerald-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-cyan-50 border border-cyan-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">العلوم والتقنية</span>
-                        <span id="cnt-science" class="font-extrabold text-cyan-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-amber-50 border border-amber-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">الرياضة والصحة</span>
-                        <span id="cnt-sports" class="font-extrabold text-amber-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-purple-50 border border-purple-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">المجال الكشفي</span>
-                        <span id="cnt-scout" class="font-extrabold text-purple-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">الأيام والمناسبات</span>
-                        <span id="cnt-events" class="font-extrabold text-rose-700 text-sm">(0)</span>
-                    </div>
-                    <div class="bg-orange-50 border border-orange-100 p-2 rounded-xl">
-                        <span class="block text-slate-600 font-medium">المسابقات</span>
-                        <span id="cnt-competitions" class="font-extrabold text-orange-700 text-sm">(0)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Day Selector Bar -->
-            <div class="no-print flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-1 max-w-full">
-                    <span class="text-xs font-bold text-slate-500 whitespace-nowrap">اختر اليوم:</span>
-                    <button onclick="switchDay('الأحد')" id="day-btn-الأحد" class="day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">الأحد</button>
-                    <button onclick="switchDay('الإثنين')" id="day-btn-الإثنين" class="day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-700 hover:bg-slate-200">الإثنين</button>
-                    <button onclick="switchDay('الثلاثاء')" id="day-btn-الثلاثاء" class="day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-700 hover:bg-slate-200">الثلاثاء</button>
-                    <button onclick="switchDay('الأربعاء')" id="day-btn-الأربعاء" class="day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-700 hover:bg-slate-200">الأربعاء</button>
-                    <button onclick="switchDay('الخميس')" id="day-btn-الخميس" class="day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-700 hover:bg-slate-200">الخميس</button>
-                </div>
-                <div class="text-xs font-medium text-slate-600">
-                    اليوم المعروض حالياً: <span id="current-day-display" class="font-bold text-indigo-700">الأحد</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Timetable & Activity Display Section -->
-        <div class="print-container glass-card rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 overflow-x-auto">
-            <table class="w-full text-right text-sm border-collapse min-w-[700px]">
-                <thead>
-                    <tr class="bg-slate-800 text-white text-xs">
-                        <th class="p-3 border border-slate-700 w-16 text-center">الحصة</th>
-                        <th class="p-3 border border-slate-700 w-28 text-center">التوقيت</th>
-                        <th class="p-3 border border-slate-700">تفاصيل برنامج النشاط والمجال</th>
-                        <th class="p-3 border border-slate-700 w-32 text-center">طبيعة الحصة</th>
-                        <th class="p-3 border border-slate-700 w-36 text-center">الباركود / الرابط</th>
-                        <th class="p-3 border border-slate-700 w-20 text-center no-print">إجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="schedule-tbody" class="divide-y divide-slate-200">
-                    <!-- Dynamic Slots will be populated by JS -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Footer Leadership Signatures for Print -->
-        <div class="print-container mt-8 grid grid-cols-2 gap-8 text-center pt-4 border-t border-slate-300">
-            <div>
-                <p class="text-xs text-slate-500 font-medium">رائد النشاط الطلابي</p>
-                <p class="text-base font-bold text-slate-800 mt-1">عواد محمد العوفي</p>
-                <p class="text-xs text-slate-400 mt-4">التوقيع: ............................</p>
-            </div>
-            <div>
-                <p class="text-xs text-slate-500 font-medium">مدير المدرسة</p>
-                <p class="text-base font-bold text-slate-800 mt-1">متعب حسن السحيمي</p>
-                <p class="text-xs text-slate-400 mt-4">التوقيع: ............................</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal for Adding / Editing Activity -->
-    <div id="activity-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 transition-all">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                <h3 id="modal-title" class="font-bold text-lg text-slate-800">إضافة برنامج حصة نشاط</h3>
-                <button onclick="closeActivityModal()" class="text-slate-400 hover:text-slate-600 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="activity-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
-                <input type="hidden" id="form-slot-index" value="">
-
+            <div class="selected-date-badge">
+                <button class="nav-arrow-btn" onclick="navigateDay(-1)" title="اليوم السابق"><i class="fas fa-chevron-right"></i></button>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">اسم البرنامج / النشاط</label>
-                    <input type="text" id="form-title" required placeholder="مثال: ورشة الأمن السيبراني الكشفي" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <i class="fas fa-clock text-warning ml-1"></i> 
+                    <span id="currentDayText">جاري جلب بيانات اليوم...</span> - <span id="currentWeekText">الموافق: —</span>
                 </div>
+                <button class="nav-arrow-btn" onclick="navigateDay(1)" title="اليوم التالي"><i class="fas fa-chevron-left"></i></button>
+            </div>
+        </div>
+    </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">المجال (من المجالات السبعة)</label>
-                        <select id="form-field" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="المواطنة والحياة">المواطنة والحياة</option>
-                            <option value="الثقافة والفنون">الثقافة والفنون</option>
-                            <option value="العلوم والتقنية">العلوم والتقنية</option>
-                            <option value="الرياضة والصحة">الرياضة والصحة</option>
-                            <option value="المجال الكشفي">المجال الكشفي</option>
-                            <option value="الأيام والمناسبات">الأيام والمناسبات</option>
-                            <option value="المسابقات">المسابقات</option>
-                        </select>
-                    </div>
+    <!-- نافذة التقويم الشامل -->
+    <div class="modal-cal" id="calendarModal">
+        <div class="mbox-cal">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>تقويم مكة والمدينة وجدة والطائف 1448هـ</h3>
+                    <button type="button" class="close text-white" onclick="closeCalendarModal()">&times;</button>
+                </div>
+                <p>اختر الأسبوع ثم اليوم لعرض جدول الحصص الخاص به</p>
+                <div class="mtabs-cal">
+                    <button class="mtab-btn active" id="tabTerm1" onclick="switchTerm(1)">الفصل الدراسي الأول</button>
+                    <button class="mtab-btn" id="tabTerm2" onclick="switchTerm(2)">الفصل الدراسي الثاني</button>
+                </div>
+            </div>
+            <div class="mbody-cal" id="weeksListContainer"></div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-outline-light" onclick="setTodayAutomatically()">اليوم الحالي</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCalendarModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">طبيعة الحصة</label>
-                        <select id="form-type" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="ثابتة">ثابتة</option>
-                            <option value="مرنة">مرنة</option>
-                        </select>
+    <!-- نافذة إدارة المعلمين (إضافة / حذف) -->
+    <div class="modal-cal" id="teachersManagerModal">
+        <div class="mbox-cal" style="width: min(400px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إدارة قائمة المعلمين</h3>
+                    <button type="button" class="close text-white" onclick="closeTeachersManagerModal()">&times;</button>
+                </div>
+            </div>
+            <div class="mbody-cal">
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" id="newTeacherNameInput" class="form-control bg-dark text-white border-secondary" placeholder="اسم المعلم الجديد">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="button" onclick="addNewTeacher()">إضافة</button>
                     </div>
                 </div>
+                <div id="teachersListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeTeachersManagerModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">نطاق الحصص</label>
-                    <select id="form-scope" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="حصة واحدة">حصة واحدة</option>
-                        <option value="حصتان متتاليتان">حصتان متتاليتان</option>
-                        <option value="ثلاث حصص">ثلاث حصص</option>
-                        <option value="يوم كامل">نشاط يوم كامل</option>
+    <!-- نافذة خيارات الترس للفصل -->
+    <div class="modal-cal" id="classActionModal">
+        <div class="mbox-cal" style="width: min(380px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إدارة الفصل</h3>
+                    <button type="button" class="close text-white" onclick="closeClassActionModal()">&times;</button>
+                </div>
+                <p id="actionModalClassName" class="text-info font-weight-bold mb-0"></p>
+            </div>
+            <div class="mbody-cal text-center p-3">
+                <button class="btn btn-outline-light btn-block mb-2 text-right" onclick="moveSelectedClass(-1)">
+                    <i class="fas fa-arrow-up text-success ml-2"></i> نقل الفصل للأعلى
+                </button>
+                <button class="btn btn-outline-light btn-block mb-3 text-right" onclick="moveSelectedClass(1)">
+                    <i class="fas fa-arrow-down text-info ml-2"></i> نقل الفصل للأسفل
+                </button>
+                <hr style="border-color: #2A3D3B;">
+                <button class="btn btn-danger btn-block text-right" onclick="deleteSelectedClass()">
+                    <i class="fas fa-trash-alt ml-2"></i> حذف هذا الفصل
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- النافذة التفاعلية لإسناد وتعديل الحصة -->
+    <div class="modal-cal" id="cellClickModal">
+        <div class="mbox-cal" style="width: min(480px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 id="cellModalTitle">تعديل وإسناد الحصة</h3>
+                    <button type="button" class="close text-white" onclick="closeCellClickModal()">&times;</button>
+                </div>
+                <p id="cellModalSubtitle" class="text-info font-weight-bold mb-0"></p>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">نوع الحصة / المادة:</label>
+                    <select id="cellTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="handleCellTypeChange(this.value)">
+                        <option value="course">حصة دراسية معتادة</option>
+                        <option value="activity">حصة نشاط مدرسي 🌟</option>
+                        <option value="empty">— خالي (تفريغ الحصة) —</option>
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">رابط التفاصيل / الشواهد (لإنشاء الباركود)</label>
-                    <input type="url" id="form-url" placeholder="https://example.com/activity-link" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    <p class="text-[11px] text-slate-500 mt-1">سيتم إنشاء باركود خفيف ومضغوط وتلقائي لضمان الحفظ السحابي السريع.</p>
+                <div class="form-group text-right" id="courseSelectionGroup">
+                    <label class="small font-weight-bold text-light">المادة الدراسية:</label>
+                    <select id="cellCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
 
-                <!-- Hidden Canvas for Compressed Barcode Processing -->
-                <canvas id="barcode-compress-canvas" class="hidden"></canvas>
-                <svg id="barcode-temp-svg" class="hidden"></svg>
-
-                <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closeActivityModal()" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200 transition">إلغاء</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition">حفظ البرنامج</button>
+                <div id="activityFieldsGroup" style="display: none; background: #121E1D; border: 1px dashed #0C6A64; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                    <div class="form-group text-right mb-2">
+                        <label class="small font-weight-bold text-success">المجال / الفعالية:</label>
+                        <select id="cellActFieldSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                            <option value="citizenship">المواطنة والحياة (10)</option>
+                            <option value="culture">الثقافة والفنون (3)</option>
+                            <option value="science">العلوم والتقنية (2)</option>
+                            <option value="sports">الرياضة والصحة (3)</option>
+                            <option value="scout">المجال الكشفي (1)</option>
+                            <option value="days">الأيام والمناسبات العالميّة/الوطنيّة</option>
+                            <option value="competitions">المسابقات المدرسيّة</option>
+                        </select>
+                    </div>
+                    <div class="form-group text-right mb-2">
+                        <label class="small font-weight-bold text-success">اسم برنامج النشاط:</label>
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="مثال: ورشة الفنون والابتكار">
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group text-right mb-2">
+                                <label class="small font-weight-bold text-success">طبيعة الحصة:</label>
+                                <select id="cellActFlexSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
+                                    <option value="ثابتة">ثابتة</option>
+                                    <option value="مرنة">مرنة</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group text-right mb-2">
+                                <label class="small font-weight-bold text-success">عدد الحصص:</label>
+                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group text-right mb-0">
+                        <label class="small font-weight-bold text-success">إرفاق باركود خاص بهذا النشاط:</label>
+                        <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
+                    </div>
                 </div>
-            </form>
+
+                <div class="form-group text-right" id="teacherSelectionGroup">
+                    <label class="small font-weight-bold text-light">المعلم المسؤول: 
+                        <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()"><i class="fas fa-pen"></i> إضافة/حذف معلم</button>
+                    </label>
+                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellAssignment()">حفظ الحصة ☁️</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellClickModal()">إلغاء</button>
+            </div>
         </div>
     </div>
 
-    <!-- Notification Toast Container -->
-    <div id="toast" class="fixed bottom-5 left-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg z-50 hidden transition-all duration-300 flex items-center gap-2 text-sm">
-        <i class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toast-message">تمت العملية بنجاح</span>
+    <!-- شريط التحكم والأزرار فوق الجدول -->
+    <div class="control-btns-container">
+        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
+            <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل</button>
+            <button class="btn-custom-dark" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
+            <button class="btn-custom-dark" onclick="executeActivitiesPrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
+        </div>
+        
+        <div class="fields-bar-container">
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (10)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (3)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-science);"></span> العلوم والتقنية (2)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-sports);"></span> الرياضة والصحة (3)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> المجال الكشفي (1)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> الأيام والمناسبات</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-competitions);"></span> المسابقات</span>
+        </div>
+    </div>
+
+    <!-- الجدول الرئيسي -->
+    <div class="table-responsive">
+        <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
+            <thead>
+                <tr>
+                    <th class="class-col-header">الفصل</th>
+                    <th>الحصة 1</th>
+                    <th>الحصة 2</th>
+                    <th>الحصة 3</th>
+                    <th>الحصة 4</th>
+                    <th>الحصة 5</th>
+                    <th>الحصة 6</th>
+                    <th>الحصة 7</th>
+                </tr>
+            </thead>
+            <tbody id="scheduleTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- تقرير طباعة الأنشطة الطلابية التنفيذي المستقل -->
+    <div id="activityReportPrintArea">
+        <div class="act-report-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div style="font-size: 0.95rem; font-weight: 700; text-align: right; line-height: 1.6;">
+                    <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
+                    <div>مدرسة مكة المكرمة الابتدائية</div>
+                    <div>النشاط الطلابي</div>
+                </div>
+                <div>
+                    <strong style="font-size: 1.2rem; color: #0C6A64;">وزارة التعليم</strong>
+                </div>
+            </div>
+            <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 4px;" id="actReportSubTitle">العام الدراسي 1448هـ</div>
+        </div>
+
+        <table class="act-report-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">م</th>
+                    <th>اسم البرنامج / النشاط</th>
+                    <th>المجال</th>
+                    <th>الصفوف المستهدفة</th>
+                    <th>فترة التنفيذ / الحصة</th>
+                    <th>آلية تقديم النشاط</th>
+                    <th>المعلم المنفذ</th>
+                </tr>
+            </thead>
+            <tbody id="actReportTableBody"></tbody>
+        </table>
+
+        <!-- إظهار أسماء رائد النشاط والمدير بدون خانات توقيع -->
+        <div class="act-names-footer">
+            <div>رائد النشاط: عواد محمد العوفي</div>
+            <div>مدير المدرسة: متعب حسن السحيمي</div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة فصل جديد -->
+    <div class="modal-cal" id="addClassModal" style="display: none;">
+        <div class="mbox-cal" style="width: min(450px, 95%);">
+            <div class="mhead-cal">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>إضافة فصل دراسي جديد للسحابة</h3>
+                    <button type="button" class="close text-white" onclick="closeAddModal()">&times;</button>
+                </div>
+            </div>
+            <div class="mbody-cal">
+                <div class="form-group text-right">
+                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 4/ج):</label>
+                    <input type="text" id="newClassNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم الفصل">
+                </div>
+            </div>
+            <div class="mfoot-cal">
+                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة وحفظ بالسحابة</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeAddModal()">إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        /**
-         * Initialize Firestore Demo Instance with local Fallback storage
-         * to prevent Base64 length limitations and Firebase syncing issues.
-         */
         const firebaseConfig = {
-            apiKey: "AIzaSyDemoKeyForSchoolActivities1448",
-            authDomain: "school-activities-1448.firebaseapp.com",
-            projectId: "school-activities-1448",
-            storageBucket: "school-activities-1448.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456"
+            apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
+            authDomain: "makkahschool-32961.firebaseapp.com",
+            projectId: "makkahschool-32961",
+            storageBucket: "makkahschool-32961.firebasestorage.app",
+            messagingSenderId: "502489720942",
+            appId: "1:502489720942:web:9738bda6457aec5904de7f",
+            measurementId: "G-HMQSMFF391"
         };
 
-        let db = null;
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.firestore();
-        } catch (e) {
-            console.warn("Firebase running in Local Storage Fallback mode.", e);
-        }
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // Global State Configuration
-        let currentSelectedDay = "الأحد";
-        const defaultSlotsCount = 7;
+        let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
+        let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
+        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الفنية", "الحياتية", "الاجتماعيات"];
+
+        const FIELDS_CONFIG = {
+            "citizenship": { title: "المواطنة والحياة", color: "#2a9d8f" },
+            "culture": { title: "الثقافة والفنون", color: "#e06d9f" },
+            "science": { title: "العلوم والتقنية", color: "#4a90e2" },
+            "sports": { title: "الرياضة والصحة", color: "#52b788" },
+            "scout": { title: "المجال الكشفي", color: "#c0a02d" },
+            "days": { title: "الأيام والمناسبات", color: "#e76f51" },
+            "competitions": { title: "المسابقات", color: "#9b59b6" }
+        };
+
+        let customAssignments = {};
+        let tempOverrides = {};
         
-        // Dynamic Weekly Activities State Matrix
-        let weeklySchedule = {
-            "الأحد": [],
-            "الإثنين": [],
-            "الثلاثاء": [],
-            "الأربعاء": [],
-            "الخميس": []
-        };
+        let activeDayName = "الثلاثاء";
+        let activeWeekLabel = "الأسبوع الثامن";
+        let currentTerm = 1;
+        let selectedCellInfo = null;
 
-        // Standard Default Schedule Slots Timings
-        const defaultSlotTimes = [
-            "07:30 - 08:15",
-            "08:15 - 09:00",
-            "09:00 - 09:45",
-            "10:15 - 11:00",
-            "11:00 - 11:45",
-            "11:45 - 12:30",
-            "12:30 - 01:15"
+        const CAL_1448 = [
+            { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
+            { t: 1, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/02/17 هـ",m:"2026/08/23 م"},{name:"الإثنين",h:"1448/02/18 هـ",m:"2026/08/24 م"},{name:"الثلاثاء",h:"1448/02/19 هـ",m:"2026/08/25 م"},{name:"الأربعاء",h:"1448/02/20 هـ",m:"2026/08/26 م"},{name:"الخميس",h:"1448/02/21 هـ",m:"2026/08/27 م"}]},
+            { t: 1, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/02/24 هـ",m:"2026/08/30 م"},{name:"الإثنين",h:"1448/02/25 هـ",m:"2026/08/31 م"},{name:"الثلاثاء",h:"1448/02/26 هـ",m:"2026/09/01 م"},{name:"الأربعاء",h:"1448/02/27 هـ",m:"2026/09/02 م"},{name:"الخميس",h:"1448/02/28 هـ",m:"2026/09/03 م"}]},
+            { t: 1, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/03/02 هـ",m:"2026/09/06 م"},{name:"الإثنين",h:"1448/03/03 هـ",m:"2026/09/07 م"},{name:"الثلاثاء",h:"1448/03/04 هـ",m:"2026/09/08 م"},{name:"الأربعاء",h:"1448/03/05 هـ",m:"2026/09/09 م"},{name:"الخميس",h:"1448/03/06 هـ",m:"2026/09/10 م"}]},
+            { t: 1, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/03/09 هـ",m:"2026/09/13 م"},{name:"الإثنين",h:"1448/03/10 هـ",m:"2026/09/14 م"},{name:"الثلاثاء",h:"1448/03/11 هـ",m:"2026/09/15 م"},{name:"الأربعاء",h:"1448/03/12 هـ",m:"2026/09/16 م"},{name:"الخميس",h:"1448/03/13 هـ",m:"2026/09/17 م"}]},
+            { t: 1, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/03/16 هـ",m:"2026/09/20 م"},{name:"الإثنين",h:"1448/03/17 هـ",m:"2026/09/21 م"},{name:"الثلاثاء",h:"1448/03/18 هـ",m:"2026/09/22 م"},{name:"الأربعاء",h:"1448/03/19 هـ",m:"2026/09/23 م"},{name:"الخميس",h:"1448/03/20 هـ",m:"2026/09/24 م"}]},
+            { t: 1, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/03/23 هـ",m:"2026/09/27 م"},{name:"الإثنين",h:"1448/03/24 هـ",m:"2026/09/28 م"},{name:"الثلاثاء",h:"1448/03/25 هـ",m:"2026/09/29 م"},{name:"الأربعاء",h:"1448/03/26 هـ",m:"2026/09/30 م"},{name:"الخميس",h:"1448/03/27 هـ",m:"2026/10/01 م"}]},
+            { t: 1, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/05/07 هـ",m:"2026/10/18 م"},{name:"الإثنين",h:"1448/05/08 هـ",m:"2026/10/19 م"},{name:"الثلاثاء",h:"1448/05/09 هـ",m:"2026/10/20 م"},{name:"الأربعاء",h:"1448/05/10 هـ",m:"2026/10/21 م"},{name:"الخميس",h:"1448/05/11 هـ",m:"2026/10/22 م"}]},
+            { t: 1, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/05/14 هـ",m:"2026/10/25 م"},{name:"الإثنين",h:"1448/05/15 هـ",m:"2026/10/26 م"},{name:"الثلاثاء",h:"1448/05/16 هـ",m:"2026/10/27 م"},{name:"الأربعاء",h:"1448/05/17 هـ",m:"2026/10/28 م"},{name:"الخميس",h:"1448/05/18 هـ",m:"2026/10/29 م"}]},
+            { t: 1, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/05/21 هـ",m:"2026/11/01 م"},{name:"الإثنين",h:"1448/05/22 هـ",m:"2026/11/02 م"},{name:"الثلاثاء",h:"1448/05/23 هـ",m:"2026/11/03 م"},{name:"الأربعاء",h:"1448/05/24 هـ",m:"2026/11/04 م"},{name:"الخميس",h:"1448/05/25 هـ",m:"2026/11/05 م"}]},
+            { t: 1, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/05/28 هـ",m:"2026/11/08 م"},{name:"الإثنين",h:"1448/05/29 هـ",m:"2026/11/09 م"},{name:"الثلاثاء",h:"1448/06/01 هـ",m:"2026/11/10 م"},{name:"الأربعاء",h:"1448/06/02 هـ",m:"2026/11/11 م"},{name:"الخميس",h:"1448/06/03 هـ",m:"2026/11/12 م"}]},
+            { t: 1, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/06/05 هـ",m:"2026/11/15 م"},{name:"الإثنين",h:"1448/06/06 هـ",m:"2026/11/16 م"},{name:"الثلاثاء",h:"1448/06/07 هـ",m:"2026/11/17 م"},{name:"الأربعاء",h:"1448/06/08 هـ",m:"2026/11/18 م"},{name:"الخميس",h:"1448/06/09 هـ",m:"2026/11/19 م"}]},
+            { t: 1, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/06/12 هـ",m:"2026/11/22 م"},{name:"الإثنين",h:"1448/06/13 هـ",m:"2026/11/23 م"},{name:"الثلاثاء",h:"1448/06/14 هـ",m:"2026/11/24 م"},{name:"الأربعاء",h:"1448/06/15 هـ",m:"2026/11/25 م"},{name:"الخميس",h:"1448/06/16 هـ",m:"2026/11/26 م"}]},
+            { t: 1, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/06/19 هـ",m:"2026/11/29 م"},{name:"الإثنين",h:"1448/06/20 هـ",m:"2026/11/30 م"},{name:"الثلاثاء",h:"1448/06/21 هـ",m:"2026/12/01 م"},{name:"الأربعاء",h:"1448/06/22 هـ",m:"2026/12/02 م"},{name:"الخميس",h:"1448/06/23 هـ",m:"2026/12/03 م"}]},
+            { t: 1, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/07/01 هـ",m:"2026/12/06 م"},{name:"الإثنين",h:"1448/07/02 هـ",m:"2026/12/07 م"},{name:"الثلاثاء",h:"1448/07/03 هـ",m:"2026/12/08 م"},{name:"الأربعاء",h:"1448/07/04 هـ",m:"2026/12/09 م"},{name:"الخميس",h:"1448/07/05 هـ",m:"2026/12/10 م"}]},
+            { t: 1, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/07/08 هـ",m:"2026/12/13 م"},{name:"الإثنين",h:"1448/07/09 هـ",m:"2026/12/14 م"},{name:"الثلاثاء",h:"1448/07/10 هـ",m:"2026/12/15 م"},{name:"الأربعاء",h:"1448/07/11 هـ",m:"2026/12/16 م"},{name:"الخميس",h:"1448/07/12 هـ",m:"2026/12/17 م"}]},
+            { t: 1, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/07/15 هـ",m:"2026/12/20 م"},{name:"الإثنين",h:"1448/07/16 هـ",m:"2026/12/21 م"},{name:"الثلاثاء",h:"1448/07/17 هـ",m:"2026/12/22 م"},{name:"الأربعاء",h:"1448/07/18 هـ",m:"2026/12/23 م"},{name:"الخميس",h:"1448/07/19 هـ",m:"2026/12/24 م"}]},
+            { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/07/22 هـ",m:"2026/12/27 م"},{name:"الإثنين",h:"1448/07/23 هـ",m:"2026/12/28 م"},{name:"الثلاثاء",h:"1448/07/24 هـ",m:"2026/12/29 م"},{name:"الأربعاء",h:"1448/07/25 هـ",m:"2026/12/30 م"},{name:"الخميس",h:"1448/07/26 هـ",m:"2026/12/31 م"}]},
+            { t: 1, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
+
+            { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/13 هـ",m:"2027/01/10 م"},{name:"الإثنين",h:"1448/08/14 هـ",m:"2027/01/11 م"},{name:"الثلاثاء",h:"1448/08/15 هـ",m:"2027/01/12 م"},{name:"الأربعاء",h:"1448/08/16 هـ",m:"2027/01/13 م"},{name:"الخميس",h:"1448/08/17 هـ",m:"2027/01/14 م"}]},
+            { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/20 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/21 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/22 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/23 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/24 هـ",m:"2027/01/21 م"}]},
+            { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/27 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/28 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/29 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/09/01 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/09/02 هـ",m:"2027/01/28 م"}]},
+            { t: 2, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/09/05 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/09/06 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/07 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/08 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/09 هـ",m:"2027/02/04 م"}]},
+            { t: 2, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/09/12 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/13 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/14 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/15 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/16 هـ",m:"2027/02/11 م"}]},
+            { t: 2, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/09/19 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/20 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/21 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/22 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/23 هـ",m:"2027/02/18 م"}]},
+            { t: 2, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/10/03 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/10/04 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/10/05 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/10/06 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/10/07 هـ",m:"2027/02/25 م"}]},
+            { t: 2, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/10/10 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/10/11 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/10/12 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/13 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/14 هـ",m:"2027/03/04 م"}]},
+            { t: 2, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/10/17 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/18 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/19 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/20 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/21 هـ",m:"2027/03/11 م"}]},
+            { t: 2, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/10/24 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/25 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/26 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/27 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/28 هـ",m:"2027/03/18 م"}]},
+            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/11/01 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/11/02 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/11/03 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/11/04 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/11/05 هـ",m:"2027/03/25 م"}]},
+            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/11/08 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/11/09 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/11/10 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/11/11 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/12 هـ",m:"2027/04/01 م"}]},
+            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/11/15 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/16 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/17 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/18 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/19 هـ",m:"2027/04/08 م"}]},
+            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/11/22 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/23 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/24 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/25 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/26 هـ",m:"2027/04/15 م"}]},
+            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/12/01 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/12/02 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/12/03 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/12/04 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/12/05 هـ",m:"2027/04/22 م"}]},
+            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/12/08 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/12/09 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/12/10 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/12/11 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/12/12 هـ",m:"2027/04/29 م"}]},
+            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/12/15 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/16 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/17 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/18 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/19 هـ",m:"2027/05/06 م"}]},
+            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/12/22 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/23 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/24 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/25 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/26 هـ",m:"2027/05/13 م"}]},
+            { t: 2, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/12/29 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/13/01 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/13/02 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/13/03 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/13/04 هـ",m:"2027/05/20 م"}]}
         ];
 
-        // Field key translation mapping for statistics
-        const fieldMap = {
-            "المواطنة والحياة": "cnt-citizenship",
-            "الثقافة والفنون": "cnt-culture",
-            "العلوم والتقنية": "cnt-science",
-            "الرياضة والصحة": "cnt-sports",
-            "المجال الكشفي": "cnt-scout",
-            "الأيام والمناسبات": "cnt-events",
-            "المسابقات": "cnt-competitions"
-        };
+        let ALL_DAYS_FLAT = [];
+        CAL_1448.forEach(wk => {
+            wk.days.forEach(d => {
+                ALL_DAYS_FLAT.push({
+                    term: wk.t,
+                    weekLabel: wk.label,
+                    dayName: d.name,
+                    hDate: d.h,
+                    mDate: d.m
+                });
+            });
+        });
 
-        window.onload = function() {
-            initScheduleData();
-            loadScheduleFromStorage();
-            renderDaySchedule();
-            updateFieldCounters();
-        };
+        let currentFlatIndex = 0;
 
-        // Initialize empty slot structures
-        function initScheduleData() {
-            Object.keys(weeklySchedule).forEach(day => {
-                if (!weeklySchedule[day] || weeklySchedule[day].length === 0) {
-                    weeklySchedule[day] = Array.from({ length: defaultSlotsCount }, (_, idx) => ({
-                        slotNum: idx + 1,
-                        time: defaultSlotTimes[idx] || "",
-                        activity: null
-                    }));
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadDataFromCloud();
+            setTodayAutomatically();
+        });
+
+        async function loadDataFromCloud() {
+            try {
+                let docRef = await db.collection("schedules").doc("main_schedule").get();
+                if (docRef.exists) {
+                    let data = docRef.data();
+                    if (data.assignments) customAssignments = data.assignments;
+                    if (data.classes) targetClasses = data.classes;
+                    if (data.teachers) teachersPool = data.teachers;
+                    if (data.overrides) tempOverrides = data.overrides;
                 }
-            });
-        }
-
-        // Switch Active Day Tab
-        function switchDay(day) {
-            currentSelectedDay = day;
-            document.getElementById('current-day-display').innerText = day;
-            
-            document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.className = "day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-700 hover:bg-slate-200";
-            });
-
-            const activeBtn = document.getElementById(`day-btn-${day}`);
-            if (activeBtn) {
-                activeBtn.className = "day-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
+            } catch (e) {
+                console.log("جارِ استخدام البيانات المحلية...");
             }
-
-            renderDaySchedule();
         }
 
-        // Render Timetable for Currently Selected Day
-        function renderDaySchedule() {
-            const tbody = document.getElementById('schedule-tbody');
+        function setTodayAutomatically() {
+            let todayObj = new Date();
+            let yyyy = todayObj.getFullYear();
+            let mm = String(todayObj.getMonth() + 1).padStart(2, '0');
+            let dd = String(todayObj.getDate()).padStart(2, '0');
+            let formattedTodayStr = `${yyyy}/${mm}/${dd}`;
+
+            let idx = ALL_DAYS_FLAT.findIndex(d => d.mDate.includes(formattedTodayStr));
+            if (idx !== -1) {
+                currentFlatIndex = idx;
+            } else {
+                currentFlatIndex = 37;
+            }
+            updateViewFromFlatIndex();
+        }
+
+        function updateViewFromFlatIndex() {
+            let cur = ALL_DAYS_FLAT[currentFlatIndex];
+            activeWeekLabel = cur.weekLabel;
+            activeDayName = cur.dayName;
+            currentTerm = cur.term;
+
+            document.getElementById('currentDayText').innerText = `${cur.weekLabel} - ${cur.dayName}`;
+            document.getElementById('currentWeekText').innerText = `الموافق: ${cur.hDate} (${cur.mDate})`;
+
+            renderScheduleTableForDay(cur.dayName);
+        }
+
+        function navigateDay(direction) {
+            let newIndex = currentFlatIndex + direction;
+            if (newIndex >= 0 && newIndex < ALL_DAYS_FLAT.length) {
+                currentFlatIndex = newIndex;
+                updateViewFromFlatIndex();
+            }
+        }
+
+        function renderScheduleTableForDay(dayStr) {
+            let cleanDay = "الثلاثاء";
+            ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(d => {
+                if (dayStr.includes(d)) cleanDay = d;
+            });
+            activeDayName = cleanDay;
+
+            const tbody = document.getElementById('scheduleTableBody');
             tbody.innerHTML = '';
 
-            const daySlots = weeklySchedule[currentSelectedDay] || [];
-
-            daySlots.forEach((slot, idx) => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-
-                if (slot.activity) {
-                    const act = slot.activity;
+            targetClasses.forEach((cls, index) => {
+                let tr = document.createElement('tr');
+                
+                let html = `<th class="class-col-header">
+                    <div class="class-row-header-box">
+                        <span class="class-title-text">${cls}</span>
+                        <button class="gear-btn" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل"><i class="fas fa-cog"></i></button>
+                    </div>
+                </th>`;
+                
+                for(let i = 1; i <= 7; i++) {
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
+                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
                     
-                    // Badges logic
-                    const typeBadge = act.type === 'ثابتة' 
-                        ? `<span class="bg-indigo-100 text-indigo-800 border border-indigo-200 text-[11px] px-2 py-0.5 rounded-md font-bold">ثابتة</span>` 
-                        : `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-[11px] px-2 py-0.5 rounded-md font-bold">مرنة</span>`;
+                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
-                    const scopeBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 text-[11px] px-2 py-0.5 rounded-md font-semibold">${act.scope || 'حصة'}</span>`;
+                    if (cellData && cellData.isActivity) {
+                        let fKey = cellData.fieldKey || "citizenship";
+                        let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+                        let flexibility = cellData.flexibility || "ثابتة";
+                        let hoursCount = cellData.hours || 1;
 
-                    // Barcode render logic
-                    let barcodeHtml = `<span class="text-xs text-slate-400">لا يوجد رابط</span>`;
-                    if (act.barcodeSrc) {
-                        barcodeHtml = `
-                            <div class="flex flex-col items-center">
-                                <img src="${act.barcodeSrc}" alt="Barcode" class="h-10 w-24 object-contain" />
-                                ${act.url ? `<a href="${act.url}" target="_blank" class="text-[10px] text-indigo-600 hover:underline mt-0.5 no-print">فتح الرابط</a>` : ''}
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                            <div class="activity-card-custom" style="border-color: ${fConf.color};">
+                                <span class="field-tag-badge" style="background: ${fConf.color};">${fConf.title}</span>
+                                <div class="activity-meta-row px-1">
+                                    <span class="activity-flexibility-box">${flexibility}</span>
+                                    <span class="activity-hours-box">${hoursCount} حصص</span>
+                                </div>
+                                <div class="activity-header-custom" style="color: ${fConf.color};">${cellData.course}</div>
+                                <div class="teacher-name-badge">${cellData.teacher || "نشاط مدرسي"}</div>
                             </div>
-                        `;
+                        </td>`;
+                    } else if (cellData && cellData.course) {
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                            <div class="course-cell-box">
+                                <div class="course-name-large">${cellData.course}</div>
+                                <div class="teacher-name-badge">${cellData.teacher || "—"}</div>
+                            </div>
+                        </td>`;
+                    } else {
+                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
+                            <div class="empty-cell-box"></div>
+                        </td>`;
                     }
-
-                    tr.innerHTML = `
-                        <td class="p-3 border border-slate-200 text-center font-bold text-slate-700">${slot.slotNum}</td>
-                        <td class="p-3 border border-slate-200 text-center text-xs text-slate-600 font-medium">${slot.time}</td>
-                        <td class="p-3 border border-slate-200">
-                            <div class="font-bold text-slate-800 text-sm">${act.title}</div>
-                            <div class="text-xs text-emerald-700 font-semibold mt-0.5"><i class="fa-solid fa-layer-group text-[10px]"></i> ${act.field}</div>
-                        </td>
-                        <td class="p-3 border border-slate-200 text-center">
-                            <div class="flex flex-col gap-1 items-center justify-center">
-                                ${typeBadge}
-                                ${scopeBadge}
-                            </div>
-                        </td>
-                        <td class="p-3 border border-slate-200 text-center">
-                            ${barcodeHtml}
-                        </td>
-                        <td class="p-3 border border-slate-200 text-center no-print">
-                            <div class="flex justify-center gap-1">
-                                <button onclick="openActivityModal(${idx})" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs" title="تعديل">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button onclick="deleteActivity(${idx})" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs" title="حذف">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                } else {
-                    tr.innerHTML = `
-                        <td class="p-3 border border-slate-200 text-center font-bold text-slate-400">${slot.slotNum}</td>
-                        <td class="p-3 border border-slate-200 text-center text-xs text-slate-400">${slot.time}</td>
-                        <td class="p-3 border border-slate-200 text-slate-400 text-xs italic">لا يوجد برنامج مخصص لهذه الحصة</td>
-                        <td class="p-3 border border-slate-200 text-center text-slate-300 text-xs">-</td>
-                        <td class="p-3 border border-slate-200 text-center text-slate-300 text-xs">-</td>
-                        <td class="p-3 border border-slate-200 text-center no-print">
-                            <button onclick="openActivityModal(${idx})" class="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-2 py-1 rounded-md font-bold transition">
-                                <i class="fa-solid fa-plus text-[10px]"></i> إضافة
-                            </button>
-                        </td>
-                    `;
                 }
-
+                tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
         }
 
-        /**
-         * Dynamic Field Counter Engine
-         * Iterates through ALL active activities across all days
-         * and updates the field indicators in real-time.
-         */
-        function updateFieldCounters() {
-            const counts = {
-                "المواطنة والحياة": 0,
-                "الثقافة والفنون": 0,
-                "العلوم والتقنية": 0,
-                "الرياضة والصحة": 0,
-                "المجال الكشفي": 0,
-                "الأيام والمناسبات": 0,
-                "المسابقات": 0
-            };
+        /* دوال الطباعة */
+        function printFullSchedule() {
+            document.body.className = "print-full-schedule";
+            window.print();
+        }
 
-            Object.keys(weeklySchedule).forEach(day => {
-                weeklySchedule[day].forEach(slot => {
-                    if (slot.activity && slot.activity.field && counts.hasOwnProperty(slot.activity.field)) {
-                        counts[slot.activity.field]++;
+        function executeActivitiesPrint() {
+            let cur = ALL_DAYS_FLAT[currentFlatIndex];
+            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} الموافق ${cur.hDate} هـ (${cur.mDate} م)`;
+
+            let tbody = document.getElementById('actReportTableBody');
+            tbody.innerHTML = '';
+
+            let count = 0;
+            let cleanDay = activeDayName;
+
+            targetClasses.forEach(cls => {
+                for(let i = 1; i <= 7; i++) {
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
+                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
+                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+
+                    if (cellData && cellData.isActivity) {
+                        count++;
+                        let fKey = cellData.fieldKey || "citizenship";
+                        let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+
+                        // جلب الباركود الخاص بكل برنامج نشاط على حدة
+                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
+
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${count}</td>
+                            <td style="font-weight: 700;">${cellData.course}</td>
+                            <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
+                            <td>فصل ${cls}</td>
+                            <td>الحصة ${i}</td>
+                            <td>${barcodeCellContent}</td>
+                            <td>${cellData.teacher || "غير محدد"}</td>
+                        `;
+                        tbody.appendChild(tr);
                     }
+                }
+            });
+
+            if (count === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
+            }
+
+            document.body.className = "print-activities-only";
+            window.print();
+        }
+
+        function openCellClickModal(day, cls, period) {
+            let baseKey = `${day}_${cls}_${period}`;
+            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+
+            selectedCellInfo = { day, cls, period };
+
+            document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
+            
+            updateTeacherDropdowns();
+            const courseSel = document.getElementById('cellCourseSelect');
+            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === cellData.course ? 'selected' : ''}>${co}</option>`).join('');
+
+            const cellTypeSel = document.getElementById('cellTypeSelect');
+            if (cellData.isActivity) {
+                cellTypeSel.value = "activity";
+                document.getElementById('cellActNameInput').value = cellData.course || "نشاط مدرسي";
+                document.getElementById('cellActFieldSelect').value = cellData.fieldKey || "citizenship";
+                document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
+                document.getElementById('cellActHoursInput').value = cellData.hours || 1;
+            } else if (cellData.course) {
+                cellTypeSel.value = "course";
+            } else {
+                cellTypeSel.value = "empty";
+            }
+
+            document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
+            document.getElementById('cellBarcodeFileInput').value = '';
+            handleCellTypeChange(cellTypeSel.value);
+
+            document.getElementById('cellClickModal').classList.add('show');
+        }
+
+        function closeCellClickModal() {
+            document.getElementById('cellClickModal').classList.remove('show');
+            selectedCellInfo = null;
+        }
+
+        function handleCellTypeChange(typeVal) {
+            document.getElementById('courseSelectionGroup').style.display = (typeVal === 'course') ? 'block' : 'none';
+            document.getElementById('activityFieldsGroup').style.display = (typeVal === 'activity') ? 'block' : 'none';
+            document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
+        }
+
+        async function saveCellAssignment() {
+            if (!selectedCellInfo) return;
+
+            const { day, cls, period } = selectedCellInfo;
+            const typeVal = document.getElementById('cellTypeSelect').value;
+            
+            let baseKey = `${day}_${cls}_${period}`;
+            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+
+            let existingData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+
+            if (typeVal === 'empty') {
+                delete customAssignments[baseKey];
+                delete tempOverrides[weekKey];
+            } else {
+                let courseName = "";
+                let teacherName = "";
+                let isAct = false;
+                let fieldKey = "";
+                let flexibility = "ثابتة";
+                let hours = 1;
+                let barcodeSrc = existingData.barcodeSrc || null;
+
+                if (typeVal === 'course') {
+                    courseName = document.getElementById('cellCourseSelect').value;
+                    teacherName = document.getElementById('cellTeacherSelect').value;
+                } else if (typeVal === 'activity') {
+                    courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط مدرسي";
+                    teacherName = document.getElementById('cellTeacherSelect').value;
+                    isAct = true;
+                    fieldKey = document.getElementById('cellActFieldSelect').value;
+                    flexibility = document.getElementById('cellActFlexSelect').value;
+                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
+
+                    let fileInput = document.getElementById('cellBarcodeFileInput');
+                    if (fileInput.files && fileInput.files[0]) {
+                        await new Promise((resolve) => {
+                            let reader = new FileReader();
+                            reader.onload = function(e) {
+                                barcodeSrc = e.target.result;
+                                resolve();
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        });
+                    }
+                }
+
+                customAssignments[baseKey] = {
+                    course: courseName,
+                    teacher: teacherName,
+                    isActivity: isAct,
+                    fieldKey: fieldKey,
+                    flexibility: flexibility,
+                    hours: hours,
+                    barcodeSrc: barcodeSrc
+                };
+                delete tempOverrides[weekKey];
+            }
+
+            await saveToCloud();
+
+            closeCellClickModal();
+            renderScheduleTableForDay(activeDayName);
+        }
+
+        function updateTeacherDropdowns() {
+            const teacherSel = document.getElementById('cellTeacherSelect');
+            teacherSel.innerHTML = `<option value="">— تفريغ المعلم —</option>` + teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        function openTeachersManagerModal() {
+            renderTeachersListInManager();
+            document.getElementById('teachersManagerModal').classList.add('show');
+        }
+        function closeTeachersManagerModal() {
+            document.getElementById('teachersManagerModal').classList.remove('show');
+            updateTeacherDropdowns();
+        }
+        function renderTeachersListInManager() {
+            const box = document.getElementById('teachersListContainer');
+            box.innerHTML = teachersPool.map((t, idx) => `
+                <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary">
+                    <span class="text-white small">${t}</span>
+                    <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteTeacher(${idx})"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+        async function addNewTeacher() {
+            let name = document.getElementById('newTeacherNameInput').value.trim();
+            if(!name) return;
+            teachersPool.push(name);
+            document.getElementById('newTeacherNameInput').value = '';
+            renderTeachersListInManager();
+            await saveToCloud();
+        }
+        async function deleteTeacher(idx) {
+            teachersPool.splice(idx, 1);
+            renderTeachersListInManager();
+            await saveToCloud();
+        }
+
+        async function saveToCloud() {
+            try {
+                await db.collection("schedules").doc("main_schedule").set({
+                    assignments: customAssignments,
+                    classes: targetClasses,
+                    teachers: teachersPool,
+                    overrides: tempOverrides
                 });
-            });
-
-            // Update UI Counters
-            Object.keys(counts).forEach(field => {
-                const elementId = fieldMap[field];
-                if (elementId) {
-                    const el = document.getElementById(elementId);
-                    if (el) {
-                        el.innerText = `(${counts[field]})`;
-                    }
-                }
-            });
-        }
-
-        // Open Modal for adding or editing
-        function openActivityModal(slotIndex = null) {
-            const modal = document.getElementById('activity-modal');
-            const form = document.getElementById('activity-form');
-            form.reset();
-
-            if (slotIndex !== null) {
-                document.getElementById('form-slot-index').value = slotIndex;
-                const slot = weeklySchedule[currentSelectedDay][slotIndex];
-                if (slot && slot.activity) {
-                    document.getElementById('modal-title').innerText = "تعديل برنامج الحصة";
-                    document.getElementById('form-title').value = slot.activity.title || "";
-                    document.getElementById('form-field').value = slot.activity.field || "المواطنة والحياة";
-                    document.getElementById('form-type').value = slot.activity.type || "ثابتة";
-                    document.getElementById('form-scope').value = slot.activity.scope || "حصة واحدة";
-                    document.getElementById('form-url').value = slot.activity.url || "";
-                } else {
-                    document.getElementById('modal-title').innerText = `إضافة برنامج للحصة (${slotIndex + 1})`;
-                }
-            } else {
-                document.getElementById('form-slot-index').value = "";
-                document.getElementById('modal-title').innerText = "إضافة برنامج للحصة";
+            } catch (e) {
+                alert("خطأ أثناء الحفظ بالسحابة.");
             }
-
-            modal.classList.remove('hidden');
         }
 
-        function closeActivityModal() {
-            document.getElementById('activity-modal').classList.add('hidden');
+        function openCalendarModal() {
+            document.getElementById('calendarModal').classList.add('show');
+            renderWeeksList(currentTerm);
         }
-
-        /**
-         * Firestore Base64 Compression Engine
-         * Generates barcode into a minimal compressed Canvas element (150x60px)
-         * creating a lightweight Base64 string that never breaks Firestore boundaries.
-         */
-        async function generateCompressedBarcode(text) {
-            if (!text) return "";
-
-            return new Promise((resolve) => {
-                try {
-                    const tempSvg = document.getElementById('barcode-temp-svg');
-                    JsBarcode(tempSvg, text, {
-                        format: "CODE128",
-                        width: 1.5,
-                        height: 40,
-                        displayValue: false,
-                        margin: 2
-                    });
-
-                    const svgData = new XMLSerializer().serializeToString(tempSvg);
-                    const img = new Image();
-                    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-                    const url = URL.createObjectURL(svgBlob);
-
-                    img.onload = function() {
-                        const canvas = document.getElementById('barcode-compress-canvas');
-                        canvas.width = 150;
-                        canvas.height = 50;
-                        const ctx = canvas.getContext('2d');
-                        ctx.fillStyle = "#FFFFFF";
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(img, 0, 0, 150, 50);
-                        
-                        URL.revokeObjectURL(url);
-                        // Compress heavily to keep payload extremely small (< 3KB)
-                        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
-                        resolve(compressedBase64);
-                    };
-
-                    img.onerror = function() {
-                        resolve("");
-                    };
-
-                    img.src = url;
-                } catch (e) {
-                    console.error("Barcode compression error:", e);
-                    resolve("");
-                }
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('show');
+        }
+        function switchTerm(term) {
+            currentTerm = term;
+            document.getElementById('tabTerm1').classList.toggle('active', term === 1);
+            document.getElementById('tabTerm2').classList.toggle('active', term === 2);
+            renderWeeksList(term);
+        }
+        function renderWeeksList(term) {
+            const container = document.getElementById('weeksListContainer');
+            container.innerHTML = '';
+            CAL_1448.filter(w => w.t === term).forEach((wk) => {
+                const wkDiv = document.createElement('div');
+                wkDiv.className = 'wk-item';
+                let daysHtml = wk.days.map(d => `
+                    <div class="day-card-item" onclick="selectDateFromCalendar('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
+                        <b>${d.name}</b> <em>${d.h} — ${d.m}</em>
+                    </div>
+                `).join('');
+                wkDiv.innerHTML = `
+                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
+                        <div><b>${wk.label}</b></div>
+                        <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
+                    </button>
+                    <div class="days-list">${daysHtml}</div>
+                `;
+                container.appendChild(wkDiv);
             });
         }
-
-        // Handle Form Submit (Add/Update Activity)
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-
-            let slotIdx = document.getElementById('form-slot-index').value;
-            if (slotIdx === "" || slotIdx === null) {
-                // Find first unassigned slot
-                slotIdx = weeklySchedule[currentSelectedDay].findIndex(s => !s.activity);
-                if (slotIdx === -1) slotIdx = 0;
-            } else {
-                slotIdx = parseInt(slotIdx);
-            }
-
-            const title = document.getElementById('form-title').value.trim();
-            const field = document.getElementById('form-field').value;
-            const type = document.getElementById('form-type').value;
-            const scope = document.getElementById('form-scope').value;
-            const url = document.getElementById('form-url').value.trim();
-
-            let barcodeSrc = "";
-            if (url) {
-                barcodeSrc = await generateCompressedBarcode(url);
-            }
-
-            // Assign Activity to Slot
-            weeklySchedule[currentSelectedDay][slotIdx].activity = {
-                title,
-                field,
-                type,
-                scope,
-                url,
-                barcodeSrc
-            };
-
-            saveScheduleToStorage();
-            renderDaySchedule();
-            updateFieldCounters();
-            closeActivityModal();
-            showToast("تم حفظ البرنامج والباركود بنجاح");
+        function toggleWeekOpen(btn) {
+            const item = btn.parentElement;
+            const list = item.querySelector('.days-list');
+            const isOpen = item.classList.contains('open');
+            item.classList.toggle('open', !isOpen);
+            list.style.display = isOpen ? 'none' : 'grid';
         }
 
-        // Delete Activity from Slot
-        function deleteActivity(slotIndex) {
-            if (confirm("هل أنت تأكد من رغبتك في حذف هذا البرنامج؟")) {
-                weeklySchedule[currentSelectedDay][slotIndex].activity = null;
-                saveScheduleToStorage();
-                renderDaySchedule();
-                updateFieldCounters();
-                showToast("تم حذف البرنامج بنجاح");
+        function selectDateFromCalendar(weekLabel, dayName, dateStr) {
+            let idx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === weekLabel && d.dayName === dayName);
+            if (idx !== -1) {
+                currentFlatIndex = idx;
+                updateViewFromFlatIndex();
             }
+            closeCalendarModal();
         }
 
-        // Local Storage Syncing
-        function saveScheduleToStorage() {
-            try {
-                localStorage.setItem('school_activity_schedule_1448', JSON.stringify(weeklySchedule));
-            } catch (e) {
-                console.error("LocalStorage write failed:", e);
-            }
+        let selectedClassIndexForAction = null;
+        function openClassActionModal(index, className) {
+            selectedClassIndexForAction = index;
+            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
+            document.getElementById('classActionModal').classList.add('show');
         }
-
-        function loadScheduleFromStorage() {
-            try {
-                const stored = localStorage.getItem('school_activity_schedule_1448');
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    if (parsed && typeof parsed === 'object') {
-                        weeklySchedule = parsed;
-                    }
-                }
-            } catch (e) {
-                console.error("LocalStorage read failed:", e);
-            }
+        function closeClassActionModal() {
+            document.getElementById('classActionModal').classList.remove('show');
+            selectedClassIndexForAction = null;
         }
-
-        // Cloud Firebase Sync Function
-        async function syncDataToFirebase() {
-            showToast("جاري المزامنة السحابية...");
-            try {
-                saveScheduleToStorage();
-                if (db) {
-                    await db.collection("activity_plans").doc("schedule_1448").set({
-                        weeklySchedule: weeklySchedule,
-                        updatedAt: new Date().toISOString(),
-                        schoolLeader: "متعب حسن السحيمي",
-                        activityLeader: "عواد محمد العوفي"
-                    });
-                    showToast("تم الحفظ بنجاح على الفايربيس");
-                } else {
-                    showToast("تم الحفظ محلياً بنجاح (وضع الحفظ المحلي)");
-                }
-            } catch (e) {
-                console.error("Firebase sync error:", e);
-                showToast("تم الحفظ محلياً - تعذر الإتصال بالفايربيس");
-            }
+        async function moveSelectedClass(direction) {
+            if (selectedClassIndexForAction === null) return;
+            let targetIndex = selectedClassIndexForAction + direction;
+            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
+            let temp = targetClasses[selectedClassIndexForAction];
+            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
+            targetClasses[targetIndex] = temp;
+            closeClassActionModal();
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
         }
-
-        // Toast Helper
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            toastMsg.innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+        async function deleteSelectedClass() {
+            if (selectedClassIndexForAction === null) return;
+            targetClasses.splice(selectedClassIndexForAction, 1);
+            closeClassActionModal();
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
+        }
+        function openModalForAdd() { document.getElementById('addClassModal').style.display = 'flex'; }
+        function closeAddModal() { document.getElementById('addClassModal').style.display = 'none'; }
+        async function addNewClassRow() {
+            let className = document.getElementById('newClassNameInput').value.trim();
+            if(!className) return;
+            targetClasses.push(className);
+            await saveToCloud();
+            renderScheduleTableForDay(activeDayName);
+            closeAddModal();
         }
     </script>
 </body>
