@@ -297,17 +297,28 @@
             gap: 10px;
         }
 
-        .btn-act-outline-green {
-            border: 1px solid var(--brand);
-            color: var(--brand);
-            background: #fff;
+        /* تعديل الأزرار لتأخذ نفس تصميم زر التاريخ والتقويم */
+        .btn-custom-dark {
+            background: linear-gradient(135deg, var(--brand), #0891b2);
+            color: #fff;
+            border: none;
             border-radius: 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            padding: 6px 14px;
-            transition: all 0.15s ease;
+            padding: 8px 16px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(12,106,100,0.2);
         }
-        .btn-act-outline-green:hover { background: var(--brand); color: #fff; }
+        .btn-custom-dark:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            color: #fff;
+            text-decoration: none;
+        }
 
         .wc-main-table {
             box-shadow: 0 4px 24px -4px rgba(15,23,42,.10);
@@ -436,7 +447,7 @@
         }
         .gear-btn:hover { background: #e2e8f0; color: #0C6A64; }
 
-        /* منطقة التقرير التنفيذي للأنشطة (تظهر عند الطباعة المخصصة للأنشطة) */
+        /* منطقة التقرير التنفيذي للأنشطة */
         #activityReportPrintArea {
             display: none;
             background: #fff;
@@ -473,22 +484,12 @@
             background-color: #f1f5f9;
             font-weight: 700;
         }
-        .act-signatures-box {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 40px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
 
         .qr-code-img {
-            max-width: 65px;
-            max-height: 65px;
-            margin-top: 4px;
+            max-width: 75px;
+            max-height: 75px;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto;
         }
 
         /* تنسيقات الطباعة */
@@ -681,17 +682,15 @@
                     <h3>إرفاق باركود لآلية التقديم 📱</h3>
                     <button type="button" class="close text-white" onclick="closeBarcodeModal()">&times;</button>
                 </div>
-                <p>هل ترغب في إضافة باركود داخل خانة آلية تقديم النشاط بالتقرير؟</p>
+                <p>اختر صورة الباركود لإدراجها داخل خانة آلية تقديم النشاط:</p>
             </div>
             <div class="mbody-cal text-right">
                 <div class="form-group">
-                    <label class="small font-weight-bold text-light">اختر صورة الباركود من جهازك:</label>
-                    <input type="file" id="barcodeFileInput" accept="image/*" class="form-control-file text-white small">
+                    <label class="small font-weight-bold text-light">رفع صورة الباركود من الجهاز:</label>
+                    <input type="file" id="barcodeFileInput" accept="image/*" class="form-control-file text-white small" onchange="previewSelectedBarcode(this)">
                 </div>
-                <div class="text-center my-2 text-muted">— أو —</div>
-                <div class="form-group">
-                    <label class="small font-weight-bold text-light">أدخل رابط صورة الباركود (URL):</label>
-                    <input type="text" id="barcodeUrlInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="https://...">
+                <div id="barcodePreviewBox" class="text-center my-2" style="display:none;">
+                    <img id="barcodeImgPreview" src="" style="max-width: 90px; max-height: 90px; border: 1px solid #3AAFA5; border-radius: 6px; padding: 2px; background: #fff;">
                 </div>
             </div>
             <div class="mfoot-cal">
@@ -703,10 +702,10 @@
 
     <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
-        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <button class="btn-act btn-act-outline-green" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
-            <button class="btn-act btn-act-outline-green" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
-            <button class="btn-act btn-act-outline-green" onclick="promptBarcodeBeforePrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
+        <div class="d-flex align-items-center gap-2" style="gap: 10px;">
+            <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل جديد</button>
+            <button class="btn-custom-dark" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
+            <button class="btn-custom-dark" onclick="promptBarcodeBeforePrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
         </div>
         
         <div class="fields-bar-container">
@@ -743,13 +742,13 @@
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div class="d-flex justify-content-between align-items-center">
-                <div style="font-size: 0.9rem; font-weight: 700; text-align: right;">
+                <div style="font-size: 0.95rem; font-weight: 700; text-align: right; line-height: 1.6;">
                     <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
                     <div>مدرسة مكة المكرمة الابتدائية</div>
                     <div>النشاط الطلابي</div>
                 </div>
                 <div>
-                    <strong style="font-size: 1.1rem; color: #0C6A64;">وزارة التعليم</strong>
+                    <strong style="font-size: 1.2rem; color: #0C6A64;">وزارة التعليم</strong>
                 </div>
             </div>
             <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
@@ -770,22 +769,6 @@
             </thead>
             <tbody id="actReportTableBody"></tbody>
         </table>
-
-        <div class="act-signatures-box">
-            <div>
-                <div>رائد النشاط</div>
-                <div style="margin-top: 20px;">الاسم: عواد محمد العوفي</div>
-                <div>التوقيع: ........................</div>
-            </div>
-            <div>
-                <div>ختم المدرسة</div>
-            </div>
-            <div>
-                <div>مدير المدرسة</div>
-                <div style="margin-top: 20px;">الاسم: متعب حسن السحيمي</div>
-                <div>التوقيع: ........................</div>
-            </div>
-        </div>
     </div>
 
     <!-- نافذة إضافة فصل جديد -->
@@ -1015,7 +998,7 @@
             });
         }
 
-        /* دوال الطباعة وإرفاق الباركود */
+        /* دوال الطباعة والباركود */
         function printFullSchedule() {
             document.body.className = "print-full-schedule";
             window.print();
@@ -1023,7 +1006,8 @@
 
         function promptBarcodeBeforePrint() {
             document.getElementById('barcodeFileInput').value = '';
-            document.getElementById('barcodeUrlInput').value = '';
+            document.getElementById('barcodePreviewBox').style.display = 'none';
+            selectedBarcodeSrc = null;
             document.getElementById('barcodePromptModal').classList.add('show');
         }
 
@@ -1031,29 +1015,22 @@
             document.getElementById('barcodePromptModal').classList.remove('show');
         }
 
-        function proceedToPrintWithBarcode(useBarcode) {
-            if (useBarcode) {
-                let fileInput = document.getElementById('barcodeFileInput');
-                let urlInput = document.getElementById('barcodeUrlInput').value.trim();
+        function previewSelectedBarcode(input) {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedBarcodeSrc = e.target.result;
+                    document.getElementById('barcodeImgPreview').src = selectedBarcodeSrc;
+                    document.getElementById('barcodePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-                if (fileInput.files && fileInput.files[0]) {
-                    let reader = new FileReader();
-                    reader.onload = function(e) {
-                        selectedBarcodeSrc = e.target.result;
-                        closeBarcodeModal();
-                        executeActivitiesPrint();
-                    };
-                    reader.readAsDataURL(fileInput.files[0]);
-                    return;
-                } else if (urlInput !== "") {
-                    selectedBarcodeSrc = urlInput;
-                } else {
-                    selectedBarcodeSrc = null;
-                }
-            } else {
+        function proceedToPrintWithBarcode(useBarcode) {
+            if (!useBarcode) {
                 selectedBarcodeSrc = null;
             }
-
             closeBarcodeModal();
             executeActivitiesPrint();
         }
@@ -1079,7 +1056,7 @@
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
 
-                        let barcodeHtml = selectedBarcodeSrc ? `<img src="${selectedBarcodeSrc}" class="qr-code-img" alt="باركود">` : '';
+                        let barcodeCellContent = selectedBarcodeSrc ? `<img src="${selectedBarcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
 
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1088,10 +1065,7 @@
                             <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                             <td>فصل ${cls}</td>
                             <td>الحصة ${i}</td>
-                            <td>
-                                <div>ترشيح من المدرسة / رائد النشاط</div>
-                                ${barcodeHtml}
-                            </td>
+                            <td>${barcodeCellContent}</td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
                         tbody.appendChild(tr);
