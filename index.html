@@ -14,7 +14,7 @@
     <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <!-- مكتبة توليد الباركود تلقائياً -->
+    <!-- مكتبة توليد الباركود عالية الدقة والقراءة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
@@ -551,14 +551,22 @@
             font-size: 0.95rem;
         }
 
+        /* تحسين تباين الباركود لقراءته بسهولة بعين الكاميرا */
         .generated-qr-box {
             display: flex;
             justify-content: center;
             align-items: center;
+            background: #fff;
+            padding: 3px;
+            border-radius: 4px;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto;
         }
         .generated-qr-box canvas, .generated-qr-box img {
-            max-width: 65px;
-            max-height: 65px;
+            width: 64px !important;
+            height: 64px !important;
+            display: block !important;
         }
 
         @media print {
@@ -570,7 +578,7 @@
 </head>
 <body>
 
-    <!-- Header Section -->
+    <!-- Header Section مع المظهر المطلوب لاسم رائد النشاط بنفس خط ونمط الإدارة والمدرسة -->
     <div class="page-header-card">
         <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
@@ -578,9 +586,10 @@
             </div>
             <div>
                 <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">خطة النشاط الطلابي</div>
-                <div style="font-size: 0.8rem; color: #64748b;">
-                    الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية
-                    <span class="text-success font-weight-bold ml-2">| رائد النشاط: عواد محمد العوفي</span>
+                <div style="font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+                    <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
+                    <div>مدرسة مكة المكرمة الابتدائية</div>
+                    <div>رائد النشاط: عواد محمد العوفي</div>
                 </div>
             </div>
         </div>
@@ -678,7 +687,7 @@
         </div>
     </div>
 
-    <!-- النافذة التفاعلية لإسناد وتعديل الحصة مع تحويل الملف لباركود تلقائياً -->
+    <!-- النافذة التفاعلية لإسناد وتعديل الحصة -->
     <div class="modal-cal" id="cellClickModal">
         <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
@@ -746,11 +755,11 @@
                         </div>
                     </div>
 
-                    <!-- خاصية إرفاق الملف لتحويله تلقائياً لباركود QR -->
+                    <!-- خيار إدخال رابط أو ملف وإنشاء الباركود الصريح القابل للمسح -->
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success"><i class="fas fa-qrcode ml-1"></i> إرفاق ملف لإنشاء باركود تلقائي (PDF / Word / صورة):</label>
-                        <input type="file" id="cellFileInputForQR" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">* سيقوم النظام بتحويل الملف تلقائياً إلى باركود QR عند الطباعة.</small>
+                        <label class="small font-weight-bold text-success"><i class="fas fa-qrcode ml-1"></i> رابط / ملف الفعالية (لإنشاء باركود سريع القراءة):</label>
+                        <input type="url" id="cellActUrlInput" class="form-control form-control-sm bg-dark text-white border-secondary mb-1" placeholder="ضع رابط الفعالية أو الملف هنا (http://...)">
+                        <input type="file" id="cellFileInputForQR" class="form-control-file text-white small">
                     </div>
                 </div>
 
@@ -839,7 +848,7 @@
                     <th>فترة التنفيذ / الحصة</th>
                     <th>طبيعة الحصة</th>
                     <th>عدد حصص البرنامج</th>
-                    <th>آلية تقديم النشاط (الباركود)</th>
+                    <th>الباركود الإلكتروني</th>
                     <th>المعلم المنفذ</th>
                 </tr>
             </thead>
@@ -912,7 +921,7 @@
             "science": [{ name: "برامج وتطبيقات STEM", hours: 3 }, { name: "التصميم والابتكار التقني", hours: 2 }, { name: "الفضاء والاستكشاف العلمي", hours: 3 }, { name: "الاستدامة وجودة الحياة", hours: 3 }, { name: "الذكاء الاصطناعي", hours: 10 }, { name: "إنترنت الأشياء", hours: 3 }, { name: "الأمن السيبراني", hours: 4 }, { name: "البحث العلمي", hours: 4 }, { name: "حوكمة البيانات", hours: 3 }],
             "sports": [{ name: "منافسات المهارات الرياضية الجماعية", hours: 6 }, { name: "منافسات المهارات الرياضية الفردية", hours: 8 }, { name: "منافسات مهارات رياضات الدفاع عن النفس", hours: 8 }, { name: "الرياضة والترفيه الإلكتروني", hours: 8 }, { name: "الرياضة الذهنية", hours: 6 }, { name: "الأولمبياد الرياضي", hours: 6 }, { name: "الإسعافات الأولية", hours: 3 }, { name: "اللياقة والصحة البدنية", hours: 2 }, { name: "مهارات التحكيم الرياضي (أنا حكم)", hours: 3 }, { name: "صحتي في بيئتي", hours: 3 }],
             "scout": [{ name: "خيمتي الجميلة", hours: 3 }, { name: "براعم البيئة والمجتمع", hours: 2 }, { name: "بصمتي الكشفية", hours: 2 }, { name: "براعم النور", hours: 2 }, { name: "بوصلة الاستكشاف", hours: 3 }, { name: "عاداتي الصحية الكشفية", hours: 2 }, { name: "مهاراتي ومستقبلي الكشفي", hours: 2 }, { name: "أشارك مجتمعي وأزرع بيئتي", hours: 3 }, { name: "خشبة وحبل كشفي", hours: 4 }, { name: "خيمة التجارب المسلية", hours: 2 }, { name: "صافرة واصطفاف كشفي", hours: 2 }, { name: "طهي كشفي", hours: 3 }, { name: "كنوز الصفار", hours: 2 }, { name: "وطني في قلبي", hours: 3 }],
-            "days": [{ name: "اليوم الوطني", hours: 4 }, { name: "يوم المعلم", hours: 2 }, { name: "يوم التسامح", hours: 2 }, { name: "اليوم العالمي للطفل", hours: 2 }, { name: "اليوم العالمي لذوي الإعاقة", hours: 2 }, { name: "يوم اللغة العربية العالمي", hours: 2 }, { name: "اليوم العالمي للتعليم", hours: 2 }, { name: "يوم التأسيس", hours: 4 }, { name: "يوم العلم السعودي", hours: 3 }, { name: "يوم السعودية الخضراء", hours: 2 }, { name: "يوم الصحة العالمي", hours: 2 }, { name: "اليوم الدولي الأسرة", hours: 2 }],
+            "days": [{ name: "اليوم الوطني", hours: 4 }, { name: "يوم المعلم", hours: 2 }, { name: "يوم التسامح", hours: 2 }, { name: "اليوم العالمي للطفل", hours: 2 }, { name: "اليوم العالمي لذوي الإعاقة", hours: 2 }, { name: "اليوم العالمي للتعليم", hours: 2 }, { name: "يوم التأسيس", hours: 4 }, { name: "يوم العلم السعودي", hours: 3 }, { name: "يوم الصحة العالمي", hours: 2 }],
             "competitions": [{ name: "مسابقة النشاط الكشفي", hours: 4 }, { name: "مسابقة الابتكار والعلوم", hours: 6 }, { name: "مسابقة المهارات الرياضية", hours: 4 }, { name: "مسابقة القرآن الكريم والسنة", hours: 5 }, { name: "مسابقة تحدي القراءة", hours: 4 }]
         };
 
@@ -931,9 +940,7 @@
             { t: 1, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/03/09 هـ",m:"2026/09/13 م"},{name:"الإثنين",h:"1448/03/10 هـ",m:"2026/09/14 م"},{name:"الثلاثاء",h:"1448/03/11 هـ",m:"2026/09/15 م"},{name:"الأربعاء",h:"1448/03/12 هـ",m:"2026/09/16 م"},{name:"الخميس",h:"1448/03/13 هـ",m:"2026/09/17 م"}]},
             { t: 1, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/03/16 هـ",m:"2026/09/20 م"},{name:"الإثنين",h:"1448/03/17 هـ",m:"2026/09/21 م"},{name:"الثلاثاء",h:"1448/03/18 هـ",m:"2026/09/22 م"},{name:"الأربعاء",h:"1448/03/19 هـ",m:"2026/09/23 م"},{name:"الخميس",h:"1448/03/20 هـ",m:"2026/09/24 م"}]},
             { t: 1, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/03/23 هـ",m:"2026/09/27 م"},{name:"الإثنين",h:"1448/03/24 هـ",m:"2026/09/28 م"},{name:"الثلاثاء",h:"1448/03/25 هـ",m:"2026/09/29 م"},{name:"الأربعاء",h:"1448/03/26 هـ",m:"2026/09/30 م"},{name:"الخميس",h:"1448/03/27 هـ",m:"2026/10/01 م"}]},
-            { t: 1, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/05/07 هـ",m:"2026/10/18 م"},{name:"الإثنين",h:"1448/05/08 هـ",m:"2026/10/19 م"},{name:"الثلاثاء",h:"1448/05/09 هـ",m:"2026/10/20 م"},{name:"الأربعاء",h:"1448/05/10 هـ",m:"2026/10/21 م"},{name:"الخميس",h:"1448/05/11 هـ",m:"2026/10/22 م"}]},
-            { t: 1, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/05/14 هـ",m:"2026/10/25 م"},{name:"الإثنين",h:"1448/05/15 هـ",m:"2026/10/26 م"},{name:"الثلاثاء",h:"1448/05/16 هـ",m:"2026/10/27 م"},{name:"الأربعاء",h:"1448/05/17 هـ",m:"2026/10/28 م"},{name:"الخميس",h:"1448/05/18 هـ",m:"2026/10/29 م"}]},
-            { t: 1, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/05/21 هـ",m:"2026/11/01 م"},{name:"الإثنين",h:"1448/05/22 هـ",m:"2026/11/02 م"},{name:"الثلاثاء",h:"1448/05/23 هـ",m:"2026/11/03 م"},{name:"الأربعاء",h:"1448/05/24 هـ",m:"2026/11/04 م"},{name:"الخميس",h:"1448/05/25 هـ",m:"2026/11/05 م"}]}
+            { t: 1, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/05/07 هـ",m:"2026/10/18 م"},{name:"الإثنين",h:"1448/05/08 هـ",m:"2026/10/19 م"},{name:"الثلاثاء",h:"1448/05/09 هـ",m:"2026/10/20 م"},{name:"الأربعاء",h:"1448/05/10 هـ",m:"2026/10/21 م"},{name:"الخميس",h:"1448/05/11 هـ",m:"2026/10/22 م"}]}
         ];
 
         let ALL_DAYS_FLAT = [];
@@ -1115,12 +1122,18 @@
             }
         }
 
-        // تحويل أي ملف إلى نص وربطه برمز الباركود QR
-        function generateQRFromAttachment(file) {
-            return new Promise((resolve) => {
-                if (!file) { resolve(null); return; }
-                let qrDataText = `مرفق نشاط مدرسي: ${file.name} | الحجم: ${(file.size / 1024).toFixed(1)}KB`;
-                resolve(qrDataText);
+        /* توليد باركود قياسي بدقة عالية قابلة للمسح فوراً بعين الكاميرا */
+        function renderScannableQRCode(containerElement, textToEncode) {
+            containerElement.innerHTML = '';
+            if (!textToEncode) textToEncode = "https://moe.gov.sa";
+            
+            new QRCode(containerElement, {
+                text: textToEncode,
+                width: 64,
+                height: 64,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
         }
 
@@ -1165,7 +1178,7 @@
                             `;
                             tbody.appendChild(tr);
 
-                            qrElementsToRender.push({ id: qrBoxId, text: cellData.qrTextContent || cellData.course });
+                            qrElementsToRender.push({ id: qrBoxId, text: cellData.qrTextContent || "https://moe.gov.sa" });
                         }
                     }
                 });
@@ -1177,15 +1190,12 @@
                 setTimeout(() => {
                     qrElementsToRender.forEach(item => {
                         let container = document.getElementById(item.id);
-                        if (container) {
-                            container.innerHTML = '';
-                            new QRCode(container, { text: item.text, width: 60, height: 60 });
-                        }
+                        if (container) renderScannableQRCode(container, item.text);
                     });
                 }, 100);
             }
 
-            setTimeout(() => { window.print(); }, 300);
+            setTimeout(() => { window.print(); }, 350);
         }
 
         function executeDailyPrint() {
@@ -1227,7 +1237,7 @@
                         `;
                         tbody.appendChild(tr);
 
-                        qrElementsToRender.push({ id: qrBoxId, text: cellData.qrTextContent || cellData.course });
+                        qrElementsToRender.push({ id: qrBoxId, text: cellData.qrTextContent || "https://moe.gov.sa" });
                     }
                 }
             });
@@ -1237,280 +1247,4 @@
             } else {
                 setTimeout(() => {
                     qrElementsToRender.forEach(item => {
-                        let container = document.getElementById(item.id);
-                        if (container) {
-                            container.innerHTML = '';
-                            new QRCode(container, { text: item.text, width: 60, height: 60 });
-                        }
-                    });
-                }, 100);
-            }
-
-            setTimeout(() => { window.print(); }, 300);
-        }
-
-        function openCellClickModal(day, cls, period) {
-            let baseKey = `${day}_${cls}_${period}`;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
-
-            selectedCellInfo = { day, cls, period };
-
-            document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
-            
-            updateTeacherDropdowns();
-            const courseSel = document.getElementById('cellCourseSelect');
-            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === cellData.course ? 'selected' : ''}>${co}</option>`).join('');
-
-            const cellTypeSel = document.getElementById('cellTypeSelect');
-            if (cellData.isActivity) {
-                cellTypeSel.value = "activity";
-                let fKey = cellData.fieldKey || "citizenship";
-                document.getElementById('cellActFieldSelect').value = fKey;
-                onFieldChange(fKey);
-
-                if (cellData.course) {
-                    let sel = document.getElementById('cellActPresetSelect');
-                    if ([...sel.options].some(o => o.value === cellData.course)) {
-                        sel.value = cellData.course;
-                        onPresetProgramSelect(cellData.course);
-                    } else {
-                        sel.value = 'NEW_CUSTOM';
-                        onPresetProgramSelect('NEW_CUSTOM');
-                        document.getElementById('cellActNameInput').value = cellData.course;
-                    }
-                }
-
-                document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
-                document.getElementById('cellActHoursInput').value = cellData.hours || 1;
-            } else if (cellData.course) {
-                cellTypeSel.value = "course";
-            } else {
-                cellTypeSel.value = "empty";
-                onFieldChange("citizenship");
-            }
-
-            document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
-            document.getElementById('cellFileInputForQR').value = '';
-            handleCellTypeChange(cellTypeSel.value);
-
-            document.getElementById('cellClickModal').classList.add('show');
-        }
-
-        function closeCellClickModal() {
-            document.getElementById('cellClickModal').classList.remove('show');
-            selectedCellInfo = null;
-        }
-
-        function handleCellTypeChange(typeVal) {
-            document.getElementById('courseSelectionGroup').style.display = (typeVal === 'course') ? 'block' : 'none';
-            document.getElementById('activityFieldsGroup').style.display = (typeVal === 'activity') ? 'block' : 'none';
-            document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
-        }
-
-        async function saveCellAssignment() {
-            if (!selectedCellInfo) return;
-
-            const { day, cls, period } = selectedCellInfo;
-            const typeVal = document.getElementById('cellTypeSelect').value;
-            
-            let baseKey = `${day}_${cls}_${period}`;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-
-            let existingData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
-
-            if (typeVal === 'empty') {
-                delete customAssignments[baseKey];
-                delete tempOverrides[weekKey];
-            } else {
-                let courseName = "";
-                let teacherName = "";
-                let isAct = false;
-                let fieldKey = "";
-                let flexibility = "ثابتة";
-                let hours = 1;
-                let qrTextContent = existingData.qrTextContent || null;
-
-                if (typeVal === 'course') {
-                    courseName = document.getElementById('cellCourseSelect').value;
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                } else if (typeVal === 'activity') {
-                    let presetVal = document.getElementById('cellActPresetSelect').value;
-                    if (presetVal === 'NEW_CUSTOM') {
-                        courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط جديد";
-                    } else {
-                        courseName = presetVal;
-                    }
-
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                    isAct = true;
-                    fieldKey = document.getElementById('cellActFieldSelect').value;
-                    flexibility = document.getElementById('cellActFlexSelect').value;
-                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-
-                    let fileInput = document.getElementById('cellFileInputForQR');
-                    if (fileInput.files && fileInput.files[0]) {
-                        qrTextContent = await generateQRFromAttachment(fileInput.files[0]);
-                    } else if (!qrTextContent) {
-                        qrTextContent = `برنامج نشاط: ${courseName} | مدرسة مكة المكرمة الابتدائية 1448هـ`;
-                    }
-                }
-
-                customAssignments[baseKey] = {
-                    course: courseName,
-                    teacher: teacherName,
-                    isActivity: isAct,
-                    fieldKey: fieldKey,
-                    flexibility: flexibility,
-                    hours: hours,
-                    qrTextContent: qrTextContent
-                };
-                delete tempOverrides[weekKey];
-            }
-
-            await saveToCloud();
-            closeCellClickModal();
-            renderScheduleTableForDay(activeDayName);
-        }
-
-        function updateTeacherDropdowns() {
-            const teacherSel = document.getElementById('cellTeacherSelect');
-            teacherSel.innerHTML = `<option value="">— تفريغ المعلم —</option>` + teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
-
-        function openTeachersManagerModal() {
-            renderTeachersListInManager();
-            document.getElementById('teachersManagerModal').classList.add('show');
-        }
-        function closeTeachersManagerModal() {
-            document.getElementById('teachersManagerModal').classList.remove('show');
-            updateTeacherDropdowns();
-        }
-        function renderTeachersListInManager() {
-            const box = document.getElementById('teachersListContainer');
-            box.innerHTML = teachersPool.map((t, idx) => `
-                <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary">
-                    <span class="text-white small">${t}</span>
-                    <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteTeacher(${idx})"><i class="fas fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-        async function addNewTeacher() {
-            let name = document.getElementById('newTeacherNameInput').value.trim();
-            if(!name) return;
-            teachersPool.push(name);
-            document.getElementById('newTeacherNameInput').value = '';
-            renderTeachersListInManager();
-            await saveToCloud();
-        }
-        async function deleteTeacher(idx) {
-            teachersPool.splice(idx, 1);
-            renderTeachersListInManager();
-            await saveToCloud();
-        }
-
-        async function saveToCloud() {
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
-                    classes: targetClasses,
-                    teachers: teachersPool,
-                    overrides: tempOverrides
-                });
-            } catch (e) {
-                alert("خطأ أثناء الحفظ بالسحابة.");
-            }
-        }
-
-        function openCalendarModal() {
-            document.getElementById('calendarModal').classList.add('show');
-            renderWeeksList(currentTerm);
-        }
-        function closeCalendarModal() {
-            document.getElementById('calendarModal').classList.remove('show');
-        }
-        function switchTerm(term) {
-            currentTerm = term;
-            document.getElementById('tabTerm1').classList.toggle('active', term === 1);
-            document.getElementById('tabTerm2').classList.toggle('active', term === 2);
-            renderWeeksList(term);
-        }
-        function renderWeeksList(term) {
-            const container = document.getElementById('weeksListContainer');
-            container.innerHTML = '';
-            CAL_1448.filter(w => w.t === term).forEach((wk) => {
-                const wkDiv = document.createElement('div');
-                wkDiv.className = 'wk-item';
-                let daysHtml = wk.days.map(d => `
-                    <div class="day-card-item" onclick="selectDateFromCalendar('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
-                        <b>${d.name}</b> <em>${d.h} — ${d.m}</em>
-                    </div>
-                `).join('');
-                wkDiv.innerHTML = `
-                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
-                        <div><b>${wk.label}</b></div>
-                        <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
-                    </button>
-                    <div class="days-list">${daysHtml}</div>
-                `;
-                container.appendChild(wkDiv);
-            });
-        }
-        function toggleWeekOpen(btn) {
-            const item = btn.parentElement;
-            const list = item.querySelector('.days-list');
-            const isOpen = item.classList.contains('open');
-            item.classList.toggle('open', !isOpen);
-            list.style.display = isOpen ? 'none' : 'grid';
-        }
-
-        function selectDateFromCalendar(weekLabel, dayName, dateStr) {
-            let idx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === weekLabel && d.dayName === dayName);
-            if (idx !== -1) {
-                currentFlatIndex = idx;
-                updateViewFromFlatIndex();
-            }
-            closeCalendarModal();
-        }
-
-        let selectedClassIndexForAction = null;
-        function openClassActionModal(index, className) {
-            selectedClassIndexForAction = index;
-            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
-            document.getElementById('classActionModal').classList.add('show');
-        }
-        function closeClassActionModal() {
-            document.getElementById('classActionModal').classList.remove('show');
-            selectedClassIndexForAction = null;
-        }
-        async function moveSelectedClass(direction) {
-            if (selectedClassIndexForAction === null) return;
-            let targetIndex = selectedClassIndexForAction + direction;
-            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
-            let temp = targetClasses[selectedClassIndexForAction];
-            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
-            targetClasses[targetIndex] = temp;
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        async function deleteSelectedClass() {
-            if (selectedClassIndexForAction === null) return;
-            targetClasses.splice(selectedClassIndexForAction, 1);
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        function openModalForAdd() { document.getElementById('addClassModal').style.display = 'flex'; }
-        function closeAddModal() { document.getElementById('addClassModal').style.display = 'none'; }
-        async function addNewClassRow() {
-            let className = document.getElementById('newClassNameInput').value.trim();
-            if(!className) return;
-            targetClasses.push(className);
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-            closeAddModal();
-        }
-    </script>
-</body>
-</html>
+                        let container = document.getElementById(item.
