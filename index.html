@@ -484,9 +484,9 @@
         }
         .moe-logo-container img {
             max-width: 100%;
-            height: auto;
-            max-height: 95px;
-            object-fit: contain;
+        /* إخفاء حاوية الشعار بالكامل لمنع ظهور الصورة المكسورة أو النص البديل */
+        .moe-logo-container {
+            display: none !important;
         }
 
         /* منطقة التقرير التنفيذي للأنشطة */
@@ -808,15 +808,11 @@
     <!-- تقرير طباعة الأنشطة الطلابية التنفيذي المستقل -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div style="font-size: 0.95rem; font-weight: 700; text-align: right; line-height: 1.6;">
+            <div class="d-flex justify-content-center align-items-center mb-2">
+                <div style="font-size: 0.95rem; font-weight: 700; text-align: center; line-height: 1.6;">
                     <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
                     <div>مدرسة مكة المكرمة الابتدائية</div>
                     <div>النشاط الطلابي</div>
-                </div>
-                <!-- شعار وزارة التعليم الرسمية المحدث برابط صورة مباشر عالي الجودة -->
-                <div class="moe-logo-container">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Saudi_Ministry_of_Education_Logo.svg" alt="شعار وزارة التعليم" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/ar/9/98/Ministry_of_Education_%28Saudi_Arabia%29_logo.png';">
                 </div>
             </div>
             <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
