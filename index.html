@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>إدارة حصص وبرامج النشاط والجدول - تقويم مكة والمدينة والطائف 1448هـ</title>
+    <title>خطة النشاط الطلابي - تقويم مكة والمدينة والطائف 1448هـ</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -553,26 +553,12 @@
             margin: 0 auto;
         }
 
-        /* ترويسة الجدول أثناء الطباعة الكاملة */
-        .print-schedule-header {
-            display: none;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
         /* تنسيقات الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
-            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal { display: none !important; }
+            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive { display: none !important; }
             
-            body.print-full-schedule .print-schedule-header { display: flex !important; }
-            body.print-full-schedule .table-responsive { display: block !important; }
-            body.print-full-schedule #activityReportPrintArea { display: none !important; }
-            
-            body.print-activities-only .print-schedule-header { display: none !important; }
-            body.print-activities-only .table-responsive { display: none !important; }
-            body.print-activities-only #activityReportPrintArea { display: block !important; }
+            #activityReportPrintArea { display: block !important; }
         }
     </style>
 </head>
@@ -585,7 +571,7 @@
                 <i class="fas fa-calendar-check"></i>
             </div>
             <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">جدول الحصص والأنشطة وتقويم المسابقات والأنشطة 1448هـ</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">خطة النشاط الطلابي</div>
                 <div style="font-size: 0.8rem; color: #64748b;">الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية</div>
             </div>
         </div>
@@ -775,8 +761,8 @@
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
             <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل</button>
-            <button class="btn-custom-dark" onclick="printFullSchedule()"><i class="fas fa-print"></i> طباعة الجدول</button>
-            <button class="btn-custom-dark" onclick="executeActivitiesPrint()"><i class="fas fa-star"></i> طباعة الأنشطة فقط 🌟</button>
+            <button class="btn-custom-dark" onclick="executeWeeklyPrint()"><i class="fas fa-print"></i> طباعة الخطة الأسبوعية</button>
+            <button class="btn-custom-dark" onclick="executeDailyPrint()"><i class="fas fa-star"></i> طباعة الخطة اليومية 🌟</button>
         </div>
         
         <div class="fields-bar-container">
@@ -787,17 +773,6 @@
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> المجال الكشفي (<span id="cnt_scout">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> الأيام والمناسبات (<span id="cnt_days">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-competitions);"></span> المسابقات (<span id="cnt_competitions">0</span>)</span>
-        </div>
-    </div>
-
-    <!-- ترويسة الشعار عند طباعة الجدول الكامل -->
-    <div class="print-schedule-header justify-content-between align-items-center">
-        <div style="font-size: 0.95rem; font-weight: 700; text-align: right; line-height: 1.6;">
-            <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
-            <div>مدرسة مكة المكرمة الابتدائية</div>
-        </div>
-        <div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Ministry_of_Education_%28Saudi_Arabia%29_logo.svg" class="moe-logo-img" alt="شعار وزارة التعليم">
         </div>
     </div>
 
@@ -1231,12 +1206,58 @@
         }
 
         /* دوال الطباعة */
-        function printFullSchedule() {
-            document.body.className = "print-full-schedule";
+        function executeWeeklyPrint() {
+            let cur = ALL_DAYS_FLAT[currentFlatIndex];
+            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} (الخطة الأسبوعية الكاملة) - العام الدراسي 1448هـ`;
+
+            let tbody = document.getElementById('actReportTableBody');
+            tbody.innerHTML = '';
+
+            let count = 0;
+            let weekDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+
+            weekDays.forEach(dayName => {
+                targetClasses.forEach(cls => {
+                    for(let i = 1; i <= 7; i++) {
+                        let baseKey = `${dayName}_${cls}_${i}`;
+                        let weekKey = `${activeWeekLabel}_${dayName}_${cls}_${i}`;
+                        let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+
+                        if (cellData && cellData.isActivity) {
+                            count++;
+                            let fKey = cellData.fieldKey || "citizenship";
+                            let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+
+                            let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
+                            let flexText = cellData.flexibility || "ثابتة";
+                            let hrs = cellData.hours || 1;
+
+                            let tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${count}</td>
+                                <td style="font-weight: 700;">${cellData.course}</td>
+                                <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
+                                <td>فصل ${cls}</td>
+                                <td>يوم ${dayName} - الحصة ${i}</td>
+                                <td>${flexText}</td>
+                                <td>${hrs} حصص</td>
+                                <td>${barcodeCellContent}</td>
+                                <td>${cellData.teacher || "غير محدد"}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        }
+                    }
+                });
+            });
+
+            if (count === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا الأسبوع.</td></tr>`;
+            }
+
             window.print();
         }
 
-        function executeActivitiesPrint() {
+        function executeDailyPrint() {
             let cur = ALL_DAYS_FLAT[currentFlatIndex];
             document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} الموافق ${cur.hDate} هـ (${cur.mDate} م)`;
 
@@ -1282,7 +1303,6 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
             }
 
-            document.body.className = "print-activities-only";
             window.print();
         }
 
