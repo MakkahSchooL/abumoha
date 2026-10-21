@@ -346,7 +346,7 @@
             border: 1px solid var(--line);
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 230px;
+            min-width: 220px;
             z-index: 1000;
             padding: 6px;
         }
@@ -487,95 +487,75 @@
         .activity-flexibility-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0px 3px; border-radius: 3px; color: #334155; line-height: 1.2; }
         .activity-hours-box { background: #ecfdf5; border: 1px solid #10b981; color: #047857; padding: 0px 3px; border-radius: 3px; line-height: 1.2; }
 
-        /* منطقة التقرير التنفيذي للأنشطة والبطاقات الرسمية */
+        /* منطقة الطباعة الخاصة بالبطاقات المعتمدة والخطط التنفيذية */
         #activityReportPrintArea {
             display: none;
             background: #fff;
             color: #000;
-            padding: 20px;
+            padding: 10px;
             direction: rtl;
         }
 
-        .act-report-header {
-            text-align: right;
-            border-bottom: 2px solid #000;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-        }
-        .act-report-title { font-size: 1.4rem; font-weight: 800; margin-top: 10px; color: #0f172a; text-align: center; }
-        .act-report-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .act-report-table th, .act-report-table td { border: 1px solid #000; padding: 8px 6px; text-align: center; font-size: 0.85rem; vertical-align: middle; }
-        .act-report-table th { background-color: #f1f5f9; font-weight: 700; }
-
-        /* تنسيق البطاقات الرسمية المستندة لملفات PowerPoint المرفقة */
-        .official-card-container {
+        /* تنسيق بطاقات الأنشطة والمسابقات المرفقة بالكامل دون تعديل أو حذف للحقول */
+        .card-official-wrapper {
             page-break-after: always;
             border: 2px solid #000;
             padding: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             background: #fff;
             font-family: var(--font);
             color: #000;
+            box-shadow: none;
         }
-        .official-card-top-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
+
+        .card-header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .card-header-table td {
+            vertical-align: top;
             font-size: 0.85rem;
             font-weight: 700;
         }
-        .official-card-title {
+
+        .card-main-title {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 800;
-            margin: 10px 0;
-            background: #f1f5f9;
-            padding: 6px;
+            margin: 8px 0;
+            padding: 4px;
             border: 1px solid #000;
+            background-color: #f8fafc;
         }
-        .official-card-instruction {
+
+        .card-note-box {
             font-size: 0.78rem;
-            color: #333;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            padding: 6px 10px;
-            margin-bottom: 12px;
-            border-radius: 4px;
+            border: 1px solid #000;
+            padding: 6px;
+            margin-bottom: 10px;
+            background: #fff;
         }
-        .official-table {
+
+        .card-fields-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
-        .official-table th, .official-table td {
+        .card-fields-table td, .card-fields-table th {
             border: 1px solid #000;
             padding: 6px 8px;
             font-size: 0.82rem;
-            text-align: right;
             vertical-align: middle;
+            text-align: right;
         }
-        .official-table th {
-            background-color: #f8fafc;
+        .card-fields-table th {
+            background-color: #f1f5f9;
             font-weight: 700;
-            width: 30%;
+            width: 25%;
         }
 
-        .approval-badge-box {
-            background-color: #f0fdf4;
-            border: 1px solid #166534;
-            border-radius: 8px;
-            padding: 6px 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #14532d;
-            font-size: 0.95rem;
-            font-weight: 800;
-        }
-
+        /* إخفاء العناصر غير المطلوبة في الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
@@ -620,7 +600,7 @@
         </div>
     </div>
 
-    <!-- نافذة التقويم الشامل للفصلين الأول والثاني -->
+    <!-- نافذة التقويم الشامل -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
@@ -738,7 +718,7 @@
 
                     <div class="form-group text-right mb-2" id="customProgramNameBox" style="display:none;">
                         <label class="small font-weight-bold text-warning">اسم البرنامج / المسابقة الجديدة:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط أو المسابقة">
+                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط">
                     </div>
 
                     <div class="row">
@@ -753,7 +733,7 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">عدد الحصص:</label>
+                                <label class="small font-weight-bold text-success">عدد حصص البرنامج:</label>
                                 <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="30">
                             </div>
                         </div>
@@ -782,33 +762,34 @@
     <!-- شريط التحكم والأزرار -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <!-- خيارات الطباعة العادية -->
+            <!-- زر خيارات الطباعة للخطط -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="printDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeDailyPrint()"><i class="fas fa-calendar-day ml-1 text-success"></i> طباعة الخطة اليومية</button>
-                    <button class="print-dropdown-item" onclick="executeWeeklyPrint()"><i class="fas fa-calendar-week ml-1 text-primary"></i> طباعة الخطة الأسبوعية</button>
-                    <button class="print-dropdown-item" onclick="executeMonthlyPrint()"><i class="fas fa-calendar-alt ml-1 text-warning"></i> طباعة الخطة الشهرية (4 أسابيع)</button>
-                    <button class="print-dropdown-item" onclick="executeTermPrint()"><i class="fas fa-graduation-cap ml-1 text-info"></i> طباعة الخطة الفصلية</button>
+                    <button class="print-dropdown-item" onclick="executePlanPrint('daily')"><i class="fas fa-calendar-day ml-1 text-success"></i> طباعة الخطة اليومية</button>
+                    <button class="print-dropdown-item" onclick="executePlanPrint('weekly')"><i class="fas fa-calendar-week ml-1 text-primary"></i> طباعة الخطة الأسبوعية</button>
+                    <button class="print-dropdown-item" onclick="executePlanPrint('monthly')"><i class="fas fa-calendar-alt ml-1 text-warning"></i> طباعة الخطة الشهرية (4 أسابيع)</button>
+                    <button class="print-dropdown-item" onclick="executePlanPrint('term')"><i class="fas fa-graduation-cap ml-1 text-info"></i> طباعة الخطة الفصلية</button>
                 </div>
             </div>
 
-            <!-- زر طباعة التقارير والبطاقات الرسمية المعتمدة -->
+            <!-- زر طباعة التقارير والبطاقات المعتمدة (يومي، أسبوعي، شهري، فصلي) -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
-                    <i class="fas fa-file-alt"></i> طباعة التقارير والبطاقات <i class="fas fa-chevron-down mr-1"></i>
+                    <i class="fas fa-file-alt"></i> طباعة التقارير <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executePrintOfficialCards('activity')"><i class="fas id-card ml-1 text-primary"></i> طباعة بطاقات تنفيذ الأنشطة الرسمية</button>
-                    <button class="print-dropdown-item" onclick="executePrintOfficialCards('competition')"><i class="fas fa-award ml-1 text-success"></i> طباعة بطاقات تنفيذ المسابقات الرسمية</button>
-                    <button class="print-dropdown-item" onclick="executeTermPrint()"><i class="fas fa-file-invoice ml-1 text-warning"></i> التقرير الفصلي التنفيذي</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('daily')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي (بطاقات)</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('weekly')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي (بطاقات)</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('monthly')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري (بطاقات)</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('term')"><i class="fas fa-award ml-1 text-success"></i> التقرير الفصلي (بطاقات)</button>
                 </div>
             </div>
         </div>
         
-        <!-- العدادات الإجمالية الشاملة لكل الأسابيع والفترات -->
+        <!-- العدادات الكلية لجميع أسابيع وأيام العام الدراسي -->
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (<span id="cnt_citizenship">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (<span id="cnt_culture">0</span>)</span>
@@ -844,10 +825,8 @@
         </table>
     </div>
 
-    <!-- منطقة طباعة التقارير والبطاقات الرسمية المطابقة تماماً لملفاتك المرفقة -->
-    <div id="activityReportPrintArea">
-        <div id="officialCardsContainer"></div>
-    </div>
+    <!-- منطقة طباعة البطاقات المعتمدة والتقارير التنفيذية -->
+    <div id="activityReportPrintArea"></div>
 
     <!-- نافذة إضافة فصل جديد -->
     <div class="modal-cal" id="addClassModal" style="display: none;">
@@ -967,7 +946,6 @@
                 { name: "يوم التسامح", hours: 2 },
                 { name: "اليوم العالمي للطفل", hours: 2 },
                 { name: "اليوم العالمي لذوي الإعاقة", hours: 2 },
-                { name: "يوم اللغة العربية العالمي", hours: 2 },
                 { name: "اليوم العالمي للتعليم", hours: 2 },
                 { name: "يوم التأسيس", hours: 4 },
                 { name: "يوم العلم السعودي", hours: 3 },
@@ -990,7 +968,7 @@
         let currentTerm = 1;
         let selectedCellInfo = null;
 
-        // التقويم الكامل للفصلين الأول والثاني لعام 1448هـ
+        // التقويم الكامل للفصلين الأول والثاني 1448هـ
         const CAL_1448 = [
             // الفصل الأول
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
@@ -1233,139 +1211,245 @@
             }
         }
 
-        /* دوال الطباعة للخطط العادية */
-        function executeDailyPrint() {
+        /* دوال طباعة الخطط العامة */
+        function executePlanPrint(period) {
             document.getElementById('printDropdownMenu').classList.remove('show');
-            // استدعاء الطباعة العادية اليومية المعتادة
             window.print();
         }
-        function executeWeeklyPrint() { document.getElementById('printDropdownMenu').classList.remove('show'); window.print(); }
-        function executeMonthlyPrint() { document.getElementById('printDropdownMenu').classList.remove('show'); window.print(); }
-        function executeTermPrint() { document.getElementById('printDropdownMenu').classList.remove('show'); window.print(); }
 
-        /* توليد وطباعة البطاقات الرسمية المعتمدة (الأنشطة والمسابقات) بناءً على النماذج المرفقة تماماً */
-        function executePrintOfficialCards(type) {
+        /* توليد وطباعة التقارير بالبطاقات الرسمية المطابقة لملفات PPTX 100% بدون أي حذوفات */
+        function executeOfficialReport(scope) {
             document.getElementById('reportsDropdownMenu').classList.remove('show');
-            let container = document.getElementById('officialCardsContainer');
+            let container = document.getElementById('activityReportPrintArea');
             container.innerHTML = '';
 
-            let count = 0;
+            let itemsToPrint = [];
 
+            // تصفية العناصر بناءً على النطاق الزمني المحجوز (يومي، أسبوعي، شهري، فصلي)
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
                 if (!cellData || !cellData.isActivity) continue;
 
-                let isCompetition = (cellData.fieldKey === 'competitions' || cellData.course.includes('مسابقة'));
-                if (type === 'activity' && isCompetition) continue;
-                if (type === 'competition' && !isCompetition) continue;
+                // تحليل مفتاح الحصة: [WeekLabel]_[Day]_[Class]_[Period]
+                let parts = key.split('_');
+                let wLabel = parts[0];
+                let dName = parts[1];
+                let clsName = parts[2];
+                let periodNum = parts[3];
 
-                count++;
-                let fKey = cellData.fieldKey || "citizenship";
-                let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                let termText = (key.includes('ف2') || currentTerm === 2) ? "الفصل الدراسي الثاني" : "الفصل الدراسي الأول";
+                let match = false;
+                if (scope === 'daily') {
+                    if (wLabel === activeWeekLabel && dName === activeDayName) match = true;
+                } else if (scope === 'weekly') {
+                    if (wLabel === activeWeekLabel) match = true;
+                } else if (scope === 'monthly') {
+                    let curIdx = CAL_1448.findIndex(w => w.label === activeWeekLabel);
+                    let mStart = Math.floor(curIdx / 4) * 4;
+                    let mWeeks = CAL_1448.slice(mStart, mStart + 4).map(w => w.label);
+                    if (mWeeks.includes(wLabel)) match = true;
+                } else if (scope === 'term') {
+                    let wkObj = CAL_1448.find(w => w.label === wLabel);
+                    if (wkObj && wkObj.t === currentTerm) match = true;
+                }
 
-                if (!isCompetition && type === 'activity') {
-                    // قالب بطاقة تنفيذ برنامج نشاط طلابي (مطابق لملفك تماماً)[cite: 4]
-                    container.innerHTML += `
-                        <div class="official-card-container">
-                            <div class="official-card-top-info">
-                                <div>
-                                    الإدارة العامة للتعليم بمنطقة المدينة المنورة<br>
-                                    مدرسة مكة المكرمة الابتدائية<br>
-                                    النشاط الطلابي
-                                </div>
-                                <div style="text-align: left;">
-                                    <b>المعلم/ة المنفذ/ة:</b> الاسم: ${cellData.teacher || '—'} | التاريخ: —/—/1448هـ | التوقيع: .........<br>
-                                    <b>رائد/ة النشاط:</b> الاسم: عواد محمد العوفي | التاريخ: —/—/1448هـ | التوقيع: .........
-                                </div>
-                            </div>
-                            
-                            <div class="official-card-title">بطاقة تنفيذ برنامج نشاط طلابي</div>
-                            
-                            <div class="official-card-instruction">
-                                يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 4].
-                            </div>
-
-                            <table class="official-table">
-                                <tr><th>اسم البرنامج</th><td colspan="3" style="font-weight: 800; color: #0C6A64;">${cellData.course}</td></tr>
-                                <tr><th>المجال</th><td>${fConf.title}</td><th>عدد حصص البرنامج</th><td>${cellData.hours || 1} حصص</td></tr>
-                                <tr><th>الفصل الدراسي</th><td>${termText}</td><th>الصف المستهدف</th><td>الفصل المشارك</td></tr>
-                                <tr>
-                                    <th>بداية التنفيذ</th>
-                                    <td>اليوم: — | الأسبوع: — | التاريخ: —/—/1448هـ</td>
-                                    <th>نهاية التنفيذ</th>
-                                    <td>اليوم: — | الأسبوع: — | التاريخ: —/—/1448هـ</td>
-                                </tr>
-                                <tr><th>المعلم/ة المنفذ/ة</th><td colspan="3">${cellData.teacher || 'غير محدد'}</td></tr>
-                                <tr><th>عدد الطلبة المشاركين</th><td>— طالب</td><th>عدد الطلبة من ذوي الإعاقة</th><td>— طالب</td></tr>
-                                <tr><th>عدد أولياء الأمور المشاركين</th><td colspan="3">— ولي أمر</td></tr>
-                                <tr>
-                                    <th>أيقونة التنفيذ عبر منصة مدرستي</th>
-                                    <td colspan="3" style="font-size: 0.78rem;">
-                                        [ ] بنك الإثراءات &nbsp;&nbsp;&nbsp; [ ] التطوير الذاتي &nbsp;&nbsp;&nbsp; [ ] قيمنا الغالية &nbsp;&nbsp;&nbsp; [ ] نادي القراءة[cite: 4]
-                                    </td>
-                                </tr>
-                                <tr><th>عدد الشراكات المجتمعية</th><td>—</td><th>أسماء الشراكات المجتمعية</th><td>—</td></tr>
-                                <tr><th>ملاحظات</th><td colspan="3" style="height: 35px;"></td></tr>
-                            </table>
-                            
-                            <div class="text-center mt-2">
-                                <span class="approval-badge-box"><i class="fas fa-check-circle"></i> معتمد إلكترونياً لعام 1448هـ</span>
-                            </div>
-                        </div>
-                    `;
-                } else if (isCompetition && type === 'competition') {
-                    // قالب بطاقة تنفيذ مسابقة نشاط طلابي (مطابق لملفك تماماً)[cite: 5]
-                    container.innerHTML += `
-                        <div class="official-card-container">
-                            <div class="official-card-top-info">
-                                <div>
-                                    الإدارة العامة للتعليم بمنطقة المدينة المنورة<br>
-                                    مدرسة مكة المكرمة الابتدائية<br>
-                                    النشاط الطلابي
-                                </div>
-                                <div style="text-align: left;">
-                                    <b>المعلم/ة المنفذ/ة:</b> الاسم: ${cellData.teacher || '—'} | التاريخ: —/—/1448هـ | التوقيع: .........<br>
-                                    <b>رائد/ة النشاط:</b> الاسم: عواد محمد العوفي | التاريخ: —/—/1448هـ | التوقيع: .........
-                                </div>
-                            </div>
-                            
-                            <div class="official-card-title">بطاقة تنفيذ مسابقة نشاط طلابي</div>
-                            
-                            <div class="official-card-instruction">
-                                يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 5].
-                            </div>
-
-                            <table class="official-table">
-                                <tr><th>اسم المدرسة</th><td>مدرسة مكة المكرمة الابتدائية[cite: 5]</td><th>اسم المسابقة</th><td style="font-weight: 800; color: #9b59b6;">${cellData.course}</td></tr>
-                                <tr><th>المجال</th><td>${fConf.title}</td><th>عدد الحصص للإعداد والتأهيل</th><td>${cellData.hours || 1} حصص</td></tr>
-                                <tr><th>الفصل الدراسي</th><td>${termText}</td><th>الصف المستهدف</th><td>جميع الصفوف</td></tr>
-                                <tr>
-                                    <th>بداية التنفيذ</th>
-                                    <td>اليوم: — | الأسبوع: — | التاريخ: —/—/1448هـ</td>
-                                    <th>نهاية التنفيذ</th>
-                                    <td>اليوم: — | الأسبوع: — | التاريخ: —/—/1448هـ</td>
-                                </tr>
-                                <tr><th>المعلم/ة المنفذ/ة</th><td colspan="3">${cellData.teacher || 'غير محدد'}</td></tr>
-                                <tr><th>عدد الطلبة المشاركين</th><td>— طالب</td><th>عدد الفائزين</th><td>— فائز</td></tr>
-                                <tr><th>عدد الطلبة المتأهلين للمرحلة المقبلة</th><td>— طالب</td><th>عدد الجوائز</th><td>— جائزة</td></tr>
-                                <tr><th>عدد أولياء الأمور المشاركين</th><td>— ولي أمر</td><th>عدد الطلبة من ذوي الإعاقة</th><td>— طالب</td></tr>
-                                <tr><th>عدد الشراكات المجتمعية</th><td>—</td><th>أسماء الشراكات المجتمعية</th><td>—</td></tr>
-                                <tr><th>نواتج المسابقة</th><td colspan="3" style="height: 30px;"></td></tr>
-                                <tr><th>ملاحظات</th><td colspan="3" style="height: 30px;"></td></tr>
-                            </table>
-
-                            <div class="text-center mt-2">
-                                <span class="approval-badge-box"><i class="fas fa-check-circle"></i> معتمد إلكترونياً لعام 1448هـ</span>
-                            </div>
-                        </div>
-                    `;
+                if (match) {
+                    itemsToPrint.push({ cellData, wLabel, dName, clsName, periodNum });
                 }
             }
 
-            if (count === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; font-size: 1.1rem; font-weight: bold;">لا توجد بيانات مسجلة مطابقة لهذا التصنيف للطباعة.</div>`;
+            if (itemsToPrint.length === 0) {
+                alert("لا توجد برامج أو مسابقات مخصصة في هذه الفترة المحددة للطباعة.");
+                return;
             }
+
+            // توليد البطاقة الرسمية لكل نشاط/مسابقة حسب القالب الرسمي
+            itemsToPrint.forEach(item => {
+                let cellData = item.cellData;
+                let isCompetition = (cellData.fieldKey === 'competitions' || cellData.course.includes('مسابقة'));
+                let fKey = cellData.fieldKey || "citizenship";
+                let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
+                let termText = (item.wLabel.includes('ف2') || currentTerm === 2) ? "الفصل الدراسي الثاني" : "الفصل الدراسي الأول";
+
+                // استخراج التاريخ الهجري والميلادي بدقة
+                let dayObj = ALL_DAYS_FLAT.find(d => d.weekLabel === item.wLabel && d.dayName === item.dName);
+                let dateFormatted = dayObj ? dayObj.hDate : "     /     / 1448هـ";
+
+                if (!isCompetition) {
+                    // **بطاقة تنفيذ برنامج نشاط طلابي (طابق للأصل)[cite: 6]**
+                    container.innerHTML += `
+                        <div class="card-official-wrapper">
+                            <table class="card-header-table">
+                                <tr>
+                                    <td style="width: 50%;">
+                                        بطاقة تنفيذ برنامج نشاط طلابي*[cite: 6]<br>
+                                    </td>
+                                    <td style="width: 50%; text-align: left;">
+                                        <b>المعلم/ة المنفذ/ة</b><br>
+                                        الاسم: ${cellData.teacher || '..........................'}<br>
+                                        التاريخ: ..........................<br>
+                                        التوقيع: ..........................<br><br>
+                                        <b>رائد/ة النشاط</b><br>
+                                        الاسم: عواد محمد العوفي<br>
+                                        التاريخ: ..........................<br>
+                                        التوقيع: ..........................
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="card-note-box">
+                                يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 6].
+                            </div>
+
+                            <div class="card-main-title">بطاقة تنفيذ برنامج نشاط طلابي</div>
+
+                            <table class="card-fields-table">
+                                <tr>
+                                    <th>اسم البرنامج</th>
+                                    <td style="font-weight: 800; font-size: 0.95rem;">${cellData.course}</td>
+                                    <th>المجال</th>
+                                    <td>${fConf.title}</td>
+                                </tr>
+                                <tr>
+                                    <th>عدد حصص البرنامج</th>
+                                    <td>${cellData.hours || 1} حصص</td>
+                                    <th>الفصل الدراسي</th>
+                                    <td>${termText}</td>
+                                </tr>
+                                <tr>
+                                    <th>بداية التنفيذ</th>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <th>نهاية التنفيذ</th>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                </tr>
+                                <tr>
+                                    <th>الصف</th>
+                                    <td>فصل ${item.clsName} (الحصة ${item.periodNum})</td>
+                                    <th>المعلم/ة المنفذ/ة</th>
+                                    <td>${cellData.teacher || '..........................'}</td>
+                                </tr>
+                                <tr>
+                                    <th>عدد الطلبة المشاركين</th>
+                                    <td></td>
+                                    <th>عدد الطلبة المشاركين من ذوي الإعاقة</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>عدد أولياء الأمور المشاركين في البرنامج</th>
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr>
+                                    <th>عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ</th>
+                                    <td colspan="3">
+                                        [ ] بنك الإثراءات &nbsp;&nbsp;&nbsp;&nbsp; [ ] التطوير الذاتي &nbsp;&nbsp;&nbsp;&nbsp; [ ] قيمنا الغالية &nbsp;&nbsp;&nbsp;&nbsp; [ ] نادي القراءة[cite: 6]
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>عدد الشراكات المجتمعية</th>
+                                    <td></td>
+                                    <th>أسماء الشراكات المجتمعية</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>ملاحظات</th>
+                                    <td colspan="3" style="height: 45px;"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    // **بطاقة تنفيذ مسابقة نشاط طلابي (طابق للأصل)[cite: 7]**
+                    container.innerHTML += `
+                        <div class="card-official-wrapper">
+                            <table class="card-header-table">
+                                <tr>
+                                    <td style="width: 50%;">
+                                        بطاقة تنفيذ مسابقة نشاط طلابي *[cite: 7]<br>
+                                    </td>
+                                    <td style="width: 50%; text-align: left;">
+                                        <b>المعلم/ة المنفذ/ة</b><br>
+                                        الاسم: ${cellData.teacher || '..........................'}<br>
+                                        التاريخ: ..........................<br>
+                                        التوقيع: ..........................<br><br>
+                                        <b>رائد/ة النشاط</b><br>
+                                        الاسم: عواد محمد العوفي<br>
+                                        التاريخ: ..........................<br>
+                                        التوقيع: ..........................
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="card-note-box">
+                                يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 7].
+                            </div>
+
+                            <div class="card-main-title">بطاقة تنفيذ مسابقة نشاط طلابي</div>
+
+                            <table class="card-fields-table">
+                                <tr>
+                                    <th>اسم المدرسة</th>
+                                    <td>مدرسة مكة المكرمة الابتدائية[cite: 7]</td>
+                                    <th>اسم المسابقة</th>
+                                    <td style="font-weight: 800; font-size: 0.95rem;">${cellData.course}</td>
+                                </tr>
+                                <tr>
+                                    <th>المجال</th>
+                                    <td>${fConf.title}</td>
+                                    <th>عدد الحصص للإعداد والتأهيل للمسابقة</th>
+                                    <td>${cellData.hours || 1} حصص</td>
+                                </tr>
+                                <tr>
+                                    <th>الفصل الدراسي</th>
+                                    <td>${termText}</td>
+                                    <th>الصف</th>
+                                    <td>فصل ${item.clsName} (الحصة ${item.periodNum})</td>
+                                </tr>
+                                <tr>
+                                    <th>بداية التنفيذ</th>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <th>نهاية التنفيذ</th>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                </tr>
+                                <tr>
+                                    <th>المعلم/ة المنفذ/ة</th>
+                                    <td colspan="3">${cellData.teacher || '..........................'}</td>
+                                </tr>
+                                <tr>
+                                    <th>عدد الطلبة المشاركين في المسابقة</th>
+                                    <td></td>
+                                    <th>عدد الفائزين</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>عدد الطلبة المتأهلين للمرحلة المقبلة</th>
+                                    <td></td>
+                                    <th>عدد الجوائز</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>عدد أولياء الأمور المشاركين في المسابقة</th>
+                                    <td></td>
+                                    <th>عدد الطلبة المشاركين من ذوي الإعاقة</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>عدد الشراكات المجتمعية</th>
+                                    <td></td>
+                                    <th>أسماء الشراكات المجتمعية</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>نواتج المسابقة</th>
+                                    <td colspan="3" style="height: 35px;"></td>
+                                </tr>
+                                <tr>
+                                    <th>ملاحظات</th>
+                                    <td colspan="3" style="height: 35px;"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    `;
+                }
+            });
 
             window.print();
         }
