@@ -478,12 +478,15 @@
         .moe-logo-container {
             width: 180px;
             height: auto;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .moe-logo-container svg {
-            width: 100%;
+        .moe-logo-container img {
+            max-width: 100%;
             height: auto;
             max-height: 95px;
+            object-fit: contain;
         }
 
         /* منطقة التقرير التنفيذي للأنشطة */
@@ -811,92 +814,9 @@
                     <div>مدرسة مكة المكرمة الابتدائية</div>
                     <div>النشاط الطلابي</div>
                 </div>
-                <!-- شعار وزارة التعليم الرسمية المحدث بنسبة 100% للشعار الرسمي المرفق -->
+                <!-- شعار وزارة التعليم الرسمية المحدث برابط صورة مباشر عالي الجودة -->
                 <div class="moe-logo-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 210" width="100%" height="auto">
-                        <defs>
-                            <!-- تدرج لوني دقيق لدوائر ونصوص الشعار من الأزرق للأخضر (يمين ويسار) -->
-                            <linearGradient id="moeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#1B609E"/>
-                                <stop offset="35%" stop-color="#1D7C8A"/>
-                                <stop offset="70%" stop-color="#219973"/>
-                                <stop offset="100%" stop-color="#24A16C"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- دوائر شعار وزارة التعليم المتناسقة بدقة -->
-                        <g fill="url(#moeGrad)">
-                            <!-- الجناح الأيسر من الدوائر -->
-                            <circle cx="30" cy="35" r="11"/>
-                            <circle cx="30" cy="62" r="11"/>
-                            <circle cx="30" cy="89" r="11"/>
-
-                            <circle cx="58" cy="35" r="11"/>
-                            <circle cx="58" cy="62" r="11"/>
-                            <circle cx="58" cy="89" r="11"/>
-
-                            <circle cx="86" cy="40" r="10"/>
-                            <circle cx="86" cy="67" r="10"/>
-
-                            <circle cx="112" cy="47" r="9"/>
-                            <circle cx="112" cy="73" r="9"/>
-
-                            <circle cx="136" cy="55" r="8"/>
-                            <circle cx="136" cy="79" r="8"/>
-
-                            <circle cx="158" cy="65" r="7"/>
-
-                            <circle cx="178" cy="78" r="6"/>
-                            <circle cx="196" cy="93" r="5.2"/>
-                            <circle cx="211" cy="109" r="4.5"/>
-                            <circle cx="223" cy="125" r="3.8"/>
-
-                            <!-- الجناح الأيمن من الدوائر -->
-                            <circle cx="470" cy="35" r="11"/>
-                            <circle cx="470" cy="62" r="11"/>
-                            <circle cx="470" cy="89" r="11"/>
-
-                            <circle cx="442" cy="35" r="11"/>
-                            <circle cx="442" cy="62" r="11"/>
-                            <circle cx="442" cy="89" r="11"/>
-
-                            <circle cx="414" cy="40" r="10"/>
-                            <circle cx="414" cy="67" r="10"/>
-
-                            <circle cx="388" cy="47" r="9"/>
-                            <circle cx="388" cy="73" r="9"/>
-
-                            <circle cx="364" cy="55" r="8"/>
-                            <circle cx="364" cy="79" r="8"/>
-
-                            <circle cx="342" cy="65" r="7"/>
-
-                            <circle cx="322" cy="78" r="6"/>
-                            <circle cx="304" cy="93" r="5.2"/>
-                            <circle cx="289" cy="109" r="4.5"/>
-                            <circle cx="277" cy="125" r="3.8"/>
-                        </g>
-
-                        <!-- كتابة "وزارة التعليم" بخط الديواني المخصص وشديد الدقة -->
-                        <g fill="url(#moeGrad)">
-                            <!-- كلمة وزارة -->
-                            <path d="M 432 158 C 438 158 442 155 446 149 L 446 168 L 454 168 L 454 138 L 446 138 L 446 142 C 442 138 438 135 432 135 C 422 135 415 142 415 152 C 415 161 422 158 432 158 Z M 434 142 C 439 142 445 145 445 152 C 445 158 439 161 434 161 C 429 161 423 158 423 152 C 423 145 429 142 434 142 Z" />
-                            <path d="M 410 168 L 410 160 L 392 160 C 387 160 384 158 384 154 C 384 150 387 148 392 148 L 408 148 L 408 141 L 392 141 C 381 141 376 146 376 154 C 376 162 381 168 392 168 Z" />
-                            <path d="M 370 158 C 375 158 379 155 381 149 L 381 168 L 389 168 L 389 138 L 381 138 L 381 142 C 379 138 375 135 370 135 C 361 135 354 142 354 152 C 354 161 361 158 370 158 Z M 371 142 C 377 142 381 145 381 152 C 381 158 377 161 371 161 C 365 161 360 158 360 152 C 360 145 365 142 371 142 Z" />
-                            <circle cx="342" cy="138" r="3.8" />
-                            
-                            <!-- كلمة التعليم -->
-                            <path d="M 312 168 L 312 126 L 304 126 L 304 160 L 268 160 L 268 126 L 260 126 L 260 160 L 246 160 L 246 138 L 238 138 L 238 160 L 216 160 C 210 160 206 156 206 150 C 206 144 210 141 216 141 L 230 141 L 230 134 L 216 134 C 204 134 198 140 198 150 C 198 160 204 168 216 168 L 246 168 L 260 168 L 268 168 L 304 168 L 320 168 L 320 160 L 312 160 Z" />
-                            <path d="M 190 168 L 190 138 L 182 138 L 182 160 L 164 160 C 158 160 154 156 154 150 C 154 144 158 141 164 141 L 176 141 L 176 134 L 164 134 C 152 134 146 140 146 150 C 146 160 152 168 164 168 Z" />
-                            <circle cx="172" cy="177" r="3.5" />
-                            <circle cx="183" cy="177" r="3.5" />
-                            <path d="M 138 168 L 138 138 L 130 138 L 130 168 Z" />
-                            <circle cx="134" cy="130" r="3.8" />
-                            <path d="M 120 168 L 120 138 L 112 138 L 112 156 C 108 152 104 150 98 150 C 88 150 82 156 82 168 L 90 168 C 90 160 94 157 100 157 C 106 157 112 160 112 168 Z M 74 168 L 74 138 L 66 138 L 66 168 Z" />
-                        </g>
-
-                        <!-- النص الإنجليزي بالأسفل بخط واضح وأنيق -->
-                        <text x="250" y="198" font-family="'IBM Plex Sans', 'Arial', sans-serif" font-size="18.5" font-weight="600" fill="url(#moeGrad)" text-anchor="middle" letter-spacing="1">Ministry of Education</text>
-                    </svg>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Saudi_Ministry_of_Education_Logo.svg" alt="شعار وزارة التعليم" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/ar/9/98/Ministry_of_Education_%28Saudi_Arabia%29_logo.png';">
                 </div>
             </div>
             <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
