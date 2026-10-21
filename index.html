@@ -27,7 +27,6 @@
             --brand-ink: #FFFFFF;
             --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
 
-            /* ألوان المجالات */
             --color-citizenship: #2a9d8f;
             --color-culture: #e06d9f;
             --color-science: #4a90e2;
@@ -487,7 +486,7 @@
         .activity-flexibility-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0px 3px; border-radius: 3px; color: #334155; line-height: 1.2; }
         .activity-hours-box { background: #ecfdf5; border: 1px solid #10b981; color: #047857; padding: 0px 3px; border-radius: 3px; line-height: 1.2; }
 
-        /* منطقة الطباعة الخاصة بالبطاقات المعتمدة والخطط التنفيذية */
+        /* منطقة طباعة البطاقات الرسمية */
         #activityReportPrintArea {
             display: none;
             background: #fff;
@@ -496,7 +495,6 @@
             direction: rtl;
         }
 
-        /* تنسيق بطاقات الأنشطة والمسابقات المرفقة بالكامل دون تعديل أو حذف للحقول */
         .card-official-wrapper {
             page-break-after: always;
             border: 2px solid #000;
@@ -505,7 +503,6 @@
             background: #fff;
             font-family: var(--font);
             color: #000;
-            box-shadow: none;
         }
 
         .card-header-table {
@@ -555,7 +552,6 @@
             width: 25%;
         }
 
-        /* إخفاء العناصر غير المطلوبة في الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
@@ -762,7 +758,7 @@
     <!-- شريط التحكم والأزرار -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <!-- زر خيارات الطباعة للخطط -->
+            <!-- خيارات طباعة الخطة الأصلية -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
@@ -775,21 +771,21 @@
                 </div>
             </div>
 
-            <!-- زر طباعة التقارير والبطاقات المعتمدة (يومي، أسبوعي، شهري، فصلي) -->
+            <!-- قائمة التقارير الرسمية (يومي، أسبوعي، شهري، فصلي) -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
                     <i class="fas fa-file-alt"></i> طباعة التقارير <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeOfficialReport('daily')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي (بطاقات)</button>
-                    <button class="print-dropdown-item" onclick="executeOfficialReport('weekly')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي (بطاقات)</button>
-                    <button class="print-dropdown-item" onclick="executeOfficialReport('monthly')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري (بطاقات)</button>
-                    <button class="print-dropdown-item" onclick="executeOfficialReport('term')"><i class="fas fa-award ml-1 text-success"></i> التقرير الفصلي (بطاقات)</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('daily')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('weekly')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('monthly')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري</button>
+                    <button class="print-dropdown-item" onclick="executeOfficialReport('term')"><i class="fas fa-award ml-1 text-success"></i> التقرير الفصلي</button>
                 </div>
             </div>
         </div>
         
-        <!-- العدادات الكلية لجميع أسابيع وأيام العام الدراسي -->
+        <!-- العدادات الإجمالية الشاملة -->
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (<span id="cnt_citizenship">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (<span id="cnt_culture">0</span>)</span>
@@ -825,7 +821,7 @@
         </table>
     </div>
 
-    <!-- منطقة طباعة البطاقات المعتمدة والتقارير التنفيذية -->
+    <!-- منطقة طباعة البطاقات الرسمية -->
     <div id="activityReportPrintArea"></div>
 
     <!-- نافذة إضافة فصل جديد -->
@@ -946,6 +942,7 @@
                 { name: "يوم التسامح", hours: 2 },
                 { name: "اليوم العالمي للطفل", hours: 2 },
                 { name: "اليوم العالمي لذوي الإعاقة", hours: 2 },
+                { name: "يوم اللغة العربية العالمي", hours: 2 },
                 { name: "اليوم العالمي للتعليم", hours: 2 },
                 { name: "يوم التأسيس", hours: 4 },
                 { name: "يوم العلم السعودي", hours: 3 },
@@ -968,7 +965,7 @@
         let currentTerm = 1;
         let selectedCellInfo = null;
 
-        // التقويم الكامل للفصلين الأول والثاني 1448هـ
+        // التقويم الكامل للفصلين الأول والثاني 1448هـ (بدون ف2 في التسمية الظاهرة)
         const CAL_1448 = [
             // الفصل الأول
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
@@ -992,25 +989,25 @@
             { t: 1, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
 
             // الفصل الثاني
-            { t: 2, w: 1, label: "الأسبوع الأول (ف2)", days: [{name:"الأحد",h:"1448/08/14 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/15 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/16 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/17 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/18 هـ",m:"2027/01/21 م"}]},
-            { t: 2, w: 2, label: "الأسبوع الثاني (ف2)", days: [{name:"الأحد",h:"1448/08/21 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/22 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/23 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/08/24 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/08/25 هـ",m:"2027/01/28 م"}]},
-            { t: 2, w: 3, label: "الأسبوع الثالث (ف2)", days: [{name:"الأحد",h:"1448/08/28 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/08/29 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/01 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/02 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/03 هـ",m:"2027/02/04 م"}]},
-            { t: 2, w: 4, label: "الأسبوع الرابع (ف2)", days: [{name:"الأحد",h:"1448/09/06 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/07 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/08 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/09 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/10 هـ",m:"2027/02/11 م"}]},
-            { t: 2, w: 5, label: "الأسبوع الخامس (ف2)", days: [{name:"الأحد",h:"1448/09/13 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/14 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/15 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/16 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/17 هـ",m:"2027/02/18 م"}]},
-            { t: 2, w: 6, label: "الأسبوع السادس (ف2)", days: [{name:"الأحد",h:"1448/09/20 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/09/21 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/09/22 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/09/23 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/09/24 هـ",m:"2027/02/25 م"}]},
-            { t: 2, w: 7, label: "الأسبوع السابع (ف2)", days: [{name:"الأحد",h:"1448/09/27 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/09/28 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/09/29 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/01 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/02 هـ",m:"2027/03/04 م"}]},
-            { t: 2, w: 8, label: "الأسبوع الثامن (ف2)", days: [{name:"الأحد",h:"1448/10/05 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/06 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/07 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/08 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/09 هـ",m:"2027/03/11 م"}]},
-            { t: 2, w: 9, label: "الأسبوع التاسع (ف2)", days: [{name:"الأحد",h:"1448/10/12 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/13 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/14 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/15 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/16 هـ",m:"2027/03/18 م"}]},
-            { t: 2, w: 10, label: "الأسبوع العاشر (ف2)", days: [{name:"الأحد",h:"1448/10/19 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/10/20 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/10/21 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/10/22 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/10/23 هـ",m:"2027/03/25 م"}]},
-            { t: 2, w: 11, label: "الأسبوع الحادي عشر (ف2)", days: [{name:"الأحد",h:"1448/10/26 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/10/27 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/10/28 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/10/29 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/01 هـ",m:"2027/04/01 م"}]},
-            { t: 2, w: 12, label: "الأسبوع الثاني عشر (ف2)", days: [{name:"الأحد",h:"1448/11/04 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/05 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/06 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/07 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/08 هـ",m:"2027/04/08 م"}]},
-            { t: 2, w: 13, label: "الأسبوع الثالث عشر (ف2)", days: [{name:"الأحد",h:"1448/11/11 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/12 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/13 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/14 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/15 هـ",m:"2027/04/15 م"}]},
-            { t: 2, w: 14, label: "الأسبوع الرابع عشر (ف2)", days: [{name:"الأحد",h:"1448/11/18 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/11/19 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/11/20 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/11/21 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/11/22 هـ",m:"2027/04/22 م"}]},
-            { t: 2, w: 15, label: "الأسبوع الخامس عشر (ف2)", days: [{name:"الأحد",h:"1448/11/25 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/11/26 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/11/27 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/11/28 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/11/29 هـ",m:"2027/04/29 م"}]},
-            { t: 2, w: 16, label: "الأسبوع السادس عشر (ف2)", days: [{name:"الأحد",h:"1448/12/03 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/04 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/05 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/06 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/07 هـ",m:"2027/05/06 م"}]},
-            { t: 2, w: 17, label: "الأسبوع السابع عشر (ف2)", days: [{name:"الأحد",h:"1448/12/10 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/11 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/12 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/13 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/14 هـ",m:"2027/05/13 م"}]},
-            { t: 2, w: 18, label: "الأسبوع الثامن عشر (ف2)", days: [{name:"الأحد",h:"1448/12/17 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/12/18 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/12/19 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/12/20 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/12/21 هـ",m:"2027/05/20 م"}]},
-            { t: 2, w: 19, label: "الأسبوع التاسع عشر (ف2)", days: [{name:"الأحد",h:"1448/12/24 هـ",m:"2027/05/23 م"},{name:"الإثنين",h:"1448/12/25 هـ",m:"2027/05/24 م"},{name:"الثلاثاء",h:"1448/12/26 هـ",m:"2027/05/25 م"},{name:"الأربعاء",h:"1448/12/27 هـ",m:"2027/05/26 م"},{name:"الخميس",h:"1448/12/28 هـ",m:"2027/05/27 م"}]}
+            { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/14 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/15 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/16 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/17 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/18 هـ",m:"2027/01/21 م"}]},
+            { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/21 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/22 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/23 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/08/24 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/08/25 هـ",m:"2027/01/28 م"}]},
+            { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/28 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/08/29 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/01 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/02 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/03 هـ",m:"2027/02/04 م"}]},
+            { t: 2, w: 4, label: "الأسبوع الرابع", days: [{name:"الأحد",h:"1448/09/06 هـ",m:"2027/02/07 م"},{name:"الإثنين",h:"1448/09/07 هـ",m:"2027/02/08 م"},{name:"الثلاثاء",h:"1448/09/08 هـ",m:"2027/02/09 م"},{name:"الأربعاء",h:"1448/09/09 هـ",m:"2027/02/10 م"},{name:"الخميس",h:"1448/09/10 هـ",m:"2027/02/11 م"}]},
+            { t: 2, w: 5, label: "الأسبوع الخامس", days: [{name:"الأحد",h:"1448/09/13 هـ",m:"2027/02/14 م"},{name:"الإثنين",h:"1448/09/14 هـ",m:"2027/02/15 م"},{name:"الثلاثاء",h:"1448/09/15 هـ",m:"2027/02/16 م"},{name:"الأربعاء",h:"1448/09/16 هـ",m:"2027/02/17 م"},{name:"الخميس",h:"1448/09/17 هـ",m:"2027/02/18 م"}]},
+            { t: 2, w: 6, label: "الأسبوع السادس", days: [{name:"الأحد",h:"1448/09/20 هـ",m:"2027/02/21 م"},{name:"الإثنين",h:"1448/09/21 هـ",m:"2027/02/22 م"},{name:"الثلاثاء",h:"1448/09/22 هـ",m:"2027/02/23 م"},{name:"الأربعاء",h:"1448/09/23 هـ",m:"2027/02/24 م"},{name:"الخميس",h:"1448/09/24 هـ",m:"2027/02/25 م"}]},
+            { t: 2, w: 7, label: "الأسبوع السابع", days: [{name:"الأحد",h:"1448/09/27 هـ",m:"2027/02/28 م"},{name:"الإثنين",h:"1448/09/28 هـ",m:"2027/03/01 م"},{name:"الثلاثاء",h:"1448/09/29 هـ",m:"2027/03/02 م"},{name:"الأربعاء",h:"1448/10/01 هـ",m:"2027/03/03 م"},{name:"الخميس",h:"1448/10/02 هـ",m:"2027/03/04 م"}]},
+            { t: 2, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/10/05 هـ",m:"2027/03/07 م"},{name:"الإثنين",h:"1448/10/06 هـ",m:"2027/03/08 م"},{name:"الثلاثاء",h:"1448/10/07 هـ",m:"2027/03/09 م"},{name:"الأربعاء",h:"1448/10/08 هـ",m:"2027/03/10 م"},{name:"الخميس",h:"1448/10/09 هـ",m:"2027/03/11 م"}]},
+            { t: 2, w: 9, label: "الأسبوع التاسع", days: [{name:"الأحد",h:"1448/10/12 هـ",m:"2027/03/14 م"},{name:"الإثنين",h:"1448/10/13 هـ",m:"2027/03/15 م"},{name:"الثلاثاء",h:"1448/10/14 هـ",m:"2027/03/16 م"},{name:"الأربعاء",h:"1448/10/15 هـ",m:"2027/03/17 م"},{name:"الخميس",h:"1448/10/16 هـ",m:"2027/03/18 م"}]},
+            { t: 2, w: 10, label: "الأسبوع العاشر", days: [{name:"الأحد",h:"1448/10/19 هـ",m:"2027/03/21 م"},{name:"الإثنين",h:"1448/10/20 هـ",m:"2027/03/22 م"},{name:"الثلاثاء",h:"1448/10/21 هـ",m:"2027/03/23 م"},{name:"الأربعاء",h:"1448/10/22 هـ",m:"2027/03/24 م"},{name:"الخميس",h:"1448/10/23 هـ",m:"2027/03/25 م"}]},
+            { t: 2, w: 11, label: "الأسبوع الحادي عشر", days: [{name:"الأحد",h:"1448/10/26 هـ",m:"2027/03/28 م"},{name:"الإثنين",h:"1448/10/27 هـ",m:"2027/03/29 م"},{name:"الثلاثاء",h:"1448/10/28 هـ",m:"2027/03/30 م"},{name:"الأربعاء",h:"1448/10/29 هـ",m:"2027/03/31 م"},{name:"الخميس",h:"1448/11/01 هـ",m:"2027/04/01 م"}]},
+            { t: 2, w: 12, label: "الأسبوع الثاني عشر", days: [{name:"الأحد",h:"1448/11/04 هـ",m:"2027/04/04 م"},{name:"الإثنين",h:"1448/11/05 هـ",m:"2027/04/05 م"},{name:"الثلاثاء",h:"1448/11/06 هـ",m:"2027/04/06 م"},{name:"الأربعاء",h:"1448/11/07 هـ",m:"2027/04/07 م"},{name:"الخميس",h:"1448/11/08 هـ",m:"2027/04/08 م"}]},
+            { t: 2, w: 13, label: "الأسبوع الثالث عشر", days: [{name:"الأحد",h:"1448/11/11 هـ",m:"2027/04/11 م"},{name:"الإثنين",h:"1448/11/12 هـ",m:"2027/04/12 م"},{name:"الثلاثاء",h:"1448/11/13 هـ",m:"2027/04/13 م"},{name:"الأربعاء",h:"1448/11/14 هـ",m:"2027/04/14 م"},{name:"الخميس",h:"1448/11/15 هـ",m:"2027/04/15 م"}]},
+            { t: 2, w: 14, label: "الأسبوع الرابع عشر", days: [{name:"الأحد",h:"1448/11/18 هـ",m:"2027/04/18 م"},{name:"الإثنين",h:"1448/11/19 هـ",m:"2027/04/19 م"},{name:"الثلاثاء",h:"1448/11/20 هـ",m:"2027/04/20 م"},{name:"الأربعاء",h:"1448/11/21 هـ",m:"2027/04/21 م"},{name:"الخميس",h:"1448/11/22 هـ",m:"2027/04/22 م"}]},
+            { t: 2, w: 15, label: "الأسبوع الخامس عشر", days: [{name:"الأحد",h:"1448/11/25 هـ",m:"2027/04/25 م"},{name:"الإثنين",h:"1448/11/26 هـ",m:"2027/04/26 م"},{name:"الثلاثاء",h:"1448/11/27 هـ",m:"2027/04/27 م"},{name:"الأربعاء",h:"1448/11/28 هـ",m:"2027/04/28 م"},{name:"الخميس",h:"1448/11/29 هـ",m:"2027/04/29 م"}]},
+            { t: 2, w: 16, label: "الأسبوع السادس عشر", days: [{name:"الأحد",h:"1448/12/03 هـ",m:"2027/05/02 م"},{name:"الإثنين",h:"1448/12/04 هـ",m:"2027/05/03 م"},{name:"الثلاثاء",h:"1448/12/05 هـ",m:"2027/05/04 م"},{name:"الأربعاء",h:"1448/12/06 هـ",m:"2027/05/05 م"},{name:"الخميس",h:"1448/12/07 هـ",m:"2027/05/06 م"}]},
+            { t: 2, w: 17, label: "الأسبوع السابع عشر", days: [{name:"الأحد",h:"1448/12/10 هـ",m:"2027/05/09 م"},{name:"الإثنين",h:"1448/12/11 هـ",m:"2027/05/10 م"},{name:"الثلاثاء",h:"1448/12/12 هـ",m:"2027/05/11 م"},{name:"الأربعاء",h:"1448/12/13 هـ",m:"2027/05/12 م"},{name:"الخميس",h:"1448/12/14 هـ",m:"2027/05/13 م"}]},
+            { t: 2, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/12/17 هـ",m:"2027/05/16 م"},{name:"الإثنين",h:"1448/12/18 هـ",m:"2027/05/17 م"},{name:"الثلاثاء",h:"1448/12/19 هـ",m:"2027/05/18 م"},{name:"الأربعاء",h:"1448/12/20 هـ",m:"2027/05/19 م"},{name:"الخميس",h:"1448/12/21 هـ",m:"2027/05/20 م"}]},
+            { t: 2, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/12/24 هـ",m:"2027/05/23 م"},{name:"الإثنين",h:"1448/12/25 هـ",m:"2027/05/24 م"},{name:"الثلاثاء",h:"1448/12/26 هـ",m:"2027/05/25 م"},{name:"الأربعاء",h:"1448/12/27 هـ",m:"2027/05/26 م"},{name:"الخميس",h:"1448/12/28 هـ",m:"2027/05/27 م"}]}
         ];
 
         let ALL_DAYS_FLAT = [];
@@ -1018,6 +1015,7 @@
             wk.days.forEach(d => {
                 ALL_DAYS_FLAT.push({
                     term: wk.t,
+                    weekKey: `t${wk.t}_${wk.label}`,
                     weekLabel: wk.label,
                     dayName: d.name,
                     hDate: d.h,
@@ -1088,7 +1086,7 @@
 
         function updateViewFromFlatIndex() {
             let cur = ALL_DAYS_FLAT[currentFlatIndex];
-            activeWeekLabel = cur.weekLabel;
+            activeWeekLabel = cur.weekKey;
             activeDayName = cur.dayName;
             currentTerm = cur.term;
 
@@ -1211,13 +1209,13 @@
             }
         }
 
-        /* دوال طباعة الخطط العامة */
-        function executePlanPrint(period) {
+        /* طباعة الخطة بالطريقة الافتراضية العادية */
+        function executePlanPrint(type) {
             document.getElementById('printDropdownMenu').classList.remove('show');
             window.print();
         }
 
-        /* توليد وطباعة التقارير بالبطاقات الرسمية المطابقة لملفات PPTX 100% بدون أي حذوفات */
+        /* طباعة التقارير بالبطاقات الرسمية (يومي، أسبوعي، شهري، فصلي) */
         function executeOfficialReport(scope) {
             document.getElementById('reportsDropdownMenu').classList.remove('show');
             let container = document.getElementById('activityReportPrintArea');
@@ -1225,35 +1223,33 @@
 
             let itemsToPrint = [];
 
-            // تصفية العناصر بناءً على النطاق الزمني المحجوز (يومي، أسبوعي، شهري، فصلي)
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
                 if (!cellData || !cellData.isActivity) continue;
 
-                // تحليل مفتاح الحصة: [WeekLabel]_[Day]_[Class]_[Period]
                 let parts = key.split('_');
-                let wLabel = parts[0];
-                let dName = parts[1];
-                let clsName = parts[2];
-                let periodNum = parts[3];
+                let wKey = parts[0] + "_" + parts[1]; // مثل t1_الأسبوع الثامن
+                let dName = parts[2];
+                let clsName = parts[3];
+                let periodNum = parts[4];
 
                 let match = false;
                 if (scope === 'daily') {
-                    if (wLabel === activeWeekLabel && dName === activeDayName) match = true;
+                    if (wKey === activeWeekLabel && dName === activeDayName) match = true;
                 } else if (scope === 'weekly') {
-                    if (wLabel === activeWeekLabel) match = true;
+                    if (wKey === activeWeekLabel) match = true;
                 } else if (scope === 'monthly') {
-                    let curIdx = CAL_1448.findIndex(w => w.label === activeWeekLabel);
-                    let mStart = Math.floor(curIdx / 4) * 4;
-                    let mWeeks = CAL_1448.slice(mStart, mStart + 4).map(w => w.label);
-                    if (mWeeks.includes(wLabel)) match = true;
+                    let curIdx = CAL_1448.findIndex(w => `t${w.t}_${w.label}` === activeWeekLabel);
+                    let mStart = Math.max(0, Math.floor(curIdx / 4) * 4);
+                    let mKeys = CAL_1448.slice(mStart, mStart + 4).map(w => `t${w.t}_${w.label}`);
+                    if (mKeys.includes(wKey)) match = true;
                 } else if (scope === 'term') {
-                    let wkObj = CAL_1448.find(w => w.label === wLabel);
+                    let wkObj = CAL_1448.find(w => `t${w.t}_${w.label}` === wKey);
                     if (wkObj && wkObj.t === currentTerm) match = true;
                 }
 
                 if (match) {
-                    itemsToPrint.push({ cellData, wLabel, dName, clsName, periodNum });
+                    itemsToPrint.push({ cellData, wKey, dName, clsName, periodNum });
                 }
             }
 
@@ -1262,26 +1258,26 @@
                 return;
             }
 
-            // توليد البطاقة الرسمية لكل نشاط/مسابقة حسب القالب الرسمي
             itemsToPrint.forEach(item => {
                 let cellData = item.cellData;
                 let isCompetition = (cellData.fieldKey === 'competitions' || cellData.course.includes('مسابقة'));
                 let fKey = cellData.fieldKey || "citizenship";
                 let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                let termText = (item.wLabel.includes('ف2') || currentTerm === 2) ? "الفصل الدراسي الثاني" : "الفصل الدراسي الأول";
+                let termText = (currentTerm === 2) ? "الفصل الدراسي الثاني" : "الفصل الدراسي الأول";
 
-                // استخراج التاريخ الهجري والميلادي بدقة
-                let dayObj = ALL_DAYS_FLAT.find(d => d.weekLabel === item.wLabel && d.dayName === item.dName);
+                let wkObj = CAL_1448.find(w => `t${w.t}_${w.label}` === item.wKey);
+                let wLabelStr = wkObj ? wkObj.label : item.wKey;
+                let dayObj = wkObj ? wkObj.days.find(d => d.name === item.dName) : null;
                 let dateFormatted = dayObj ? dayObj.hDate : "     /     / 1448هـ";
 
                 if (!isCompetition) {
-                    // **بطاقة تنفيذ برنامج نشاط طلابي (طابق للأصل)[cite: 6]**
+                    // بطاقة تنفيذ برنامج نشاط طلابي (مطابق للأصل 100%)[cite: 6]
                     container.innerHTML += `
                         <div class="card-official-wrapper">
                             <table class="card-header-table">
                                 <tr>
                                     <td style="width: 50%;">
-                                        بطاقة تنفيذ برنامج نشاط طلابي*[cite: 6]<br>
+                                        بطاقة تنفيذ برنامج نشاط طلابي *[cite: 6]
                                     </td>
                                     <td style="width: 50%; text-align: left;">
                                         <b>المعلم/ة المنفذ/ة</b><br>
@@ -1317,9 +1313,9 @@
                                 </tr>
                                 <tr>
                                     <th>بداية التنفيذ</th>
-                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${wLabelStr}<br>التاريخ: ${dateFormatted}</td>
                                     <th>نهاية التنفيذ</th>
-                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${wLabelStr}<br>التاريخ: ${dateFormatted}</td>
                                 </tr>
                                 <tr>
                                     <th>الصف</th>
@@ -1357,13 +1353,13 @@
                         </div>
                     `;
                 } else {
-                    // **بطاقة تنفيذ مسابقة نشاط طلابي (طابق للأصل)[cite: 7]**
+                    // بطاقة تنفيذ مسابقة نشاط طلابي (مطابق للأصل 100%)[cite: 7]
                     container.innerHTML += `
                         <div class="card-official-wrapper">
                             <table class="card-header-table">
                                 <tr>
                                     <td style="width: 50%;">
-                                        بطاقة تنفيذ مسابقة نشاط طلابي *[cite: 7]<br>
+                                        بطاقة تنفيذ مسابقة نشاط طلابي *[cite: 7]
                                     </td>
                                     <td style="width: 50%; text-align: left;">
                                         <b>المعلم/ة المنفذ/ة</b><br>
@@ -1405,9 +1401,9 @@
                                 </tr>
                                 <tr>
                                     <th>بداية التنفيذ</th>
-                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${wLabelStr}<br>التاريخ: ${dateFormatted}</td>
                                     <th>نهاية التنفيذ</th>
-                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${item.wLabel}<br>التاريخ: ${dateFormatted}</td>
+                                    <td>اليوم: ${item.dName}<br>الأسبوع: ${wLabelStr}<br>التاريخ: ${dateFormatted}</td>
                                 </tr>
                                 <tr>
                                     <th>المعلم/ة المنفذ/ة</th>
@@ -1459,7 +1455,9 @@
             let cellData = weekAssignments[weekKey] || {};
 
             selectedCellInfo = { day, cls, period };
-            document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
+            let wkObj = CAL_1448.find(w => `t${w.t}_${w.label}` === activeWeekLabel);
+            let displayWk = wkObj ? wkObj.label : activeWeekLabel;
+            document.getElementById('cellModalSubtitle').innerText = `${displayWk} - ${day} - فصل ${cls} - الحصة ${period}`;
             
             updateTeacherDropdowns();
             const courseSel = document.getElementById('cellCourseSelect');
@@ -1658,7 +1656,7 @@
                 const wkDiv = document.createElement('div');
                 wkDiv.className = 'wk-item';
                 let daysHtml = wk.days.map(d => `
-                    <div class="day-card-item" onclick="selectDateFromCalendar('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
+                    <div class="day-card-item" onclick="selectDateFromCalendar('${wk.t}', '${wk.label}', '${d.name}', '${d.h} (${d.m})')">
                         <b>${d.name}</b> <em>${d.h} — ${d.m}</em>
                     </div>
                 `).join('');
@@ -1680,8 +1678,9 @@
             list.style.display = isOpen ? 'none' : 'grid';
         }
 
-        function selectDateFromCalendar(weekLabel, dayName, dateStr) {
-            let idx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === weekLabel && d.dayName === dayName);
+        function selectDateFromCalendar(termNum, weekLabel, dayName, dateStr) {
+            let targetKey = `t${termNum}_${weekLabel}`;
+            let idx = ALL_DAYS_FLAT.findIndex(d => d.weekKey === targetKey && d.dayName === dayName);
             if (idx !== -1) {
                 currentFlatIndex = idx;
                 updateViewFromFlatIndex();
