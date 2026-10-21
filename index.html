@@ -297,7 +297,7 @@
             gap: 10px;
         }
 
-        /* زر طباعة بتصميم إطار مقطع تماماً مثل حصص النشاط وبدون خلفية ملونة مزعجة */
+        /* زر طباعة بإطار مقطع وتصميم حصص النشاط */
         .dashed-print-dropdown {
             position: relative;
             display: inline-block;
@@ -375,7 +375,6 @@
             vertical-align: middle !important;
         }
 
-        /* رأس عمود الفصل المتمم للتعديل السابق */
         .class-col-header {
             width: 110px !important;
             max-width: 110px !important;
@@ -401,15 +400,22 @@
         }
         .header-gear-btn:hover { background: #0C6A64; color: #fff; }
 
+        /* مظهر اسم الفصل في الصف بحيث يكون قابلاً للنقر لفتح خيارات الإدارة بدلاً من الترس الخارجي */
         .class-row-header-box {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 4px 8px;
+            justify-content: center;
+            padding: 6px 8px;
             background: #fff;
             border: 1px solid var(--line);
             border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .class-row-header-box:hover {
+            background: #f1f5f9;
+            border-color: var(--brand);
         }
         .class-title-text {
             font-size: 0.92rem;
@@ -417,18 +423,6 @@
             color: #0F172A;
             margin: 0 auto;
         }
-        .gear-btn {
-            background: none;
-            border: none;
-            color: #94A3B8;
-            font-size: 0.75rem;
-            cursor: pointer;
-            padding: 2px;
-            border-radius: 4px;
-            transition: all 0.2s;
-            opacity: 0.6;
-        }
-        .gear-btn:hover { color: #0C6A64; opacity: 1; background: #e2e8f0; }
 
         .wc-main-table td {
             border-color: #edf0f5 !important;
@@ -607,7 +601,7 @@
         /* إخفاء العناصر غير المطلوبة في الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
-            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .gear-btn, .header-gear-btn { display: none !important; }
+            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
             #activityReportPrintArea { display: block !important; }
         }
     </style>
@@ -695,7 +689,7 @@
         </div>
     </div>
 
-    <!-- نافذة خيارات الترس للفصل -->
+    <!-- نافذة خيارات إدارة الفصل (تظهر عند النقر على اسم الفصل) -->
     <div class="modal-cal" id="classActionModal">
         <div class="mbox-cal" style="width: min(380px, 95%);">
             <div class="mhead-cal">
@@ -835,7 +829,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي مع زر إضافة وإدارة الفصول في كلمة "الفصل" -->
+    <!-- الجدول الرئيسي مع زر إضافة وفصول يتم النقر على اسمها لفتح الإدارة -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -1082,10 +1076,10 @@
             await loadDataFromCloud();
             setTodayAutomatically();
 
-            // إغلاق قائمة الطباعة عند النقر خارجها
             window.addEventListener('click', function(e) {
                 if (!e.target.closest('.dashed-print-dropdown')) {
-                    document.getElementById('printDropdownMenu').classList.remove('show');
+                    let dropdown = document.getElementById('printDropdownMenu');
+                    if (dropdown) dropdown.classList.remove('show');
                 }
             });
         });
@@ -1191,10 +1185,10 @@
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
                 
+                // النقر على اسم الفصل يفتح نافذة إدارة الفصل بدلاً من الترس الخارجي
                 let html = `<th class="class-col-header">
-                    <div class="class-row-header-box">
+                    <div class="class-row-header-box" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل">
                         <span class="class-title-text">${cls}</span>
-                        <button class="gear-btn" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل"><i class="fas fa-cog"></i></button>
                     </div>
                 </th>`;
                 
@@ -1276,11 +1270,12 @@
             }
         }
 
-        /* دوال الطباعة الأربع المطلوبة بدقة */
+        /* دوال الطباعة الأربع المطلوبة بالبيانات الفعلية والفترات الدقيقة */
         function executeDailyPrint() {
-            document.getElementById('printDropdownMenu').classList.remove('show');
+            let dropdown = document.getElementById('printDropdownMenu');
+            if (dropdown) dropdown.classList.remove('show');
             let cur = ALL_DAYS_FLAT[currentFlatIndex];
-            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} الموافق ${cur.hDate} هـ (${cur.mDate} م)`;
+            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} | الفترة: ${cur.hDate} هـ (${cur.mDate} م)`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
@@ -1328,9 +1323,13 @@
         }
 
         function executeWeeklyPrint() {
-            document.getElementById('printDropdownMenu').classList.remove('show');
-            let cur = ALL_DAYS_FLAT[currentFlatIndex];
-            document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - الخطة الأسبوعية - العام الدراسي 1448هـ`;
+            let dropdown = document.getElementById('printDropdownMenu');
+            if (dropdown) dropdown.classList.remove('show');
+            let curWkObj = CAL_1448.find(w => w.label === activeWeekLabel) || CAL_1448[0];
+            let firstDay = curWkObj.days[0];
+            let lastDay = curWkObj.days[curWkObj.days.length - 1];
+            
+            document.getElementById('actReportSubTitle').innerText = `${activeWeekLabel} | الفترة من: ${firstDay.h} (${firstDay.m}) إلى: ${lastDay.h} (${lastDay.m})`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
@@ -1380,21 +1379,25 @@
         }
 
         function executeMonthlyPrint() {
-            document.getElementById('printDropdownMenu').classList.remove('show');
-            let cur = ALL_DAYS_FLAT[currentFlatIndex];
-            document.getElementById('actReportSubTitle').innerText = `الخطة الشهرية (تغطية 4 أسابيع تبدأ من ${cur.weekLabel}) - العام الدراسي 1448هـ`;
+            let dropdown = document.getElementById('printDropdownMenu');
+            if (dropdown) dropdown.classList.remove('show');
+            
+            // تحديد بداية الشهر (كل 4 أسابيع تبدأ من أسابيع المضاعفات: 1, 5, 9, 13, 17)
+            let curIdx = CAL_1448.findIndex(w => w.label === activeWeekLabel);
+            if (curIdx === -1) curIdx = 0;
+            let monthStartIndex = Math.floor(curIdx / 4) * 4;
+            let selectedWeeks = CAL_1448.slice(monthStartIndex, monthStartIndex + 4);
+
+            let startWk = selectedWeeks[0];
+            let endWk = selectedWeeks[selectedWeeks.length - 1];
+            let periodStr = `من ${startWk.days[0].h} إلى ${endWk.days[endWk.days.length - 1].h}`;
+
+            document.getElementById('actReportSubTitle').innerText = `الخطة الشهرية (${startWk.label} إلى ${endWk.label}) | الفترة: ${periodStr}`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
 
             let count = 0;
-            let weekDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-
-            // استخراج 4 أسابيع متتالية بدءاً من الأسبوع الحالي
-            let currentWeekIndex = CAL_1448.findIndex(w => w.label === activeWeekLabel);
-            if (currentWeekIndex === -1) currentWeekIndex = 0;
-            let selectedWeeks = CAL_1448.slice(currentWeekIndex, currentWeekIndex + 4);
-
             selectedWeeks.forEach(wk => {
                 wk.days.forEach(d => {
                     let dayName = d.name;
@@ -1433,24 +1436,29 @@
             });
 
             if (count === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة خلال هذه الأسابيع الأربعة.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة خلال هذا الشهر.</td></tr>`;
             }
 
             window.print();
         }
 
         function executeTermPrint() {
-            document.getElementById('printDropdownMenu').classList.remove('show');
+            let dropdown = document.getElementById('printDropdownMenu');
+            if (dropdown) dropdown.classList.remove('show');
+            let termWeeks = CAL_1448.filter(w => w.t === currentTerm);
             let termName = currentTerm === 1 ? "الفصل الدراسي الأول" : "الفصل الدراسي الثاني";
-            document.getElementById('actReportSubTitle').innerText = `خطة ${termName} الكامله - العام الدراسي 1448هـ`;
+            
+            let startWk = termWeeks[0];
+            let endWk = termWeeks[termWeeks.length - 1];
+            let periodStr = `من ${startWk.days[0].h} إلى ${endWk.days[endWk.days.length - 1].h}`;
+
+            document.getElementById('actReportSubTitle').innerText = `خطة ${termName} الكاملة | الفترة: ${periodStr}`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
 
             let count = 0;
-            let weekDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-
-            CAL_1448.filter(w => w.t === currentTerm).forEach(wk => {
+            termWeeks.forEach(wk => {
                 wk.days.forEach(d => {
                     let dayName = d.name;
                     targetClasses.forEach(cls => {
