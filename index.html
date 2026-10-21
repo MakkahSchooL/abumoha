@@ -400,7 +400,6 @@
         }
         .header-gear-btn:hover { background: #0C6A64; color: #fff; }
 
-        /* مظهر اسم الفصل في الصف بحيث يكون قابلاً للنقر لفتح خيارات الإدارة بدلاً من الترس الخارجي */
         .class-row-header-box {
             display: flex;
             align-items: center;
@@ -829,7 +828,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي مع زر إضافة وفصول يتم النقر على اسمها لفتح الإدارة -->
+    <!-- الجدول الرئيسي -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -1154,8 +1153,8 @@
 
             targetClasses.forEach(cls => {
                 for (let i = 1; i <= 7; i++) {
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                     if (cellData && cellData.isActivity && cellData.fieldKey) {
@@ -1185,7 +1184,6 @@
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
                 
-                // النقر على اسم الفصل يفتح نافذة إدارة الفصل بدلاً من الترس الخارجي
                 let html = `<th class="class-col-header">
                     <div class="class-row-header-box" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل">
                         <span class="class-title-text">${cls}</span>
@@ -1193,9 +1191,8 @@
                 </th>`;
                 
                 for(let i = 1; i <= 7; i++) {
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
-                    
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                     if (cellData && cellData.isActivity) {
@@ -1270,7 +1267,7 @@
             }
         }
 
-        /* دوال الطباعة الأربع المطلوبة بالبيانات الفعلية والفترات الدقيقة */
+        /* دوال الطباعة الأربع المطلوبة بالبيانات الفعلية المستقلة لكل أسبوع وفترة */
         function executeDailyPrint() {
             let dropdown = document.getElementById('printDropdownMenu');
             if (dropdown) dropdown.classList.remove('show');
@@ -1285,8 +1282,8 @@
 
             targetClasses.forEach(cls => {
                 for(let i = 1; i <= 7; i++) {
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
+                    let baseKey = `${cleanDay}_${cls}_${i}`;
                     let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                     if (cellData && cellData.isActivity) {
@@ -1340,8 +1337,8 @@
             weekDays.forEach(dayName => {
                 targetClasses.forEach(cls => {
                     for(let i = 1; i <= 7; i++) {
-                        let baseKey = `${dayName}_${cls}_${i}`;
                         let weekKey = `${activeWeekLabel}_${dayName}_${cls}_${i}`;
+                        let baseKey = `${dayName}_${cls}_${i}`;
                         let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                         if (cellData && cellData.isActivity) {
@@ -1382,7 +1379,7 @@
             let dropdown = document.getElementById('printDropdownMenu');
             if (dropdown) dropdown.classList.remove('show');
             
-            // تحديد بداية الشهر (كل 4 أسابيع تبدأ من أسابيع المضاعفات: 1, 5, 9, 13, 17)
+            // يبدأ من الأسبوع الأول من الشهر (مضاعفات 4 أسابيع: 0, 4, 8, 12, 16)
             let curIdx = CAL_1448.findIndex(w => w.label === activeWeekLabel);
             if (curIdx === -1) curIdx = 0;
             let monthStartIndex = Math.floor(curIdx / 4) * 4;
@@ -1403,8 +1400,8 @@
                     let dayName = d.name;
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
-                            let baseKey = `${dayName}_${cls}_${i}`;
                             let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
+                            let baseKey = `${dayName}_${cls}_${i}`;
                             let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                             if (cellData && cellData.isActivity) {
@@ -1463,8 +1460,8 @@
                     let dayName = d.name;
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
-                            let baseKey = `${dayName}_${cls}_${i}`;
                             let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
+                            let baseKey = `${dayName}_${cls}_${i}`;
                             let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
 
                             if (cellData && cellData.isActivity) {
@@ -1503,8 +1500,8 @@
         }
 
         function openCellClickModal(day, cls, period) {
-            let baseKey = `${day}_${cls}_${period}`;
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+            let baseKey = `${day}_${cls}_${period}`;
             let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
 
             selectedCellInfo = { day, cls, period };
@@ -1601,14 +1598,14 @@
             const { day, cls, period } = selectedCellInfo;
             const typeVal = document.getElementById('cellTypeSelect').value;
             
-            let baseKey = `${day}_${cls}_${period}`;
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+            let baseKey = `${day}_${cls}_${period}`;
 
             let existingData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
 
             if (typeVal === 'empty') {
-                delete customAssignments[baseKey];
                 delete tempOverrides[weekKey];
+                delete customAssignments[baseKey];
             } else {
                 let courseName = "";
                 let teacherName = "";
@@ -1641,7 +1638,8 @@
                     }
                 }
 
-                customAssignments[baseKey] = {
+                // الحفظ يتم الآن بشكل مستقل لكل أسبوع بناءً على الأسبوع النشط الحالي
+                tempOverrides[weekKey] = {
                     course: courseName,
                     teacher: teacherName,
                     isActivity: isAct,
@@ -1650,7 +1648,6 @@
                     hours: hours,
                     barcodeSrc: barcodeSrc
                 };
-                delete tempOverrides[weekKey];
             }
 
             await saveToCloud();
