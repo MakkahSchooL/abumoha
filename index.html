@@ -1026,8 +1026,7 @@
             ]
         };
 
-        let customAssignments = {};
-        let tempOverrides = {};
+        let weekAssignments = {}; // تخزين مستقل لكل أسبوع لمنع التداخل والتكرار
         
         let activeDayName = "الثلاثاء";
         let activeWeekLabel = "الأسبوع الثامن";
@@ -1094,10 +1093,9 @@
                 let docRef = await db.collection("schedules").doc("main_schedule").get();
                 if (docRef.exists) {
                     let data = docRef.data();
-                    if (data.assignments) customAssignments = data.assignments;
+                    if (data.weekAssignments) weekAssignments = data.weekAssignments;
                     if (data.classes) targetClasses = data.classes;
                     if (data.teachers) teachersPool = data.teachers;
-                    if (data.overrides) tempOverrides = data.overrides;
                 }
             } catch (e) {
                 console.log("جارِ استخدام البيانات المحلية...");
@@ -1154,8 +1152,7 @@
             targetClasses.forEach(cls => {
                 for (let i = 1; i <= 7; i++) {
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
-                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                    let cellData = weekAssignments[weekKey] || null;
 
                     if (cellData && cellData.isActivity && cellData.fieldKey) {
                         if (counts[cellData.fieldKey] !== undefined) {
@@ -1192,8 +1189,7 @@
                 
                 for(let i = 1; i <= 7; i++) {
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
-                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                    let cellData = weekAssignments[weekKey] || null;
 
                     if (cellData && cellData.isActivity) {
                         let fKey = cellData.fieldKey || "citizenship";
@@ -1267,7 +1263,7 @@
             }
         }
 
-        /* دوال الطباعة الأربع المطلوبة بالبيانات الفعلية المستقلة لكل أسبوع وفترة */
+        /* دوال الطباعة بالبيانات الفعلية البحتة المستقلة تماماً لكل أسبوع */
         function executeDailyPrint() {
             let dropdown = document.getElementById('printDropdownMenu');
             if (dropdown) dropdown.classList.remove('show');
@@ -1283,8 +1279,7 @@
             targetClasses.forEach(cls => {
                 for(let i = 1; i <= 7; i++) {
                     let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
-                    let baseKey = `${cleanDay}_${cls}_${i}`;
-                    let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                    let cellData = weekAssignments[weekKey] || null;
 
                     if (cellData && cellData.isActivity) {
                         count++;
@@ -1338,8 +1333,7 @@
                 targetClasses.forEach(cls => {
                     for(let i = 1; i <= 7; i++) {
                         let weekKey = `${activeWeekLabel}_${dayName}_${cls}_${i}`;
-                        let baseKey = `${dayName}_${cls}_${i}`;
-                        let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                        let cellData = weekAssignments[weekKey] || null;
 
                         if (cellData && cellData.isActivity) {
                             count++;
@@ -1401,8 +1395,7 @@
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
                             let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
-                            let baseKey = `${dayName}_${cls}_${i}`;
-                            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                            let cellData = weekAssignments[weekKey] || null;
 
                             if (cellData && cellData.isActivity) {
                                 count++;
@@ -1461,8 +1454,7 @@
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
                             let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
-                            let baseKey = `${dayName}_${cls}_${i}`;
-                            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || null;
+                            let cellData = weekAssignments[weekKey] || null;
 
                             if (cellData && cellData.isActivity) {
                                 count++;
@@ -1501,8 +1493,7 @@
 
         function openCellClickModal(day, cls, period) {
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-            let baseKey = `${day}_${cls}_${period}`;
-            let cellData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+            let cellData = weekAssignments[weekKey] || {};
 
             selectedCellInfo = { day, cls, period };
 
@@ -1599,13 +1590,10 @@
             const typeVal = document.getElementById('cellTypeSelect').value;
             
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-            let baseKey = `${day}_${cls}_${period}`;
-
-            let existingData = tempOverrides[weekKey] || customAssignments[baseKey] || {};
+            let existingData = weekAssignments[weekKey] || {};
 
             if (typeVal === 'empty') {
-                delete tempOverrides[weekKey];
-                delete customAssignments[baseKey];
+                delete weekAssignments[weekKey];
             } else {
                 let courseName = "";
                 let teacherName = "";
@@ -1638,8 +1626,7 @@
                     }
                 }
 
-                // الحفظ يتم الآن بشكل مستقل لكل أسبوع بناءً على الأسبوع النشط الحالي
-                tempOverrides[weekKey] = {
+                weekAssignments[weekKey] = {
                     course: courseName,
                     teacher: teacherName,
                     isActivity: isAct,
@@ -1695,10 +1682,9 @@
         async function saveToCloud() {
             try {
                 await db.collection("schedules").doc("main_schedule").set({
-                    assignments: customAssignments,
+                    weekAssignments: weekAssignments,
                     classes: targetClasses,
-                    teachers: teachersPool,
-                    overrides: tempOverrides
+                    teachers: teachersPool
                 });
             } catch (e) {
                 alert("خطأ أثناء الحفظ بالسحابة.");
