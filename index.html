@@ -297,7 +297,6 @@
             gap: 10px;
         }
 
-        /* دوال زري الطباعة والتقارير المنسدلة */
         .dashed-print-dropdown {
             position: relative;
             display: inline-block;
@@ -355,7 +354,7 @@
             border: 1px solid var(--line);
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 210px;
+            min-width: 220px;
             z-index: 1000;
             padding: 6px;
         }
@@ -545,7 +544,7 @@
             line-height: 1.2;
         }
 
-        /* منطقة التقرير التنفيذي للأنشطة - الكود الأول الأكاديمية */
+        /* منطقة التقرير التنفيذي للأنشطة */
         #activityReportPrintArea {
             display: none;
             background: #fff;
@@ -584,7 +583,6 @@
             font-weight: 700;
         }
 
-        /* شارة الاعتماد الإلكتروني */
         .approval-badge-box {
             background-color: #f0fdf4;
             border: 1px solid #166534;
@@ -620,7 +618,7 @@
             margin: 0 auto;
         }
 
-        /* تنسيقات بطاقات تنفيذ مسابقة النشاط الطلابي من الصورة المرفقة */
+        /* تنسيقات بطاقة تنفيذ مسابقة النشاط الطلابي */
         #competitionCardPrintArea {
             display: none;
             background: #fff;
@@ -628,6 +626,16 @@
             padding: 0;
             direction: rtl;
         }
+
+        /* تنسيقات بطاقة تنفيذ برنامج نشاط طلابي (من المرفق) */
+        #programCardPrintArea {
+            display: none;
+            background: #fff;
+            color: #003845;
+            padding: 0;
+            direction: rtl;
+        }
+
         .card-page {
             width: 210mm;
             min-height: 290mm;
@@ -639,78 +647,100 @@
             background: #fff;
             page-break-after: always;
         }
-        .card-header-gov {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .card-header-gov img {
-            max-width: 140px;
-            height: auto;
-        }
-        .card-main-title {
+
+        .cd-logo-gov {
+            position: absolute;
+            top: 7.7mm;
+            left: 8.8mm;
+            width: 35mm;
             text-align: center;
-            font-size: 1.5rem;
+            line-height: 1.25;
+            color: #003845;
+        }
+        .cd-logo-gov b { display: block; font-size: 12pt; }
+        .cd-logo-gov span { font-size: 7.5pt; letter-spacing: 0.2px; }
+
+        .cd-title-gov {
+            margin: 10mm 0 4mm;
+            text-align: center;
+            font-size: 17pt;
             font-weight: 800;
             color: #003744;
-            margin: 15px 0 20px 0;
         }
-        table.comp-card-table {
+
+        table.prog-card-table {
             width: 100%;
             border-collapse: collapse;
-            border: 2px solid #003845;
-            margin-bottom: 25px;
+            table-layout: fixed;
+            border: 1.5px solid #003845;
+            margin-bottom: 15px;
         }
-        table.comp-card-table td, table.comp-card-table th {
+        table.prog-card-table td {
             border: 1px solid #003845;
-            padding: 7px 10px;
-            font-size: 0.9rem;
-            vertical-align: middle;
+            padding: 1.5mm 2mm;
             text-align: center;
+            vertical-align: middle;
+            font-size: 10.5pt;
+            line-height: 1.35;
         }
-        table.comp-card-table tr:nth-child(even) td {
-            background-color: #D2E2E8;
-        }
-        .td-label {
+        table.prog-card-table tr:nth-child(even) td { background: #D2E2E8; }
+        table.prog-card-table td.lb {
             font-weight: 800;
+            font-size: 11pt;
+            background: #fff !important;
             color: #003744;
-            background-color: #ffffff !important;
-            width: 28%;
-            font-size: 0.92rem;
         }
-        .td-sub-label {
-            font-weight: 700;
-            color: #003744;
-            background-color: #e6eff2;
-            font-size: 0.85rem;
+
+        .platform-options-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: right;
+            padding-right: 10px;
+            font-weight: 600;
+            font-size: 9.5pt;
         }
+
         .card-footer-signatures {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-top: 35px;
-            padding: 0 20px;
-            font-size: 0.95rem;
+            margin-top: 25px;
+            padding: 0 15px;
+            font-size: 10.5pt;
             font-weight: 700;
-        }
-        .card-footer-signatures div {
-            line-height: 2.2;
-        }
-        .card-bottom-note {
-            margin-top: 40px;
-            font-size: 0.8rem;
-            color: #4b5563;
-            line-height: 1.5;
-            padding-right: 10px;
+            line-height: 2;
         }
 
-        /* إخفاء العناصر غير المطلوبة في الطباعة */
+        .card-bottom-note {
+            margin-top: 25px;
+            font-size: 8.5pt;
+            color: #4b5563;
+            line-height: 1.5;
+            padding-right: 5px;
+        }
+
+        .card-bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6mm;
+            background: linear-gradient(90deg, #2E8B57 0%, #20B2AA 50%, #4682B4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 8pt;
+            letter-spacing: 1px;
+        }
+
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
             body.print-plan-mode #activityReportPrintArea { display: block !important; }
             body.print-card-mode #competitionCardPrintArea { display: block !important; }
+            body.print-prog-mode #programCardPrintArea { display: block !important; }
         }
     </style>
 </head>
@@ -733,7 +763,7 @@
         </div>
     </div>
 
-    <!-- شريط اختيار اليوم والتقويم مع أسهم التنقل -->
+    <!-- شريط اختيار اليوم والتقويم -->
     <div class="cal-nav-bar">
         <div class="d-flex align-items-center gap-3">
             <button class="btn-open-cal" onclick="openCalendarModal()">
@@ -773,7 +803,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة المعلمين (إضافة / حذف) -->
+    <!-- نافذة إدارة المعلمين -->
     <div class="modal-cal" id="teachersManagerModal">
         <div class="mbox-cal" style="width: min(400px, 95%);">
             <div class="mhead-cal">
@@ -910,10 +940,10 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والأزرار فوق الجدول مع أزرار الطباعة والتقارير والعدادات الكلية -->
+    <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <!-- زر طباعة الخطط الأصلية دون تغيير -->
+            <!-- زر طباعة الخطط -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
@@ -926,13 +956,14 @@
                 </div>
             </div>
 
-            <!-- زر طباعة التقارير المضاف إليه بطاقة تنفيذ البرامج -->
+            <!-- زر طباعة التقارير وبطاقات الأنشطة -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
                     <i class="fas fa-file-alt"></i> طباعة التقارير <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-id-card ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط طلابي *</button>
+                    <button class="print-dropdown-item" onclick="executeProgramCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط طلابي *</button>
+                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط طلابي *</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير اليومي...')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الأسبوعي...')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الشهري...')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري</button>
@@ -941,7 +972,7 @@
             </div>
         </div>
         
-        <!-- العدادات الإجمالية الشاملة لجميع الأسابيع والفترات -->
+        <!-- العدادات الإجمالية -->
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (<span id="cnt_citizenship">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (<span id="cnt_culture">0</span>)</span>
@@ -977,7 +1008,7 @@
         </table>
     </div>
 
-    <!-- تقرير طباعة الأنشطة الطلابية التنفيذي (الأصلي) -->
+    <!-- تقرير طباعة الأنشطة الطلابية التنفيذي -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
@@ -1006,7 +1037,6 @@
             <tbody id="actReportTableBody"></tbody>
         </table>
 
-        <!-- أسماء القيادة مع شارة الاعتماد الإلكتروني -->
         <div class="act-names-footer">
             <div>رائد النشاط: عواد محمد العوفي</div>
             <div class="approval-badge-box">
@@ -1016,9 +1046,14 @@
         </div>
     </div>
 
-    <!-- بطاقة تنفيذ مسابقة نشاط طلابي * (المطابقة للمرفق تماماً) -->
+    <!-- بطاقة تنفيذ مسابقة نشاط طلابي -->
     <div id="competitionCardPrintArea">
         <div id="compCardsListContainer"></div>
+    </div>
+
+    <!-- بطاقة تنفيذ برنامج نشاط طلابي * (المضافة من نموذج المرفق) -->
+    <div id="programCardPrintArea">
+        <div id="progCardsListContainer"></div>
     </div>
 
     <!-- نافذة إضافة فصل جديد -->
@@ -1157,13 +1192,11 @@
         };
 
         let weekAssignments = {};
-        
         let activeDayName = "الثلاثاء";
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
         let selectedCellInfo = null;
 
-        /* تم تعديل المسميات هنا لإلغاء كلمة (ف2) نهائياً من التقويم */
         const CAL_1448 = [
             // --- الفصل الدراسي الأول ---
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
@@ -1422,7 +1455,6 @@
             }
         }
 
-        /* إعادة طباعة الخطط كما كانت في الكود الأول بدون أي تغييرات */
         function executeDailyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1653,7 +1685,155 @@
             window.print();
         }
 
-        /* دالة طباعة بطاقة تنفيذ مسابقة نشاط طلابي * بنفس المرفق بالضبط */
+        /* دالة طباعة بطاقة تنفيذ برنامج نشاط طلابي * (المطابقة للمرفق) */
+        function executeProgramCardPrint() {
+            document.body.className = "print-prog-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('progCardsListContainer');
+            container.innerHTML = '';
+
+            let activitiesList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity) {
+                    activitiesList.push({ key, ...cellData });
+                }
+            }
+
+            if (activitiesList.length === 0) {
+                activitiesList.push({
+                    course: "برنامج نشاط افتراضي",
+                    fieldKey: "citizenship",
+                    teacher: "",
+                    hours: 4
+                });
+            }
+
+            let curDateObj = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "1448/03/17" };
+
+            activitiesList.forEach(act => {
+                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
+
+                let cardDiv = document.createElement('div');
+                cardDiv.className = 'card-page';
+                cardDiv.innerHTML = `
+                    <div class="cd-logo-gov">
+                        <b>وزارة التعليم</b>
+                        <span>Ministry of Education</span>
+                    </div>
+
+                    <div class="cd-title-gov">بطاقة تنفيذ برنامج نشاط طلابي *</div>
+
+                    <table class="prog-card-table">
+                        <colgroup>
+                            <col style="width:33%">
+                            <col style="width:22%">
+                            <col style="width:22%">
+                            <col style="width:23%">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="lb">اسم البرنامج</td>
+                                <td colspan="3" style="text-align:right; font-weight:700; font-size:11pt;">${act.course}</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">المجال</td>
+                                <td colspan="3" style="text-align:right; font-weight:700; color:${fConf.color};">${fConf.title}</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عدد حصص البرنامج</td>
+                                <td colspan="3" style="text-align:right; font-weight:700;">${act.hours || 4}</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">الفصل الدراسي</td>
+                                <td colspan="3" style="text-align:right; font-weight:700;">${currentTerm === 1 ? 'الأول' : 'الثاني'}</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">بداية التنفيذ</td>
+                                <td>اليوم: <b>${activeDayName}</b></td>
+                                <td>الأسبوع: <b>${activeWeekLabel}</b></td>
+                                <td>التاريخ: <b>${curDateObj.hDate}</b></td>
+                            </tr>
+                            <tr>
+                                <td class="lb">نهاية التنفيذ</td>
+                                <td>اليوم: <b>الخميس</b></td>
+                                <td>الأسبوع: <b>${activeWeekLabel}</b></td>
+                                <td>التاريخ: <b>____/____/1448</b></td>
+                            </tr>
+                            <tr>
+                                <td class="lb">الصف</td>
+                                <td colspan="3" style="text-align:right; font-weight:700;">جميع الصفوف</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">المعلم/ة المنفذ/ة</td>
+                                <td colspan="3" style="text-align:right; font-weight:700;">${act.teacher || '—'}</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عدد الطلبة المشاركين</td>
+                                <td colspan="3" style="text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عدد الطلبة المشاركين من ذوي الإعاقة</td>
+                                <td colspan="3" style="text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عدد أولياء الأمور المشاركين في البرنامج</td>
+                                <td colspan="3" style="text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ:</td>
+                                <td colspan="3">
+                                    <div class="platform-options-box">
+                                        <div><i class="far fa-circle"></i> بنك الإثراءات</div>
+                                        <div><i class="far fa-circle"></i> التطوير الذاتي</div>
+                                        <div><i class="far fa-circle"></i> قيمنا الغالية</div>
+                                        <div><i class="far fa-circle"></i> نادي القراءة</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="lb">عدد الشراكات المجتمعية</td>
+                                <td>0</td>
+                                <td class="lb">أسماء الشراكات المجتمعية</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td class="lb">ملاحظات</td>
+                                <td colspan="3" style="height:35px;">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="card-footer-signatures">
+                        <div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
+                            <div>الاسم: ${act.teacher || '________________'}</div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                            <div>التوقيع: ________________</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
+                            <div>الاسم: عواد محمد العوفي</div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                            <div>التوقيع: ________________</div>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-note">
+                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس.
+                    </div>
+
+                    <div class="card-bottom-bar">WWW.MOE.GOV.SA</div>
+                </div>
+                `;
+                container.appendChild(cardDiv);
+            });
+
+            window.print();
+        }
+
         function executeCompetitionCardPrint() {
             document.body.className = "print-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
