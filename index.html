@@ -302,13 +302,13 @@
             color: #fff;
             border: none;
             border-radius: 10px;
-            padding: 7px 12px;
+            padding: 7px 14px;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(12,106,100,0.2);
             white-space: nowrap;
@@ -339,14 +339,32 @@
             vertical-align: middle !important;
         }
 
-        /* تحسين مظهر اسم الفصل وجعل الترس هادئاً غير مزعج */
+        /* رأس عمود الفصل المحدث ليتضمن أيقونة الترس والإضافة */
         .class-col-header {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 110px !important;
+            max-width: 110px !important;
             background: #f8fafc;
             vertical-align: middle !important;
             padding: 6px 4px !important;
         }
+        .header-class-title-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 6px;
+        }
+        .header-gear-btn {
+            background: #e2e8f0;
+            border: none;
+            color: #0C6A64;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .header-gear-btn:hover { background: #0C6A64; color: #fff; }
+
         .class-row-header-box {
             display: flex;
             align-items: center;
@@ -553,7 +571,7 @@
         /* إخفاء العناصر غير المطلوبة في الطباعة */
         @media print {
             body { background: #fff !important; padding: 0 !important; }
-            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .gear-btn { display: none !important; }
+            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .gear-btn, .header-gear-btn { display: none !important; }
             #activityReportPrintArea { display: block !important; }
         }
     </style>
@@ -754,12 +772,15 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والأزرار فوق الجدول -->
+    <!-- شريط التحكم والأزرار فوق الجدول (تمت إزالة أيقونة إضافة فصل وتحديث أيقونات الطباعة الذكية) -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <button class="btn-custom-dark" onclick="openModalForAdd()"><i class="fas fa-plus"></i> إضافة فصل</button>
-            <button class="btn-custom-dark" onclick="executeWeeklyPrint()"><i class="fas fa-print"></i> طباعة الخطة الأسبوعية</button>
-            <button class="btn-custom-dark" onclick="executeDailyPrint()"><i class="fas fa-star"></i> طباعة الخطة اليومية 🌟</button>
+            <button class="btn-custom-dark" onclick="executeWeeklyPrint()">
+                <i class="fas fa-magic text-warning"></i> طباعة الخطة الأسبوعية الذكية
+            </button>
+            <button class="btn-custom-dark" onclick="executeDailyPrint()">
+                <i class="fas fa-robot text-info"></i> طباعة الخطة اليومية AI
+            </button>
         </div>
         
         <div class="fields-bar-container">
@@ -773,12 +794,17 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي -->
+    <!-- الجدول الرئيسي مع زر إضافة وإدارة الفصول في كلمة "الفصل" -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
                 <tr>
-                    <th class="class-col-header">الفصل</th>
+                    <th class="class-col-header">
+                        <div class="header-class-title-box">
+                            <span>الفصل</span>
+                            <button class="header-gear-btn" onclick="openModalForAdd()" title="إضافة فصل جديد"><i class="fas fa-plus-circle"></i></button>
+                        </div>
+                    </th>
                     <th>الحصة 1</th>
                     <th>الحصة 2</th>
                     <th>الحصة 3</th>
