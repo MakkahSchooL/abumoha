@@ -616,7 +616,7 @@
             margin: 0 auto;
         }
 
-        /* حاويات البطاقات المطبوعة بمقاسات وأبعاد دقيقة مطابقة للملفات الرسمية */
+        /* حاويات البطاقات المطبوعة بمقاسات وأبعاد دقيقة تملاء كامل الصفحة مثل المرفق */
         #activityCardPrintArea, #competitionCardPrintArea {
             display: none;
             background: #fff;
@@ -626,39 +626,43 @@
         }
         .card-page {
             width: 210mm;
-            min-height: 290mm;
+            height: 297mm;
+            max-height: 297mm;
             margin: 0 auto;
-            padding: 10mm 12mm;
+            padding: 10mm 15mm;
             box-sizing: border-box;
             font-family: var(--font);
             position: relative;
             background: #fff;
             page-break-after: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .card-header-gov {
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            margin-bottom: 8px;
         }
         .card-main-title {
             text-align: center;
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #003744;
-            margin: 6px 0 12px 0;
+            margin: 4px 0;
         }
         table.comp-card-table {
             width: 100%;
             border-collapse: collapse;
             border: 2px solid #003845;
-            margin-bottom: 15px;
             background: #fff;
+            flex-grow: 1;
+            margin: 6px 0;
         }
         table.comp-card-table td, table.comp-card-table th {
             border: 1px solid #003845;
-            padding: 5px 8px;
-            font-size: 0.85rem;
+            padding: 6px 10px;
+            font-size: 0.88rem;
             vertical-align: middle;
             text-align: center;
         }
@@ -670,39 +674,37 @@
             color: #003744;
             background-color: #ffffff !important;
             width: 32%;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
         }
         .td-sub-label {
             font-weight: 700;
             color: #003744;
             background-color: #e6eff2;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
         }
         .card-footer-signatures {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-top: 15px;
-            padding: 0 10px;
-            font-size: 0.85rem;
+            padding: 0 5px;
+            font-size: 0.88rem;
             font-weight: 700;
         }
         .card-footer-signatures div {
-            line-height: 1.9;
+            line-height: 1.8;
         }
         .card-bottom-note {
-            margin-top: 15px;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: #4b5563;
             line-height: 1.35;
-            padding-right: 5px;
+            padding-right: 2px;
         }
         
         .editable-cell-box {
             outline: none;
             border-radius: 4px;
             padding: 2px 4px;
-            min-height: 18px;
+            min-height: 20px;
         }
         .editable-cell-box:focus {
             background-color: #fffde7;
@@ -1604,7 +1606,6 @@
             let activitiesList = [];
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
-                // تصفية البرامج لتشمل فقط الأنشطة التي ليست مسابقات
                 if (cellData && cellData.isActivity && cellData.fieldKey !== "competitions") {
                     activitiesList.push({ key, ...cellData });
                 }
@@ -1676,7 +1677,7 @@
                         <tr>
                             <td class="td-label">عدد الطلبة المشاركين</td>
                             <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td class="td-sub-label" style="font-size: 0.7rem;">عدد الطلبة ذوي الإعاقة</td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة ذوي الإعاقة</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
@@ -1685,8 +1686,8 @@
                         </tr>
                         <tr>
                             <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ[cite: 3]:</td>
-                            <td colspan="5" style="text-align: right; padding: 3px 8px;">
-                                <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <td colspan="5" style="text-align: right; padding: 4px 10px;">
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
                                     ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="radio" name="act_plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
                                 </div>
                             </td>
@@ -1699,27 +1700,29 @@
                         </tr>
                         <tr>
                             <td class="td-label">ملاحظات</td>
-                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                     </table>
 
-                    <div class="card-footer-signatures">
-                        <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
-                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
-                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
-                            <div>التوقيع: ________________</div>
+                    <div>
+                        <div class="card-footer-signatures">
+                            <div>
+                                <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
+                                <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
+                                <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                                <div>التوقيع: ________________</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
+                                <div>الاسم: عواد محمد العوفي</div>
+                                <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                                <div>التوقيع: ________________</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
-                            <div>الاسم: عواد محمد العوفي</div>
-                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
-                            <div>التوقيع: ________________</div>
-                        </div>
-                    </div>
 
-                    <div class="card-bottom-note">
-                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 3].
+                        <div class="card-bottom-note mt-2">
+                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 3].
+                        </div>
                     </div>
                 </div>
                 `;
@@ -1741,7 +1744,6 @@
             let competitionsList = [];
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
-                // تصفية الأنشطة لتشمل المسابقات فقط
                 if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
                     competitionsList.push({ key, ...cellData });
                 }
@@ -1826,42 +1828,44 @@
                         <tr>
                             <td class="td-label">عدد أولياء الأمور المشاركين في المسابقة</td>
                             <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td class="td-sub-label" style="font-size: 0.7rem;">عدد الطلبة ذوي الإعاقة</td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة ذوي الإعاقة</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد الشراكات المجتمعية</td>
                             <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td class="td-sub-label" style="font-size: 0.7rem;">أسماء الشراكات</td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">أسماء الشراكات</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نواتج المسابقة</td>
-                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">ملاحظات</td>
-                            <td colspan="5" style="height: 25px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                     </table>
 
-                    <div class="card-footer-signatures">
-                        <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
-                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
-                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
-                            <div>التوقيع: ________________</div>
+                    <div>
+                        <div class="card-footer-signatures">
+                            <div>
+                                <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
+                                <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
+                                <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                                <div>التوقيع: ________________</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
+                                <div>الاسم: عواد محمد العوفي</div>
+                                <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                                <div>التوقيع: ________________</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
-                            <div>الاسم: عواد محمد العوفي</div>
-                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
-                            <div>التوقيع: ________________</div>
-                        </div>
-                    </div>
 
-                    <div class="card-bottom-note">
-                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 4].
+                        <div class="card-bottom-note mt-2">
+                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 4].
+                        </div>
                     </div>
                 </div>
                 `;
