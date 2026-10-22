@@ -2153,7 +2153,7 @@
                 let snapshot = await fileRef.put(file);
                 let downloadURL = await snapshot.ref.getDownloadURL();
                 
-                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(downloadURL)}`;
+                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
                 return qrApiUrl;
             } catch (error) {
                 console.error("خطأ في رفع الملف:", error);
