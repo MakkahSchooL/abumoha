@@ -898,7 +898,7 @@
                     <div class="form-group text-right mb-0">
                         <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود يحفظ الملف تلقائياً:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيتم توليد باركود يقوم بتحفظ وحفظ الملف مباشرة عند قراءته.</small>
+                        <small class="text-muted d-block mt-1">سيتم توليد باركود يقوم بتحميل وحفظ الملف مباشرة عند قراءته.</small>
                     </div>
                 </div>
 
@@ -1259,13 +1259,22 @@
 
         async function loadDataFromCloud() {
             try {
-                let docRef = await db.collection("schedules").doc("main_schedule").get();
-                if (docRef.exists) {
-                    let data = docRef.data();
-                    if (data.weekAssignments) weekAssignments = data.weekAssignments;
+                let metaRef = await db.collection("schedules").doc("metadata").get();
+                if (metaRef.exists) {
+                    let data = metaRef.data();
                     if (data.classes) targetClasses = data.classes;
                     if (data.teachers) teachersPool = data.teachers;
                 }
+
+                let weeksSnap = await db.collection("week_schedules").get();
+                weeksSnap.forEach(doc => {
+                    let weekData = doc.data();
+                    if (weekData && weekData.assignments) {
+                        for (let k in weekData.assignments) {
+                            weekAssignments[k] = weekData.assignments[k];
+                        }
+                    }
+                });
             } catch (e) {
                 console.log("جارِ استخدام البيانات المحلية...", e);
             }
@@ -2158,7 +2167,6 @@
                     let reader = new FileReader();
                     reader.onload = function(e) {
                         let base64Data = e.target.result;
-                        // فرض التحميل والحفظ التلقائي عبر تطبيق نوع بيانات octet-stream
                         let downloadDataUrl = base64Data.replace(/^data:[^;]+/, 'data:application/octet-stream');
                         resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadDataUrl)}&ecc=M`);
                     };
@@ -2282,16 +2290,54 @@
 
         async function saveToCloud() {
             try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    weekAssignments: weekAssignments,
+                // حفظ الفصول والمعلمين في مستند مستقل
+                await db.collection("schedules").doc("metadata").set({
                     classes: targetClasses,
                     teachers: teachersPool
                 });
-                console.log("تم الحفظ بنجاح في السحابة!");
+
+                // تجميع حصص الأسبوع الحالي فقط لحفظها في مستند خاص بهذا الأسبوع
+                let currentWeekAssignments = {};
+                for (let key in weekAssignments) {
+                    if (key.startsWith(activeWeekLabel + "_")) {
+                        currentWeekAssignments[key] = weekAssignments[key];
+                    }
+                }
+
+                // حفظ حصص الأسبوع الحالي في مستند مستقل باسم الأسبوع
+                await db.collection("week_schedules").doc(activeWeekLabel).set({
+                    assignments: currentWeekAssignments
+                });
+
+                console.log("تم الحفظ بنجاح في السحابة بدون تجاوز الحد الأقصى!");
             } catch (e) {
                 console.error("خطأ أثناء الحفظ بالسحابة:", e);
                 alert("تعذر الحفظ بالسحابة. التفاصيل: " + e.message);
             }
+        }
+
+        async function loadDataFromCloud() {
+            try {
+                let metaRef = await db.collection("schedules").doc("metadata").get();
+                if (metaRef.exists) {
+                    let data = metaRef.data();
+                    if (data.classes) targetClasses = data.classes;
+                    if (data.teachers) teachersPool = data.teachers;
+                }
+
+                let weeksSnap = await db.collection("week_schedules").get();
+                weeksSnap.forEach(doc => {
+                    let weekData = doc.data();
+                    if (weekData && weekData.assignments) {
+                        for (let k in weekData.assignments) {
+                            weekAssignments[k] = weekData.assignments[k];
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log("جارِ استخدام البيانات المحلية...", e);
+            }
+            updateFieldCounters();
         }
 
         function openCalendarModal() {
