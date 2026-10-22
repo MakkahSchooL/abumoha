@@ -1267,7 +1267,7 @@
                     if (data.teachers) teachersPool = data.teachers;
                 }
             } catch (e) {
-                console.log("جارِ استخدام البيانات المحلية...");
+                console.log("جارِ استخدام البيانات المحلية...", e);
             }
             updateFieldCounters();
         }
@@ -2151,7 +2151,7 @@
                 return qrApiUrl;
             } catch (error) {
                 console.error("خطأ في رفع الملف:", error);
-                alert("تعذر رفع الملف للسحابة. تأكد من ضبط قواعد التخزين (Storage Rules) في فايربيس واتصال الإنترنت.");
+                alert("تعذر رفع الملف للسحابة. السبب: " + error.message + "\nتأكد من ضبط قواعد التخزين (Storage Rules) في فايربيس.");
                 return null;
             }
         }
@@ -2253,7 +2253,6 @@
             await saveToCloud();
         }
 
-        /* دالة الحفظ المحدثة مع تنبيه تفصيلي عند وجود أي خلل */
         async function saveToCloud() {
             try {
                 await db.collection("schedules").doc("main_schedule").set({
@@ -2263,8 +2262,8 @@
                 });
                 console.log("تم الحفظ بنجاح في السحابة!");
             } catch (e) {
-                console.error("خطأ تفصيلي أثناء الحفظ بالسحابة:", e);
-                alert("تعذر الحفظ في السحابة. السبب: " + e.message + "\nتأكد من ضبط قواعد أمان قاعدة البيانات (Firestore Rules) في فايربيس.");
+                console.error("خطأ أثناء الحفظ بالسحابة:", e);
+                alert("تعذر الحفظ في السحابة. السبب: " + e.message + "\n\nقم بضبط قواعد الأمان (Rules) في Firestore داخل فايربيس للسماح بالحفظ.");
             }
         }
 
