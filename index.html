@@ -1067,6 +1067,8 @@
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
         let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الفنية", "الحياتية", "الاجتماعيات"];
 
+        const DAYS_ORDER = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+
         const FIELDS_CONFIG = {
             "citizenship": { title: "المواطنة والحياة", color: "#2a9d8f" },
             "culture": { title: "الثقافة والفنون", color: "#e06d9f" },
@@ -1598,26 +1600,67 @@
             window.print();
         }
 
-        /* دالة ذكية لاستخراج استعلام وتاريخ الحصة الفعلية من المفتاح أو السياق النشط */
-        function getAssignmentDateInfo(key) {
-            if (!key || key.startsWith("def_")) {
-                let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "", dayName: activeDayName, weekLabel: activeWeekLabel };
-                return { hDate: cur.hDate, mDate: cur.mDate, dayName: cur.dayName || activeDayName, weekLabel: cur.weekLabel || activeWeekLabel };
-            }
-            let parts = key.split("_");
-            if (parts.length >= 2) {
-                let wLabel = parts[0];
-                let dName = parts[1];
-                let wkObj = CAL_1448.find(w => w.label === wLabel);
-                if (wkObj) {
-                    let dayObj = wkObj.days.find(d => d.name === dName);
-                    if (dayObj) {
-                        return { hDate: dayObj.h, mDate: dayObj.m, dayName: dName, weekLabel: wLabel };
-                    }
+        /* دالة ذكية لاستخراج استعلام وتاريخ الحصة الفعلية وحساب تاريخ بداية ونهاية التنفيذ تلقائياً */
+        function getAssignmentDateInfo(key, hours = 1) {
+            let startIdx = -1;
+
+            if (key && !key.startsWith("def_")) {
+                let parts = key.split("_");
+                if (parts.length >= 2) {
+                    let wLabel = parts[0];
+                    let dName = parts[1];
+                    startIdx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === wLabel && d.dayName === dName);
                 }
             }
-            let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
-            return { hDate: cur.hDate, mDate: cur.mDate, dayName: activeDayName, weekLabel: activeWeekLabel };
+
+            if (startIdx === -1) {
+                startIdx = currentFlatIndex;
+            }
+
+            let startDayInfo = ALL_DAYS_FLAT[startIdx] || { hDate: "", mDate: "", dayName: activeDayName, weekLabel: activeWeekLabel };
+            
+            // حساب تاريخ النهاية بناءً على عدد الحصص/الأيام (بفرض حصة يومياً)
+            let daysSpan = Math.max(0, parseInt(hours) - 1);
+            let endIdx = Math.min(ALL_DAYS_FLAT.length - 1, startIdx + daysSpan);
+            let endDayInfo = ALL_DAYS_FLAT[endIdx] || startDayInfo;
+
+            return {
+                start: {
+                    hDate: startDayInfo.hDate,
+                    mDate: startDayInfo.mDate,
+                    dayName: startDayInfo.dayName,
+                    weekLabel: startDayInfo.weekLabel,
+                    fullStr: startDayInfo.hDate ? `${startDayInfo.hDate} (${startDayInfo.mDate})` : ""
+                },
+                end: {
+                    hDate: endDayInfo.hDate,
+                    mDate: endDayInfo.mDate,
+                    dayName: endDayInfo.dayName,
+                    weekLabel: endDayInfo.weekLabel,
+                    fullStr: endDayInfo.hDate ? `${endDayInfo.hDate} (${endDayInfo.mDate})` : ""
+                }
+            };
+        }
+
+        /* دالة لفرز وتنسيق القوائم زمنياً (الأحد -> الخميس) للأسابيع والأيام */
+        function sortListChronologically(list) {
+            list.sort((a, b) => {
+                if (a.key.startsWith("def_") || b.key.startsWith("def_")) return 0;
+                let partsA = a.key.split('_');
+                let partsB = b.key.split('_');
+                
+                let weekAIndex = CAL_1448.findIndex(w => w.label === partsA[0]);
+                let weekBIndex = CAL_1448.findIndex(w => w.label === partsB[0]);
+                if (weekAIndex !== weekBIndex) return weekAIndex - weekBIndex;
+                
+                let dayAIndex = DAYS_ORDER.indexOf(partsA[1]);
+                let dayBIndex = DAYS_ORDER.indexOf(partsB[1]);
+                if (dayAIndex !== dayBIndex) return dayAIndex - dayBIndex;
+                
+                if (partsA[2] !== partsB[2]) return partsA[2].localeCompare(partsB[2], 'ar');
+                
+                return parseInt(partsA[3]) - parseInt(partsB[3]);
+            });
         }
 
         /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
@@ -1638,6 +1681,8 @@
                     }
                 }
             }
+
+            sortListChronologically(activitiesList);
 
             if (activitiesList.length === 0) {
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "" });
@@ -1664,6 +1709,8 @@
                     }
                 }
             }
+
+            sortListChronologically(activitiesList);
 
             if (activitiesList.length === 0) {
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "" });
@@ -1693,6 +1740,8 @@
                 }
             }
 
+            sortListChronologically(activitiesList);
+
             if (activitiesList.length === 0) {
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "" });
             }
@@ -1709,8 +1758,7 @@
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
-                let dateInfo = getAssignmentDateInfo(act.key);
-                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key, act.hours || 1);
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1744,18 +1792,18 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${dateInfo.dayName}</td>
+                            <td style="width: 15%;">${dateInfo.start.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
+                            <td style="width: 15%;">${dateInfo.start.weekLabel}</td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.start.fullStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
                             <td class="td-sub-label">اليوم:</td>
-                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td><div class="editable-cell-box" contenteditable="true">${dateInfo.end.dayName}</div></td>
                             <td class="td-sub-label">الأسبوع:</td>
-                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
+                            <td><div class="editable-cell-box" contenteditable="true">${dateInfo.end.weekLabel}</div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.end.fullStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الصف</td>
@@ -1840,6 +1888,8 @@
                 }
             }
 
+            sortListChronologically(competitionsList);
+
             if (competitionsList.length === 0) {
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (يومي)", fieldKey: "competitions", teacher: "", hours: 1 });
             }
@@ -1865,6 +1915,8 @@
                     }
                 }
             }
+
+            sortListChronologically(competitionsList);
 
             if (competitionsList.length === 0) {
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (أسبوعي)", fieldKey: "competitions", teacher: "", hours: 2 });
@@ -1894,6 +1946,8 @@
                 }
             }
 
+            sortListChronologically(competitionsList);
+
             if (competitionsList.length === 0) {
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (فصلي)", fieldKey: "competitions", teacher: "", hours: 4 });
             }
@@ -1908,8 +1962,7 @@
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
-                let dateInfo = getAssignmentDateInfo(act.key);
-                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key, act.hours || 1);
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1947,18 +2000,18 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${dateInfo.dayName}</td>
+                            <td style="width: 15%;">${dateInfo.start.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
+                            <td style="width: 15%;">${dateInfo.start.weekLabel}</td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.start.fullStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
                             <td class="td-sub-label">اليوم:</td>
-                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td><div class="editable-cell-box" contenteditable="true">${dateInfo.end.dayName}</div></td>
                             <td class="td-sub-label">الأسبوع:</td>
-                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
+                            <td><div class="editable-cell-box" contenteditable="true">${dateInfo.end.weekLabel}</div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.end.fullStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الصف</td>
