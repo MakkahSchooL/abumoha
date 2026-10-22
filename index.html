@@ -14,6 +14,8 @@
     <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <!-- مكتبة توليد الباركود/QR Code تلقائياً -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
@@ -895,8 +897,9 @@
                     </div>
 
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">إرفاق باركود خاص بهذا النشاط:</label>
-                        <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
+                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود فريد تلقائياً:</label>
+                        <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
+                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص لهذا البرنامج منعاً للتكرار.</small>
                     </div>
                 </div>
 
@@ -1600,7 +1603,7 @@
             window.print();
         }
 
-        /* دالة جلب تواريخ التنفيذ (بداية التنفيذ تعكس اليوم والتاريخ الفعلي للنشاط، ونهاية التنفيذ فارغة تماماً) */
+        /* دالة جلب تواريخ التنفيذ */
         function getAssignmentDateInfo(key, cardScope = 'daily') {
             let parts = key ? key.split("_") : [];
             let weekLabel = parts.length >= 1 && !key.startsWith("def_") ? parts[0] : activeWeekLabel;
@@ -1615,8 +1618,8 @@
             };
         }
 
-        /* دالة لفرز وتنسيق القوائم زمنياً (الأحد -> الخميس) للأسابيع والأيام */
-        function sortListChronologically(list) {
+        /* دالة لفرز وتنسيق القوائم زمنياً */
+        sortListChronologically = function(list) {
             list.sort((a, b) => {
                 if (a.key.startsWith("def_") || b.key.startsWith("def_")) return 0;
                 let partsA = a.key.split('_');
@@ -1634,9 +1637,9 @@
                 
                 return parseInt(partsA[3]) - parseInt(partsB[3]);
             });
-        }
+        };
 
-        /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
+        /* دوال طباعة بطاقات برامج النشاط */
         function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1734,6 +1737,7 @@
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
                 let dateInfo = getAssignmentDateInfo(act.key, cardScope);
+                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1807,6 +1811,12 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="td-label">آلية تقديم النشاط (الباركود)</td>
+                            <td colspan="5" style="text-align: center; padding: 4px;">
+                                ${barcodeDisplay}
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="td-label">عدد الشراكات المجتمعية</td>
                             <td colspan="2"><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label">أسماء الشراكات</td>
@@ -1844,7 +1854,7 @@
             });
         }
 
-        /* دوال طباعة بطاقات مسابقات النشاط (يومي، أسبوعي، فصلي) */
+        /* دوال طباعة بطاقات مسابقات النشاط */
         function executeDailyCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1940,6 +1950,7 @@
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
                 let dateInfo = getAssignmentDateInfo(act.key, cardScope);
+                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود المسابقة">` : '—';
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -2015,6 +2026,12 @@
                             <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة ذوي الإعاقة</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">آلية تقديم المسابقة (الباركود)</td>
+                            <td colspan="5" style="text-align: center; padding: 4px;">
+                                ${barcodeDisplay}
+                            </td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد الشراكات المجتمعية</td>
@@ -2127,35 +2144,37 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        function compressImage(file, maxWidth = 180, maxHeight = 180, quality = 0.6) {
+        /* توليد QR Code تلقائياً من الملف المرفوع */
+        function generateQrCodeForFile(file) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    let img = new Image();
-                    img.onload = function() {
-                        let canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
+                    let fileData = e.target.result;
+                    // نص فريد يربط النشاط بالملف المرفوع لضمان عدم التكرار
+                    let uniqueData = `نشاط: ${file.name} - الحجم: ${file.size} - النوع: ${file.type || 'ملف'} - معرف: ${Date.now()}`;
+                    
+                    let tempDiv = document.createElement('div');
+                    tempDiv.style.display = 'none';
+                    document.body.appendChild(tempDiv);
 
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height = Math.round((height * maxWidth) / width);
-                                width = maxWidth;
-                            }
-                        } else {
-                            if (height > maxHeight) {
-                                width = Math.round((width * maxHeight) / height);
-                                height = maxHeight;
-                            }
+                    new QRCode(tempDiv, {
+                        text: uniqueData,
+                        width: 150,
+                        height: 150
+                    });
+
+                    setTimeout(() => {
+                        let canvas = tempDiv.querySelector('canvas');
+                        let img = tempDiv.querySelector('img');
+                        let qrDataUrl = "";
+                        if (canvas) {
+                            qrDataUrl = canvas.toDataURL();
+                        } else if (img) {
+                            qrDataUrl = img.src;
                         }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        let ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.src = e.target.result;
+                        document.body.removeChild(tempDiv);
+                        resolve(qrDataUrl);
+                    }, 150);
                 };
                 reader.readAsDataURL(file);
             });
@@ -2201,7 +2220,8 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        barcodeSrc = await compressImage(fileInput.files[0]);
+                        // توليد باركود فريد وخاص بالملف المرفوع لهذا البرنامج
+                        barcodeSrc = await generateQrCodeForFile(fileInput.files[0]);
                     }
                 }
 
