@@ -937,7 +937,9 @@
                     <button class="print-dropdown-item" onclick="executeDailyActivityCardPrint()"><i class="fas fa-calendar-day ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط يومي</button>
                     <button class="print-dropdown-item" onclick="executeWeeklyActivityCardPrint()"><i class="fas fa-calendar-week ml-1 text-primary"></i> بطاقة تنفيذ برنامج نشاط أسبوعي</button>
                     <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-warning"></i> بطاقة تنفيذ برنامج نشاط فصلي</button>
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط</button>
+                    <button class="print-dropdown-item" onclick="executeDailyCompetitionCardPrint()"><i class="fas fa-calendar-day ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط يومي</button>
+                    <button class="print-dropdown-item" onclick="executeWeeklyCompetitionCardPrint()"><i class="fas fa-calendar-week ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط أسبوعي</button>
+                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط فصلي</button>
                 </div>
             </div>
         </div>
@@ -1794,8 +1796,8 @@
             });
         }
 
-        /* بطاقة تنفيذ مسابقة نشاط */
-        function executeCompetitionCardPrint() {
+        /* دوال طباعة بطاقات مسابقات النشاط (يومي، أسبوعي، فصلي) */
+        function executeDailyCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
             if (menu) menu.classList.remove('show');
@@ -1807,13 +1809,76 @@
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
                 if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
-                    competitionsList.push({ key, ...cellData });
+                    if (key.startsWith(`${activeWeekLabel}_${activeDayName}_`)) {
+                        competitionsList.push({ key, ...cellData });
+                    }
                 }
             }
 
             if (competitionsList.length === 0) {
-                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم", fieldKey: "competitions", teacher: "", hours: 4 });
+                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (يومي)", fieldKey: "competitions", teacher: "", hours: 1 });
             }
+
+            renderCompetitionCards(competitionsList);
+            window.print();
+        }
+
+        function executeWeeklyCompetitionCardPrint() {
+            document.body.className = "print-competition-card-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('compCardsListContainer');
+            container.innerHTML = '';
+
+            let competitionsList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
+                    if (key.startsWith(`${activeWeekLabel}_`)) {
+                        competitionsList.push({ key, ...cellData });
+                    }
+                }
+            }
+
+            if (competitionsList.length === 0) {
+                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (أسبوعي)", fieldKey: "competitions", teacher: "", hours: 2 });
+            }
+
+            renderCompetitionCards(competitionsList);
+            window.print();
+        }
+
+        function executeCompetitionCardPrint() {
+            document.body.className = "print-competition-card-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('compCardsListContainer');
+            container.innerHTML = '';
+
+            let termWeekLabels = CAL_1448.filter(w => w.t === currentTerm).map(w => w.label);
+            let competitionsList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
+                    let matchesTerm = termWeekLabels.some(wl => key.startsWith(wl + "_"));
+                    if (matchesTerm) {
+                        competitionsList.push({ key, ...cellData });
+                    }
+                }
+            }
+
+            if (competitionsList.length === 0) {
+                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (فصلي)", fieldKey: "competitions", teacher: "", hours: 4 });
+            }
+
+            renderCompetitionCards(competitionsList);
+            window.print();
+        }
+
+        function renderCompetitionCards(competitionsList) {
+            let container = document.getElementById('compCardsListContainer');
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
@@ -1933,8 +1998,6 @@
                 `;
                 container.appendChild(cardDiv);
             });
-
-            window.print();
         }
 
         document.addEventListener('change', function(e) {
