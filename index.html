@@ -14,8 +14,6 @@
     <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <!-- مكتبة توليد الباركود/QR Code تلقائياً -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
@@ -899,7 +897,7 @@
                     <div class="form-group text-right mb-0">
                         <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود فريد تلقائياً:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص لهذا البرنامج منعاً للتكرار.</small>
+                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص لهذا البرنامج منعاً للتكرار وبدون أي تأخير.</small>
                     </div>
                 </div>
 
@@ -2144,40 +2142,10 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        /* توليد QR Code تلقائياً من الملف المرفوع */
+        /* توليد رابط QR Code فوري وفريد بناءً على الملف المرفوع */
         function generateQrCodeForFile(file) {
-            return new Promise((resolve) => {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let fileData = e.target.result;
-                    // نص فريد يربط النشاط بالملف المرفوع لضمان عدم التكرار
-                    let uniqueData = `نشاط: ${file.name} - الحجم: ${file.size} - النوع: ${file.type || 'ملف'} - معرف: ${Date.now()}`;
-                    
-                    let tempDiv = document.createElement('div');
-                    tempDiv.style.display = 'none';
-                    document.body.appendChild(tempDiv);
-
-                    new QRCode(tempDiv, {
-                        text: uniqueData,
-                        width: 150,
-                        height: 150
-                    });
-
-                    setTimeout(() => {
-                        let canvas = tempDiv.querySelector('canvas');
-                        let img = tempDiv.querySelector('img');
-                        let qrDataUrl = "";
-                        if (canvas) {
-                            qrDataUrl = canvas.toDataURL();
-                        } else if (img) {
-                            qrDataUrl = img.src;
-                        }
-                        document.body.removeChild(tempDiv);
-                        resolve(qrDataUrl);
-                    }, 150);
-                };
-                reader.readAsDataURL(file);
-            });
+            let uniqueText = encodeURIComponent(`نشاط مكة الابتدائية - ملف: ${file.name} - حجم: ${file.size} - بصمة: ${Date.now()}`);
+            return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${uniqueText}`;
         }
 
         async function saveCellAssignment() {
@@ -2220,8 +2188,8 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        // توليد باركود فريد وخاص بالملف المرفوع لهذا البرنامج
-                        barcodeSrc = await generateQrCodeForFile(fileInput.files[0]);
+                        // توليد باركود فريد وخاص بالملف المرفوع بشكل فوري بدون تعليق
+                        barcodeSrc = generateQrCodeForFile(fileInput.files[0]);
                     }
                 }
 
