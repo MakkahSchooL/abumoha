@@ -1598,6 +1598,28 @@
             window.print();
         }
 
+        /* دالة ذكية لاستخراج استعلام وتاريخ الحصة الفعلية من المفتاح أو السياق النشط */
+        function getAssignmentDateInfo(key) {
+            if (!key || key.startsWith("def_")) {
+                let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "", dayName: activeDayName, weekLabel: activeWeekLabel };
+                return { hDate: cur.hDate, mDate: cur.mDate, dayName: cur.dayName || activeDayName, weekLabel: cur.weekLabel || activeWeekLabel };
+            }
+            let parts = key.split("_");
+            if (parts.length >= 2) {
+                let wLabel = parts[0];
+                let dName = parts[1];
+                let wkObj = CAL_1448.find(w => w.label === wLabel);
+                if (wkObj) {
+                    let dayObj = wkObj.days.find(d => d.name === dName);
+                    if (dayObj) {
+                        return { hDate: dayObj.h, mDate: dayObj.m, dayName: dName, weekLabel: wLabel };
+                    }
+                }
+            }
+            let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
+            return { hDate: cur.hDate, mDate: cur.mDate, dayName: activeDayName, weekLabel: activeWeekLabel };
+        }
+
         /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
         function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
@@ -1681,13 +1703,14 @@
 
         function renderActivityCards(activitiesList) {
             let container = document.getElementById('activityCardsListContainer');
+            container.innerHTML = '';
             const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
-            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
 
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
-                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key);
+                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1721,9 +1744,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${activeDayName}</td>
+                            <td style="width: 15%;">${dateInfo.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${activeWeekLabel}</td>
+                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
@@ -1881,11 +1904,12 @@
 
         function renderCompetitionCards(competitionsList) {
             let container = document.getElementById('compCardsListContainer');
-            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
+            container.innerHTML = '';
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
-                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key);
+                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1923,9 +1947,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${activeDayName}</td>
+                            <td style="width: 15%;">${dateInfo.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${activeWeekLabel}</td>
+                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
@@ -2002,8 +2026,6 @@
                 `;
                 container.appendChild(cardDiv);
             });
-
-            window.print();
         }
 
         document.addEventListener('change', function(e) {
