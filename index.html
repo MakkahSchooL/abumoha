@@ -353,7 +353,7 @@
             border: 1px solid var(--line);
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 220px;
+            min-width: 230px;
             z-index: 1000;
             padding: 6px;
         }
@@ -616,7 +616,7 @@
             margin: 0 auto;
         }
 
-        /* حاوية البطاقات (برنامج نشاط & مسابقة نشاط) للطباعة */
+        /* حاويات البطاقات المطبوعة بمقاسات وأبعاد دقيقة مطابقة للملفات الرسمية */
         #activityCardPrintArea, #competitionCardPrintArea {
             display: none;
             background: #fff;
@@ -639,26 +639,26 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .card-main-title {
             text-align: center;
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: #003744;
-            margin: 10px 0 15px 0;
+            margin: 6px 0 12px 0;
         }
         table.comp-card-table {
             width: 100%;
             border-collapse: collapse;
             border: 2px solid #003845;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: #fff;
         }
         table.comp-card-table td, table.comp-card-table th {
             border: 1px solid #003845;
-            padding: 6px 10px;
-            font-size: 0.88rem;
+            padding: 5px 8px;
+            font-size: 0.85rem;
             vertical-align: middle;
             text-align: center;
         }
@@ -669,41 +669,40 @@
             font-weight: 800;
             color: #003744;
             background-color: #ffffff !important;
-            width: 30%;
-            font-size: 0.9rem;
+            width: 32%;
+            font-size: 0.88rem;
         }
         .td-sub-label {
             font-weight: 700;
             color: #003744;
             background-color: #e6eff2;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
         }
         .card-footer-signatures {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-top: 25px;
-            padding: 0 15px;
-            font-size: 0.9rem;
+            margin-top: 15px;
+            padding: 0 10px;
+            font-size: 0.85rem;
             font-weight: 700;
         }
         .card-footer-signatures div {
-            line-height: 2.1;
+            line-height: 1.9;
         }
         .card-bottom-note {
-            margin-top: 25px;
-            font-size: 0.78rem;
+            margin-top: 15px;
+            font-size: 0.75rem;
             color: #4b5563;
-            line-height: 1.4;
+            line-height: 1.35;
             padding-right: 5px;
         }
         
-        /* حقول التعديل المباشر داخل البطاقات المطبوعة */
         .editable-cell-box {
             outline: none;
             border-radius: 4px;
             padding: 2px 4px;
-            min-height: 20px;
+            min-height: 18px;
         }
         .editable-cell-box:focus {
             background-color: #fffde7;
@@ -721,7 +720,6 @@
 </head>
 <body>
 
-    <!-- رأس الصفحة الأساسي -->
     <div class="page-header-card">
         <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
@@ -738,7 +736,6 @@
         </div>
     </div>
 
-    <!-- شريط التنقل والتقويم -->
     <div class="cal-nav-bar">
         <div class="d-flex align-items-center gap-3">
             <button class="btn-open-cal" onclick="openCalendarModal()">
@@ -778,7 +775,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة المعلمين -->
+    <!-- إدارة المعلمين -->
     <div class="modal-cal" id="teachersManagerModal">
         <div class="mbox-cal" style="width: min(400px, 95%);">
             <div class="mhead-cal">
@@ -802,7 +799,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الفصل -->
+    <!-- إدارة الفصل -->
     <div class="modal-cal" id="classActionModal">
         <div class="mbox-cal" style="width: min(380px, 95%);">
             <div class="mhead-cal">
@@ -827,7 +824,7 @@
         </div>
     </div>
 
-    <!-- النافذة التفاعلية لإسناد الحصة وتعديلها -->
+    <!-- تعديل الحصة -->
     <div class="modal-cal" id="cellClickModal">
         <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
@@ -915,10 +912,9 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والأزرار فوق الجدول مع خيارات الطباعة المتقدمة -->
+    <!-- شريط التحكم والطباعة -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <!-- قائمة خيارات الطباعة للخطط -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
@@ -931,19 +927,17 @@
                 </div>
             </div>
 
-            <!-- قائمة خيارات طباعة البطاقات والتقارير -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
                     <i class="fas fa-file-alt"></i> طباعة البطاقات <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط[cite: 3]</button>
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط[cite: 4]</button>
+                    <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط</button>
+                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط</button>
                 </div>
             </div>
         </div>
         
-        <!-- إحصائيات المجالات الكلية -->
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة (<span id="cnt_citizenship">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة (<span id="cnt_culture">0</span>)</span>
@@ -955,7 +949,7 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي المتفاعل -->
+    <!-- الجدول الرئيسي -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -979,7 +973,7 @@
         </table>
     </div>
 
-    <!-- تقرير طباعة الخطط الأنشطة التنفيذي -->
+    <!-- تقرير طباعة الخطة العام -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
@@ -1017,17 +1011,17 @@
         </div>
     </div>
 
-    <!-- 1. بطاقة تنفيذ برنامج نشاط طلابي (مع خيارات منصة مدرستي: بنك الإثراءات، التطوير الذاتي، قيمنا الغالية، نادي القراءة) -->
+    <!-- بطاقة تنفيذ برنامج نشاط (للبرامج والمجالات عدا المسابقات)[cite: 3] -->
     <div id="activityCardPrintArea">
         <div id="activityCardsListContainer"></div>
     </div>
 
-    <!-- 2. بطاقة تنفيذ مسابقة نشاط طلابي (مع حقول الإعداد، المتأهلين، الفائزين، والجوائز) -->
+    <!-- بطاقة تنفيذ مسابقة نشاط (للمسابقات فقط)[cite: 4, 5] -->
     <div id="competitionCardPrintArea">
         <div id="compCardsListContainer"></div>
     </div>
 
-    <!-- نافذة إضافة فصل جديد -->
+    <!-- نافذة إضافة فصل -->
     <div class="modal-cal" id="addClassModal" style="display: none;">
         <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
@@ -1598,7 +1592,7 @@
             window.print();
         }
 
-        /* 1. طباعة بطاقة تنفيذ برنامج نشاط طلابي (مع أيقونات منصة مدرستي المعتمدة)[cite: 3] */
+        /* 1. طباعة بطاقة تنفيذ برنامج نشاط (للبرامج والمجالات عدا المسابقات)[cite: 3] */
         function executeActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1610,7 +1604,8 @@
             let activitiesList = [];
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
-                if (cellData && cellData.isActivity) {
+                // تصفية البرامج لتشمل فقط الأنشطة التي ليست مسابقات
+                if (cellData && cellData.isActivity && cellData.fieldKey !== "competitions") {
                     activitiesList.push({ key, ...cellData });
                 }
             }
@@ -1635,7 +1630,7 @@
                         </div>
                     </div>
 
-                    <div class="card-main-title">بطاقة تنفيذ برنامج نشاط طلابي *</div>
+                    <div class="card-main-title">بطاقة تنفيذ برنامج نشاط</div>
 
                     <table class="comp-card-table">
                         <tr>
@@ -1660,7 +1655,7 @@
                             <td style="width: 15%;">${activeDayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
@@ -1668,7 +1663,7 @@
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label">الأسبوع:</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الصف</td>
@@ -1681,17 +1676,17 @@
                         <tr>
                             <td class="td-label">عدد الطلبة المشاركين</td>
                             <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة ذوي الإعاقة</td>
+                            <td class="td-sub-label" style="font-size: 0.7rem;">عدد الطلبة ذوي الإعاقة</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
-                            <td class="td-label">عدد أولياء الأمور المشاركين</td>
+                            <td class="td-label">عدد أولياء الأمور المشاركين في البرنامج</td>
                             <td colspan="5"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ[cite: 3]:</td>
-                            <td colspan="5" style="text-align: right; padding: 4px 10px;">
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <td colspan="5" style="text-align: right; padding: 3px 8px;">
+                                <div style="display: flex; flex-direction: column; gap: 3px;">
                                     ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="radio" name="act_plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
                                 </div>
                             </td>
@@ -1704,19 +1699,19 @@
                         </tr>
                         <tr>
                             <td class="td-label">ملاحظات</td>
-                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                     </table>
 
                     <div class="card-footer-signatures">
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">المعلم/ة المنفذ/ة</div>
-                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:120px;">${act.teacher || ''}</span></div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
+                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
                             <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
                         </div>
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">رائد/ة النشاط</div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
                             <div>الاسم: عواد محمد العوفي</div>
                             <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
@@ -1734,7 +1729,7 @@
             window.print();
         }
 
-        /* 2. طباعة بطاقة تنفيذ مسابقة نشاط طلابي (المطابقة للنموذج الرسمي الثاني)[cite: 4] */
+        /* 2. طباعة بطاقة تنفيذ مسابقة نشاط (للمسابقات فقط مطابقة للنموذج المرفق)[cite: 4, 5] */
         function executeCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1743,20 +1738,21 @@
             let container = document.getElementById('compCardsListContainer');
             container.innerHTML = '';
 
-            let activitiesList = [];
+            let competitionsList = [];
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
-                if (cellData && cellData.isActivity) {
-                    activitiesList.push({ key, ...cellData });
+                // تصفية الأنشطة لتشمل المسابقات فقط
+                if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
+                    competitionsList.push({ key, ...cellData });
                 }
             }
 
-            if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_comp", course: "مسابقة القرآن الكريم", fieldKey: "citizenship", teacher: "", hours: 4 });
+            if (competitionsList.length === 0) {
+                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم", fieldKey: "competitions", teacher: "", hours: 4 });
             }
 
-            activitiesList.forEach(act => {
-                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
+            competitionsList.forEach(act => {
+                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1797,7 +1793,7 @@
                             <td style="width: 15%;">${activeDayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
@@ -1805,7 +1801,7 @@
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label">الأسبوع:</td>
                             <td><div class="editable-cell-box" contenteditable="true"></div></td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الصف</td>
@@ -1841,23 +1837,23 @@
                         </tr>
                         <tr>
                             <td class="td-label">نواتج المسابقة</td>
-                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">ملاحظات</td>
-                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td colspan="5" style="height: 25px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                     </table>
 
                     <div class="card-footer-signatures">
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">المعلم/ة المنفذ/ة</div>
-                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:120px;">${act.teacher || ''}</span></div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">المعلم/ة المنفذ/ة</div>
+                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:110px;">${act.teacher || ''}</span></div>
                             <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
                         </div>
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">رائد/ة النشاط</div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 2px;">رائد/ة النشاط</div>
                             <div>الاسم: عواد محمد العوفي</div>
                             <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
