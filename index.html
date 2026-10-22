@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>خطة النشاط الطلابي ـ</title>
+    <title>خطة ونظام النشاط الطلابي المتكامل 1448هـ</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,6 @@
             --brand-ink: #FFFFFF;
             --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
 
-            /* ألوان المجالات */
             --color-citizenship: #2a9d8f;
             --color-culture: #e06d9f;
             --color-science: #4a90e2;
@@ -354,7 +353,7 @@
             border: 1px solid var(--line);
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 210px;
+            min-width: 220px;
             z-index: 1000;
             padding: 6px;
         }
@@ -617,7 +616,8 @@
             margin: 0 auto;
         }
 
-        #competitionCardPrintArea {
+        /* حاوية البطاقات (برنامج نشاط & مسابقة نشاط) للطباعة */
+        #activityCardPrintArea, #competitionCardPrintArea {
             display: none;
             background: #fff;
             color: #003845;
@@ -641,27 +641,24 @@
             align-items: center;
             margin-bottom: 12px;
         }
-        .card-header-gov img {
-            max-width: 140px;
-            height: auto;
-        }
         .card-main-title {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #003744;
-            margin: 15px 0 20px 0;
+            margin: 10px 0 15px 0;
         }
         table.comp-card-table {
             width: 100%;
             border-collapse: collapse;
             border: 2px solid #003845;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            background: #fff;
         }
         table.comp-card-table td, table.comp-card-table th {
             border: 1px solid #003845;
-            padding: 7px 10px;
-            font-size: 0.9rem;
+            padding: 6px 10px;
+            font-size: 0.88rem;
             vertical-align: middle;
             text-align: center;
         }
@@ -672,54 +669,68 @@
             font-weight: 800;
             color: #003744;
             background-color: #ffffff !important;
-            width: 28%;
-            font-size: 0.92rem;
+            width: 30%;
+            font-size: 0.9rem;
         }
         .td-sub-label {
             font-weight: 700;
             color: #003744;
             background-color: #e6eff2;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
         }
         .card-footer-signatures {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-top: 35px;
-            padding: 0 20px;
-            font-size: 0.95rem;
+            margin-top: 25px;
+            padding: 0 15px;
+            font-size: 0.9rem;
             font-weight: 700;
         }
         .card-footer-signatures div {
-            line-height: 2.2;
+            line-height: 2.1;
         }
         .card-bottom-note {
-            margin-top: 40px;
-            font-size: 0.8rem;
+            margin-top: 25px;
+            font-size: 0.78rem;
             color: #4b5563;
-            line-height: 1.5;
-            padding-right: 10px;
+            line-height: 1.4;
+            padding-right: 5px;
+        }
+        
+        /* حقول التعديل المباشر داخل البطاقات المطبوعة */
+        .editable-cell-box {
+            outline: none;
+            border-radius: 4px;
+            padding: 2px 4px;
+            min-height: 20px;
+        }
+        .editable-cell-box:focus {
+            background-color: #fffde7;
+            box-shadow: 0 0 0 2px #0c6a64;
         }
 
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
             body.print-plan-mode #activityReportPrintArea { display: block !important; }
-            body.print-card-mode #competitionCardPrintArea { display: block !important; }
+            body.print-activity-card-mode #activityCardPrintArea { display: block !important; }
+            body.print-competition-card-mode #competitionCardPrintArea { display: block !important; }
         }
     </style>
 </head>
 <body>
 
+    <!-- رأس الصفحة الأساسي -->
     <div class="page-header-card">
         <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
                 <i class="fas fa-calendar-check"></i>
             </div>
             <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">خطة النشاط الطلابي</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">خطة ونظام النشاط الطلابي المتكامل</div>
                 <div style="font-size: 0.8rem; color: #64748b;">الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية</div>
-                <div style="font-size: 0.8rem; color: #64748b;">رائد النشاط عواد محمد العوفي </div>
+                <div style="font-size: 0.8rem; color: #64748b;">رائد النشاط: عواد محمد العوفي</div>
             </div>
         </div>
         <div>
@@ -727,6 +738,7 @@
         </div>
     </div>
 
+    <!-- شريط التنقل والتقويم -->
     <div class="cal-nav-bar">
         <div class="d-flex align-items-center gap-3">
             <button class="btn-open-cal" onclick="openCalendarModal()">
@@ -744,6 +756,7 @@
         </div>
     </div>
 
+    <!-- نافذة التقويم الشامل -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
@@ -765,6 +778,7 @@
         </div>
     </div>
 
+    <!-- نافذة إدارة المعلمين -->
     <div class="modal-cal" id="teachersManagerModal">
         <div class="mbox-cal" style="width: min(400px, 95%);">
             <div class="mhead-cal">
@@ -788,6 +802,7 @@
         </div>
     </div>
 
+    <!-- نافذة إدارة الفصل -->
     <div class="modal-cal" id="classActionModal">
         <div class="mbox-cal" style="width: min(380px, 95%);">
             <div class="mhead-cal">
@@ -812,6 +827,7 @@
         </div>
     </div>
 
+    <!-- النافذة التفاعلية لإسناد الحصة وتعديلها -->
     <div class="modal-cal" id="cellClickModal">
         <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
@@ -899,8 +915,10 @@
         </div>
     </div>
 
+    <!-- شريط التحكم والأزرار فوق الجدول مع خيارات الطباعة المتقدمة -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
+            <!-- قائمة خيارات الطباعة للخطط -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
@@ -913,31 +931,31 @@
                 </div>
             </div>
 
+            <!-- قائمة خيارات طباعة البطاقات والتقارير -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
-                    <i class="fas fa-file-alt"></i> طباعة التقارير <i class="fas fa-chevron-down mr-1"></i>
+                    <i class="fas fa-file-alt"></i> طباعة البطاقات <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-id-card ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط طلابي *</button>
-                    <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير اليومي...')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي</button>
-                    <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الأسبوعي...')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي</button>
-                    <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الشهري...')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري</button>
-                    <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الفصلي...')"><i class="fas fa-award ml-1 text-success"></i> التقرير الفصلي</button>
+                    <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط[cite: 3]</button>
+                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط[cite: 4]</button>
                 </div>
             </div>
         </div>
         
+        <!-- إحصائيات المجالات الكلية -->
         <div class="fields-bar-container">
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (<span id="cnt_citizenship">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (<span id="cnt_culture">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-science);"></span> العلوم والتقنية (<span id="cnt_science">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-sports);"></span> الرياضة والصحة (<span id="cnt_sports">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> المجال الكشفي (<span id="cnt_scout">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> الأيام والمناسبات (<span id="cnt_days">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة (<span id="cnt_citizenship">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة (<span id="cnt_culture">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-science);"></span> العلوم (<span id="cnt_science">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-sports);"></span> الرياضة (<span id="cnt_sports">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> الكشفي (<span id="cnt_scout">0</span>)</span>
+            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> المناسبات (<span id="cnt_days">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-competitions);"></span> المسابقات (<span id="cnt_competitions">0</span>)</span>
         </div>
     </div>
 
+    <!-- الجدول الرئيسي المتفاعل -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -961,6 +979,7 @@
         </table>
     </div>
 
+    <!-- تقرير طباعة الخطط الأنشطة التنفيذي -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
@@ -998,10 +1017,17 @@
         </div>
     </div>
 
+    <!-- 1. بطاقة تنفيذ برنامج نشاط طلابي (مع خيارات منصة مدرستي: بنك الإثراءات، التطوير الذاتي، قيمنا الغالية، نادي القراءة) -->
+    <div id="activityCardPrintArea">
+        <div id="activityCardsListContainer"></div>
+    </div>
+
+    <!-- 2. بطاقة تنفيذ مسابقة نشاط طلابي (مع حقول الإعداد، المتأهلين، الفائزين، والجوائز) -->
     <div id="competitionCardPrintArea">
         <div id="compCardsListContainer"></div>
     </div>
 
+    <!-- نافذة إضافة فصل جديد -->
     <div class="modal-cal" id="addClassModal" style="display: none;">
         <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
@@ -1137,7 +1163,6 @@
         };
 
         let weekAssignments = {};
-        
         let activeDayName = "الثلاثاء";
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
@@ -1279,25 +1304,13 @@
         }
 
         function updateFieldCounters() {
-            let counts = {
-                citizenship: 0,
-                culture: 0,
-                science: 0,
-                sports: 0,
-                scout: 0,
-                days: 0,
-                competitions: 0
-            };
-
+            let counts = { citizenship: 0, culture: 0, science: 0, sports: 0, scout: 0, days: 0, competitions: 0 };
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
                 if (cellData && cellData.isActivity && cellData.fieldKey) {
-                    if (counts[cellData.fieldKey] !== undefined) {
-                        counts[cellData.fieldKey]++;
-                    }
+                    if (counts[cellData.fieldKey] !== undefined) counts[cellData.fieldKey]++;
                 }
             }
-
             for (let fk in counts) {
                 let el = document.getElementById(`cnt_${fk}`);
                 if (el) el.innerText = counts[fk];
@@ -1316,7 +1329,6 @@
 
             targetClasses.forEach((cls, index) => {
                 let tr = document.createElement('tr');
-                
                 let html = `<th class="class-col-header">
                     <div class="class-row-header-box" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل">
                         <span class="class-title-text">${cls}</span>
@@ -1408,24 +1420,19 @@
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
-
             let count = 0;
-            let cleanDay = activeDayName;
 
             targetClasses.forEach(cls => {
                 for(let i = 1; i <= 7; i++) {
-                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
+                    let weekKey = `${activeWeekLabel}_${activeDayName}_${cls}_${i}`;
                     let cellData = weekAssignments[weekKey] || null;
 
                     if (cellData && cellData.isActivity) {
                         count++;
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-
-                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
-                        let flexText = cellData.flexibility || "ثابتة";
-                        let hrs = cellData.hours || 1;
-
+                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                        
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${count}</td>
@@ -1433,8 +1440,8 @@
                             <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                             <td>فصل ${cls}</td>
                             <td>الحصة ${i}</td>
-                            <td>${flexText}</td>
-                            <td>${hrs} حصص</td>
+                            <td>${cellData.flexibility || "ثابتة"}</td>
+                            <td>${cellData.hours || 1} حصص</td>
                             <td>${barcodeCellContent}</td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
@@ -1446,7 +1453,6 @@
             if (count === 0) {
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا اليوم.</td></tr>`;
             }
-
             window.print();
         }
 
@@ -1455,41 +1461,32 @@
             let menu = document.getElementById('printDropdownMenu');
             if (menu) menu.classList.remove('show');
             let curWkObj = CAL_1448.find(w => w.label === activeWeekLabel) || CAL_1448[0];
-            let firstDay = curWkObj.days[0];
-            let lastDay = curWkObj.days[curWkObj.days.length - 1];
-            
-            document.getElementById('actReportSubTitle').innerText = `${activeWeekLabel} | الفترة من: ${firstDay.h} (${firstDay.m}) إلى: ${lastDay.h} (${lastDay.m})`;
+            document.getElementById('actReportSubTitle').innerText = `${activeWeekLabel} | من ${curWkObj.days[0].h} إلى ${curWkObj.days[curWkObj.days.length-1].h}`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
-
             let count = 0;
-            let weekDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-            weekDays.forEach(dayName => {
+            ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(dayName => {
                 targetClasses.forEach(cls => {
                     for(let i = 1; i <= 7; i++) {
                         let weekKey = `${activeWeekLabel}_${dayName}_${cls}_${i}`;
                         let cellData = weekAssignments[weekKey] || null;
-
                         if (cellData && cellData.isActivity) {
                             count++;
                             let fKey = cellData.fieldKey || "citizenship";
                             let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-
-                            let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
-                            let flexText = cellData.flexibility || "ثابتة";
-                            let hrs = cellData.hours || 1;
-
+                            let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                            
                             let tr = document.createElement('tr');
                             tr.innerHTML = `
                                 <td>${count}</td>
                                 <td style="font-weight: 700;">${cellData.course}</td>
                                 <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                                 <td>فصل ${cls}</td>
-                                <td>يوم ${dayName} - الحصة ${i}</td>
-                                <td>${flexText}</td>
-                                <td>${hrs} حصص</td>
+                                <td>يوم ${dayName} (ح ${i})</td>
+                                <td>${cellData.flexibility || "ثابتة"}</td>
+                                <td>${cellData.hours || 1} حصص</td>
                                 <td>${barcodeCellContent}</td>
                                 <td>${cellData.teacher || "غير محدد"}</td>
                             `;
@@ -1502,7 +1499,6 @@
             if (count === 0) {
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا الأسبوع.</td></tr>`;
             }
-
             window.print();
         }
 
@@ -1510,48 +1506,35 @@
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
             if (menu) menu.classList.remove('show');
-            
             let curIdx = CAL_1448.findIndex(w => w.label === activeWeekLabel);
             if (curIdx === -1) curIdx = 0;
-            let monthStartIndex = Math.floor(curIdx / 4) * 4;
-            let selectedWeeks = CAL_1448.slice(monthStartIndex, monthStartIndex + 4);
-
-            let startWk = selectedWeeks[0];
-            let endWk = selectedWeeks[selectedWeeks.length - 1];
-            let periodStr = `من ${startWk.days[0].h} إلى ${endWk.days[endWk.days.length - 1].h}`;
-
-            document.getElementById('actReportSubTitle').innerText = `الخطة الشهرية (${startWk.label} إلى ${endWk.label}) | الفترة: ${periodStr}`;
+            let selectedWeeks = CAL_1448.slice(Math.floor(curIdx / 4) * 4, Math.floor(curIdx / 4) * 4 + 4);
+            document.getElementById('actReportSubTitle').innerText = `الخطة الشهرية (${selectedWeeks[0].label} إلى ${selectedWeeks[selectedWeeks.length-1].label})`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
-
             let count = 0;
+
             selectedWeeks.forEach(wk => {
                 wk.days.forEach(d => {
-                    let dayName = d.name;
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
-                            let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
+                            let weekKey = `${wk.label}_${d.name}_${cls}_${i}`;
                             let cellData = weekAssignments[weekKey] || null;
-
                             if (cellData && cellData.isActivity) {
                                 count++;
-                                let fKey = cellData.fieldKey || "citizenship";
-                                let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-
-                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
-                                let flexText = cellData.flexibility || "ثابتة";
-                                let hrs = cellData.hours || 1;
-
+                                let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
+                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                                
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
                                     <td>${count}</td>
                                     <td style="font-weight: 700;">${cellData.course}</td>
                                     <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                                     <td>فصل ${cls}</td>
-                                    <td>${wk.label} - ${dayName} (ح ${i})</td>
-                                    <td>${flexText}</td>
-                                    <td>${hrs} حصص</td>
+                                    <td>${wk.label} - ${d.name} (ح ${i})</td>
+                                    <td>${cellData.flexibility || "ثابتة"}</td>
+                                    <td>${cellData.hours || 1} حصص</td>
                                     <td>${barcodeCellContent}</td>
                                     <td>${cellData.teacher || "غير محدد"}</td>
                                 `;
@@ -1563,9 +1546,8 @@
             });
 
             if (count === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة خلال هذا الشهر.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط خلال هذا الشهر.</td></tr>`;
             }
-
             window.print();
         }
 
@@ -1574,44 +1556,32 @@
             let menu = document.getElementById('printDropdownMenu');
             if (menu) menu.classList.remove('show');
             let termWeeks = CAL_1448.filter(w => w.t === currentTerm);
-            let termName = currentTerm === 1 ? "الفصل الدراسي الأول" : "الفصل الدراسي الثاني";
-            
-            let startWk = termWeeks[0];
-            let endWk = termWeeks[termWeeks.length - 1];
-            let periodStr = `من ${startWk.days[0].h} إلى ${endWk.days[endWk.days.length - 1].h}`;
-
-            document.getElementById('actReportSubTitle').innerText = `خطة ${termName} الكاملة | الفترة: ${periodStr}`;
+            document.getElementById('actReportSubTitle').innerText = `خطة الفصل الدراسي ${currentTerm === 1 ? 'الأول' : 'الثاني'} الكاملة`;
 
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
-
             let count = 0;
+
             termWeeks.forEach(wk => {
                 wk.days.forEach(d => {
-                    let dayName = d.name;
                     targetClasses.forEach(cls => {
                         for(let i = 1; i <= 7; i++) {
-                            let weekKey = `${wk.label}_${dayName}_${cls}_${i}`;
+                            let weekKey = `${wk.label}_${d.name}_${cls}_${i}`;
                             let cellData = weekAssignments[weekKey] || null;
-
                             if (cellData && cellData.isActivity) {
                                 count++;
-                                let fKey = cellData.fieldKey || "citizenship";
-                                let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-
-                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
-                                let flexText = cellData.flexibility || "ثابتة";
-                                let hrs = cellData.hours || 1;
-
+                                let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
+                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                                
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
                                     <td>${count}</td>
                                     <td style="font-weight: 700;">${cellData.course}</td>
                                     <td style="background-color: ${fConf.color}; color: #fff; font-weight: 700;">${fConf.title}</td>
                                     <td>فصل ${cls}</td>
-                                    <td>${wk.label} - ${dayName} (ح ${i})</td>
-                                    <td>${flexText}</td>
-                                    <td>${hrs} حصص</td>
+                                    <td>${wk.label} - ${d.name} (ح ${i})</td>
+                                    <td>${cellData.flexibility || "ثابتة"}</td>
+                                    <td>${cellData.hours || 1} حصص</td>
                                     <td>${barcodeCellContent}</td>
                                     <td>${cellData.teacher || "غير محدد"}</td>
                                 `;
@@ -1623,15 +1593,150 @@
             });
 
             if (count === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا الفصل الدراسي.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; text-align: center; color: #777;">لا توجد حصص نشاط مخصصة في هذا الفصل.</td></tr>`;
             }
+            window.print();
+        }
+
+        /* 1. طباعة بطاقة تنفيذ برنامج نشاط طلابي (مع أيقونات منصة مدرستي المعتمدة)[cite: 3] */
+        function executeActivityCardPrint() {
+            document.body.className = "print-activity-card-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('activityCardsListContainer');
+            container.innerHTML = '';
+
+            let activitiesList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity) {
+                    activitiesList.push({ key, ...cellData });
+                }
+            }
+
+            if (activitiesList.length === 0) {
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم", fieldKey: "citizenship", teacher: "", hours: 4, platform: "بنك الإثراءات" });
+            }
+
+            const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
+
+            activitiesList.forEach(act => {
+                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
+                let curPlat = act.platform || platforms[0];
+
+                let cardDiv = document.createElement('div');
+                cardDiv.className = 'card-page';
+                cardDiv.innerHTML = `
+                    <div class="card-header-gov">
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #003744;">
+                            <div>وزارة التعليم</div>
+                            <div style="font-size: 0.7rem; font-weight: 600; color: #5A6F6C;">Ministry of Education</div>
+                        </div>
+                    </div>
+
+                    <div class="card-main-title">بطاقة تنفيذ برنامج نشاط طلابي *</div>
+
+                    <table class="comp-card-table">
+                        <tr>
+                            <td class="td-label">اسم البرنامج</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700; color: #003744;"><div class="editable-cell-box" contenteditable="true">${act.course}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">المجال</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700; color: ${fConf.color};">${fConf.title}</td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عدد حصص البرنامج</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">${act.hours || 1} حصص</div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">الفصل الدراسي</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;">${currentTerm === 1 ? 'الفصل الدراسي الأول' : 'الفصل الدراسي الثاني'}</td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">بداية التنفيذ</td>
+                            <td class="td-sub-label" style="width: 10%;">اليوم:</td>
+                            <td style="width: 15%;">${activeDayName}</td>
+                            <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
+                            <td style="width: 15%;">${activeWeekLabel}</td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">نهاية التنفيذ</td>
+                            <td class="td-sub-label">اليوم:</td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td class="td-sub-label">الأسبوع:</td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">الصف</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">جميع الصفوف</div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">المعلم/ة المنفذ/ة</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">${act.teacher || '—'}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عدد الطلبة المشاركين</td>
+                            <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة ذوي الإعاقة</td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عدد أولياء الأمور المشاركين</td>
+                            <td colspan="5"><div class="editable-cell-box" contenteditable="true"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ[cite: 3]:</td>
+                            <td colspan="5" style="text-align: right; padding: 4px 10px;">
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="radio" name="act_plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عدد الشراكات المجتمعية</td>
+                            <td colspan="2"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td class="td-sub-label">أسماء الشراكات</td>
+                            <td colspan="2"><div class="editable-cell-box" contenteditable="true"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">ملاحظات</td>
+                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
+                        </tr>
+                    </table>
+
+                    <div class="card-footer-signatures">
+                        <div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">المعلم/ة المنفذ/ة</div>
+                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:120px;">${act.teacher || ''}</span></div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                            <div>التوقيع: ________________</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">رائد/ة النشاط</div>
+                            <div>الاسم: عواد محمد العوفي</div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
+                            <div>التوقيع: ________________</div>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-note">
+                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 3].
+                    </div>
+                </div>
+                `;
+                container.appendChild(cardDiv);
+            });
 
             window.print();
         }
 
-        /* دالة طباعة بطاقة تنفيذ مسابقة نشاط طلابي متضمنة أيقونة التنفيذ من منصة مدرستي */
+        /* 2. طباعة بطاقة تنفيذ مسابقة نشاط طلابي (المطابقة للنموذج الرسمي الثاني)[cite: 4] */
         function executeCompetitionCardPrint() {
-            document.body.className = "print-card-mode";
+            document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
             if (menu) menu.classList.remove('show');
 
@@ -1647,29 +1752,19 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({
-                    key: "default_act",
-                    course: "مسابقة القرآن الكريم",
-                    fieldKey: "citizenship",
-                    teacher: "",
-                    hours: 4,
-                    platform: "بنك الإثراءات"
-                });
+                activitiesList.push({ key: "def_comp", course: "مسابقة القرآن الكريم", fieldKey: "citizenship", teacher: "", hours: 4 });
             }
-
-            const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
 
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
-                let curPlat = act.platform || platforms[0];
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
                 cardDiv.innerHTML = `
                     <div class="card-header-gov">
-                        <div style="font-size: 1rem; font-weight: 800; color: #003744;">
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #003744;">
                             <div>وزارة التعليم</div>
-                            <div style="font-size: 0.75rem; font-weight: 600; color: #5A6F6C;">Ministry of Education</div>
+                            <div style="font-size: 0.7rem; font-weight: 600; color: #5A6F6C;">Ministry of Education</div>
                         </div>
                     </div>
 
@@ -1678,11 +1773,11 @@
                     <table class="comp-card-table">
                         <tr>
                             <td class="td-label">اسم المدرسة</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700;">مدرسة مكة المكرمة الابتدائية</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">مدرسة مكة المكرمة الابتدائية</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">اسم المسابقة</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700; color: #003744;">${act.course}</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700; color: #003744;"><div class="editable-cell-box" contenteditable="true">${act.course}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">المجال</td>
@@ -1690,7 +1785,7 @@
                         </tr>
                         <tr>
                             <td class="td-label">عدد الحصص للإعداد والتأهيل للمسابقة</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700;">${act.hours || 1} حصص</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">${act.hours || 1} حصص</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الفصل الدراسي</td>
@@ -1702,83 +1797,75 @@
                             <td style="width: 15%;">${activeDayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> </td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
                             <td class="td-sub-label">اليوم:</td>
-                            <td></td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label">الأسبوع:</td>
-                            <td></td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> </td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:100px;"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">الصف</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700;">جميع الصفوف</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">جميع الصفوف</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">المعلم/ة المنفذ/ة</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700;">${act.teacher || '—'}</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;"><div class="editable-cell-box" contenteditable="true">${act.teacher || '—'}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد الطلبة المشاركين في المسابقة</td>
-                            <td colspan="3"></td>
+                            <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label" style="width: 15%;">عدد الفائزين</td>
-                            <td style="width: 15%;"></td>
+                            <td style="width: 15%;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد الطلبة المتأهلين للمرحلة المقبلة</td>
-                            <td colspan="3"></td>
+                            <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
                             <td class="td-sub-label">عدد الجوائز</td>
-                            <td></td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد أولياء الأمور المشاركين في المسابقة</td>
-                            <td colspan="3"></td>
-                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة المشاركين من ذوي الإعاقة</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ:</td>
-                            <td colspan="5" style="text-align: right; padding: 5px 12px;">
-                                <div style="display: flex; flex-direction: column; gap: 5px;">
-                                    ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><input type="radio" name="plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
-                                </div>
-                            </td>
+                            <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td class="td-sub-label" style="font-size: 0.7rem;">عدد الطلبة ذوي الإعاقة</td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">عدد الشراكات المجتمعية</td>
-                            <td colspan="3"></td>
-                            <td class="td-sub-label" style="font-size: 0.75rem;">أسماء الشراكات المجتمعية</td>
-                            <td></td>
+                            <td colspan="3"><div class="editable-cell-box" contenteditable="true"></div></td>
+                            <td class="td-sub-label" style="font-size: 0.7rem;">أسماء الشراكات</td>
+                            <td><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نواتج المسابقة</td>
-                            <td colspan="5" style="height: 45px;"></td>
+                            <td colspan="5" style="height: 35px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
                             <td class="td-label">ملاحظات</td>
-                            <td colspan="5" style="height: 40px;"></td>
+                            <td colspan="5" style="height: 30px;"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                     </table>
 
                     <div class="card-footer-signatures">
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 5px;">المعلم/ة المنفذ/ة</div>
-                            <div>الاسم: ${act.teacher || '________________'}</div>
-                            <div>التاريخ: ____ / ____ / ________ هـ</div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">المعلم/ة المنفذ/ة</div>
+                            <div>الاسم: <span class="editable-cell-box" contenteditable="true" style="display:inline-block; width:120px;">${act.teacher || ''}</span></div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
                         </div>
                         <div>
-                            <div style="font-weight: 800; color: #003744; margin-bottom: 5px;">رائد/ة النشاط</div>
+                            <div style="font-weight: 800; color: #003744; margin-bottom: 3px;">رائد/ة النشاط</div>
                             <div>الاسم: عواد محمد العوفي</div>
-                            <div>التاريخ: ____ / ____ / ________ هـ</div>
+                            <div>التاريخ: ____ / ____ / 1448 هـ</div>
                             <div>التوقيع: ________________</div>
                         </div>
                     </div>
 
                     <div class="card-bottom-note">
-                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس.
+                        * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 4].
                     </div>
                 </div>
                 `;
@@ -1788,7 +1875,6 @@
             window.print();
         }
 
-        // مستمع حدث لتحديث أيقونة المنصة المختارة في بطاقة التنفيذ
         document.addEventListener('change', function(e) {
             let r = e.target.closest('[data-radio-plat]');
             if (r) {
@@ -1806,7 +1892,6 @@
             let cellData = weekAssignments[weekKey] || {};
 
             selectedCellInfo = { day, cls, period };
-
             document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
             
             updateTeacherDropdowns();
@@ -1950,7 +2035,6 @@
             }
 
             await saveToCloud();
-
             closeCellClickModal();
             renderScheduleTableForDay(activeDayName);
         }
@@ -1999,7 +2083,7 @@
                     teachers: teachersPool
                 });
             } catch (e) {
-                alert("خطأ أثناء الحفظ بالسحابة.");
+                console.log("خطأ أثناء الحفظ بالسحابة.");
             }
         }
 
@@ -2045,7 +2129,7 @@
             list.style.display = isOpen ? 'none' : 'grid';
         }
 
-        function selectDateFromCalendar(weekLabel, dayName, dateStr) {
+        function selectDateFromCalendar(weekLabel, dayName) {
             let idx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === weekLabel && d.dayName === dayName);
             if (idx !== -1) {
                 currentFlatIndex = idx;
