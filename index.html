@@ -1145,7 +1145,7 @@
                 { name: "يوم التسامح", hours: 2 },
                 { name: "اليوم العالمي للطفل", hours: 2 },
                 { name: "اليوم العالمي لذوي الإعاقة", hours: 2 },
-                { name: "اليوم العالمي للغة العربية", hours: 2 },
+                { name: "يوم اللغة العربية العالمي", hours: 2 },
                 { name: "اليوم العالمي للتعليم", hours: 2 },
                 { name: "يوم التأسيس", hours: 4 },
                 { name: "يوم العلم السعودي", hours: 3 },
@@ -1598,6 +1598,28 @@
             window.print();
         }
 
+        /* دوال مساعدة لاستخراج التاريخ واليوم من مفتاح جدول الحصص */
+        function getAssignmentDateInfo(key) {
+            if (!key || key.startsWith("def_")) {
+                let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "", dayName: activeDayName, weekLabel: activeWeekLabel };
+                return { hDate: cur.hDate, mDate: cur.mDate, dayName: cur.dayName || activeDayName, weekLabel: cur.weekLabel || activeWeekLabel };
+            }
+            let parts = key.split("_");
+            if (parts.length >= 2) {
+                let wLabel = parts[0];
+                let dName = parts[1];
+                let wkObj = CAL_1448.find(w => w.label === wLabel);
+                if (wkObj) {
+                    let dayObj = wkObj.days.find(d => d.name === dName);
+                    if (dayObj) {
+                        return { hDate: dayObj.h, mDate: dayObj.m, dayName: dName, weekLabel: wLabel };
+                    }
+                }
+            }
+            let cur = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
+            return { hDate: cur.hDate, mDate: cur.mDate, dayName: activeDayName, weekLabel: activeWeekLabel };
+        }
+
         /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
         function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
@@ -1681,13 +1703,14 @@
 
         function renderActivityCards(activitiesList) {
             let container = document.getElementById('activityCardsListContainer');
+            container.innerHTML = '';
             const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
-            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
 
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
-                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key);
+                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1721,9 +1744,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${activeDayName}</td>
+                            <td style="width: 15%;">${dateInfo.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${activeWeekLabel}</td>
+                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
@@ -1881,11 +1904,12 @@
 
         function renderCompetitionCards(competitionsList) {
             let container = document.getElementById('compCardsListContainer');
-            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
+            container.innerHTML = '';
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
-                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
+                let dateInfo = getAssignmentDateInfo(act.key);
+                let startDateStr = dateInfo.hDate ? `${dateInfo.hDate} (${dateInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1923,9 +1947,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${activeDayName}</td>
+                            <td style="width: 15%;">${dateInfo.dayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${activeWeekLabel}</td>
+                            <td style="width: 15%;">${dateInfo.weekLabel}</td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
@@ -2002,8 +2026,6 @@
                 `;
                 container.appendChild(cardDiv);
             });
-
-            window.print();
         }
 
         document.addEventListener('change', function(e) {
@@ -2127,186 +2149,4 @@
                 let fieldKey = "";
                 let flexibility = "ثابتة";
                 let hours = 1;
-                let barcodeSrc = existingData.barcodeSrc || null;
-                let platform = existingData.platform || "";
-
-                if (typeVal === 'course') {
-                    courseName = document.getElementById('cellCourseSelect').value;
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                } else if (typeVal === 'activity') {
-                    let presetVal = document.getElementById('cellActPresetSelect').value;
-                    if (presetVal === 'NEW_CUSTOM') {
-                        courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط جديد";
-                    } else {
-                        courseName = presetVal;
-                    }
-
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                    isAct = true;
-                    fieldKey = document.getElementById('cellActFieldSelect').value;
-                    flexibility = document.getElementById('cellActFlexSelect').value;
-                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-
-                    let fileInput = document.getElementById('cellBarcodeFileInput');
-                    if (fileInput.files && fileInput.files[0]) {
-                        barcodeSrc = await compressImage(fileInput.files[0]);
-                    }
-                }
-
-                weekAssignments[weekKey] = {
-                    course: courseName,
-                    teacher: teacherName,
-                    isActivity: isAct,
-                    fieldKey: fieldKey,
-                    flexibility: flexibility,
-                    hours: hours,
-                    barcodeSrc: barcodeSrc,
-                    platform: platform
-                };
-            }
-
-            await saveToCloud();
-            closeCellClickModal();
-            renderScheduleTableForDay(activeDayName);
-        }
-
-        function updateTeacherDropdowns() {
-            const teacherSel = document.getElementById('cellTeacherSelect');
-            teacherSel.innerHTML = `<option value="">— تفريغ المعلم —</option>` + teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
-
-        function openTeachersManagerModal() {
-            renderTeachersListInManager();
-            document.getElementById('teachersManagerModal').classList.add('show');
-        }
-        function closeTeachersManagerModal() {
-            document.getElementById('teachersManagerModal').classList.remove('show');
-            updateTeacherDropdowns();
-        }
-        function renderTeachersListInManager() {
-            const box = document.getElementById('teachersListContainer');
-            box.innerHTML = teachersPool.map((t, idx) => `
-                <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary">
-                    <span class="text-white small">${t}</span>
-                    <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteTeacher(${idx})"><i class="fas fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-        async function addNewTeacher() {
-            let name = document.getElementById('newTeacherNameInput').value.trim();
-            if(!name) return;
-            teachersPool.push(name);
-            document.getElementById('newTeacherNameInput').value = '';
-            renderTeachersListInManager();
-            await saveToCloud();
-        }
-        async function deleteTeacher(idx) {
-            teachersPool.splice(idx, 1);
-            renderTeachersListInManager();
-            await saveToCloud();
-        }
-
-        async function saveToCloud() {
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    weekAssignments: weekAssignments,
-                    classes: targetClasses,
-                    teachers: teachersPool
-                });
-            } catch (e) {
-                console.log("خطأ أثناء الحفظ بالسحابة.");
-            }
-        }
-
-        function openCalendarModal() {
-            document.getElementById('calendarModal').classList.add('show');
-            renderWeeksList(currentTerm);
-        }
-        function closeCalendarModal() {
-            document.getElementById('calendarModal').classList.remove('show');
-        }
-        function switchTerm(term) {
-            currentTerm = term;
-            document.getElementById('tabTerm1').classList.toggle('active', term === 1);
-            document.getElementById('tabTerm2').classList.toggle('active', term === 2);
-            renderWeeksList(term);
-        }
-        function renderWeeksList(term) {
-            const container = document.getElementById('weeksListContainer');
-            container.innerHTML = '';
-            CAL_1448.filter(w => w.t === term).forEach((wk) => {
-                const wkDiv = document.createElement('div');
-                wkDiv.className = 'wk-item';
-                let daysHtml = wk.days.map(d => `
-                    <div class="day-card-item" onclick="selectDateFromCalendar('${wk.label}', '${d.name}', '${d.h} (${d.m})')">
-                        <b>${d.name}</b> <em>${d.h} — ${d.m}</em>
-                    </div>
-                `).join('');
-                wkDiv.innerHTML = `
-                    <button class="wk-head-btn" onclick="toggleWeekOpen(this)">
-                        <div><b>${wk.label}</b></div>
-                        <span>عرض الأيام <i class="fas fa-chevron-down mr-1"></i></span>
-                    </button>
-                    <div class="days-list">${daysHtml}</div>
-                `;
-                container.appendChild(wkDiv);
-            });
-        }
-        function toggleWeekOpen(btn) {
-            const item = btn.parentElement;
-            const list = item.querySelector('.days-list');
-            const isOpen = item.classList.contains('open');
-            item.classList.toggle('open', !isOpen);
-            list.style.display = isOpen ? 'none' : 'grid';
-        }
-
-        function selectDateFromCalendar(weekLabel, dayName) {
-            let idx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === weekLabel && d.dayName === dayName);
-            if (idx !== -1) {
-                currentFlatIndex = idx;
-                updateViewFromFlatIndex();
-            }
-            closeCalendarModal();
-        }
-
-        let selectedClassIndexForAction = null;
-        function openClassActionModal(index, className) {
-            selectedClassIndexForAction = index;
-            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
-            document.getElementById('classActionModal').classList.add('show');
-        }
-        function closeClassActionModal() {
-            document.getElementById('classActionModal').classList.remove('show');
-            selectedClassIndexForAction = null;
-        }
-        async function moveSelectedClass(direction) {
-            if (selectedClassIndexForAction === null) return;
-            let targetIndex = selectedClassIndexForAction + direction;
-            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
-            let temp = targetClasses[selectedClassIndexForAction];
-            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
-            targetClasses[targetIndex] = temp;
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        async function deleteSelectedClass() {
-            if (selectedClassIndexForAction === null) return;
-            targetClasses.splice(selectedClassIndexForAction, 1);
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        function openModalForAdd() { document.getElementById('addClassModal').style.display = 'flex'; }
-        function closeAddModal() { document.getElementById('addClassModal').style.display = 'none'; }
-        async function addNewClassRow() {
-            let className = document.getElementById('newClassNameInput').value.trim();
-            if(!className) return;
-            targetClasses.push(className);
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-            closeAddModal();
-        }
-    </script>
-</body>
-</html>
+                let barcodeSrc = existingData.
