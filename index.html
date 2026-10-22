@@ -1600,7 +1600,7 @@
             window.print();
         }
 
-        /* دالة ذكية لحساب تواريخ بداية ونهاية التنفيذ بحسب نطاق البطاقة (يومي، أسبوعي، فصلي) */
+        /* دالة جلب تواريخ التنفيذ (بداية التنفيذ تلقائية، ونهاية التنفيذ فارغة تماماً) */
         function getAssignmentDateInfo(key, cardScope = 'daily') {
             let parts = key ? key.split("_") : [];
             let weekLabel = parts.length >= 1 && !key.startsWith("def_") ? parts[0] : activeWeekLabel;
@@ -1612,31 +1612,28 @@
                 let dayObj = wkObj.days.find(d => d.name === dayName) || wkObj.days[0];
                 return {
                     start: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` },
-                    end: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` }
+                    end: { dayName: "", weekLabel: "", fullStr: "" }
                 };
             } else if (cardScope === 'weekly') {
                 let firstDay = wkObj.days[0];
-                let lastDay = wkObj.days[wkObj.days.length - 1];
                 return {
                     start: { dayName: firstDay.name, weekLabel: wkObj.label, fullStr: `${firstDay.h} (${firstDay.m})` },
-                    end: { dayName: lastDay.name, weekLabel: wkObj.label, fullStr: `${lastDay.h} (${lastDay.m})` }
+                    end: { dayName: "", weekLabel: "", fullStr: "" }
                 };
             } else if (cardScope === 'term') {
                 let termWeeks = CAL_1448.filter(w => w.t === currentTerm);
                 let firstWk = termWeeks[0] || wkObj;
-                let lastWk = termWeeks[termWeeks.length - 1] || wkObj;
                 let firstDay = firstWk.days[0];
-                let lastDay = lastWk.days[lastWk.days.length - 1];
                 return {
                     start: { dayName: firstDay.name, weekLabel: firstWk.label, fullStr: `${firstDay.h} (${firstDay.m})` },
-                    end: { dayName: lastDay.name, weekLabel: lastWk.label, fullStr: `${lastDay.h} (${lastDay.m})` }
+                    end: { dayName: "", weekLabel: "", fullStr: "" }
                 };
             }
             
             let dayObj = wkObj.days[0];
             return {
                 start: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` },
-                end: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` }
+                end: { dayName: "", weekLabel: "", fullStr: "" }
             };
         }
 
