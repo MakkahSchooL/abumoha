@@ -934,7 +934,9 @@
                     <i class="fas fa-file-alt"></i> طباعة البطاقات <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط</button>
+                    <button class="print-dropdown-item" onclick="executeDailyActivityCardPrint()"><i class="fas fa-calendar-day ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط يومي</button>
+                    <button class="print-dropdown-item" onclick="executeWeeklyActivityCardPrint()"><i class="fas fa-calendar-week ml-1 text-primary"></i> بطاقة تنفيذ برنامج نشاط أسبوعي</button>
+                    <button class="print-dropdown-item" onclick="executeActivityCardPrint()"><i class="fas fa-id-card ml-1 text-warning"></i> بطاقة تنفيذ برنامج نشاط فصلي</button>
                     <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط</button>
                 </div>
             </div>
@@ -1013,7 +1015,7 @@
         </div>
     </div>
 
-    <!-- بطاقة تنفيذ برنامج نشاط (للبرامج والمجالات عدا المسابقات) -->
+    <!-- بطاقة تنفيذ برنامج نشاط -->
     <div id="activityCardPrintArea">
         <div id="activityCardsListContainer"></div>
     </div>
@@ -1594,8 +1596,8 @@
             window.print();
         }
 
-        /* 1. بطاقة تنفيذ برنامج نشاط */
-        function executeActivityCardPrint() {
+        /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
+        function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
             if (menu) menu.classList.remove('show');
@@ -1607,14 +1609,76 @@
             for (let key in weekAssignments) {
                 let cellData = weekAssignments[key];
                 if (cellData && cellData.isActivity && cellData.fieldKey !== "competitions") {
-                    activitiesList.push({ key, ...cellData });
+                    if (key.startsWith(`${activeWeekLabel}_${activeDayName}_`)) {
+                        activitiesList.push({ key, ...cellData });
+                    }
                 }
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم", fieldKey: "citizenship", teacher: "", hours: 4, platform: "بنك الإثراءات" });
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "بنك الإثراءات" });
             }
 
+            renderActivityCards(activitiesList);
+            window.print();
+        }
+
+        function executeWeeklyActivityCardPrint() {
+            document.body.className = "print-activity-card-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('activityCardsListContainer');
+            container.innerHTML = '';
+
+            let activitiesList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity && cellData.fieldKey !== "competitions") {
+                    if (key.startsWith(`${activeWeekLabel}_`)) {
+                        activitiesList.push({ key, ...cellData });
+                    }
+                }
+            }
+
+            if (activitiesList.length === 0) {
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "بنك الإثراءات" });
+            }
+
+            renderActivityCards(activitiesList);
+            window.print();
+        }
+
+        function executeActivityCardPrint() {
+            document.body.className = "print-activity-card-mode";
+            let menu = document.getElementById('reportsDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            let container = document.getElementById('activityCardsListContainer');
+            container.innerHTML = '';
+
+            let termWeekLabels = CAL_1448.filter(w => w.t === currentTerm).map(w => w.label);
+            let activitiesList = [];
+            for (let key in weekAssignments) {
+                let cellData = weekAssignments[key];
+                if (cellData && cellData.isActivity && cellData.fieldKey !== "competitions") {
+                    let matchesTerm = termWeekLabels.some(wl => key.startsWith(wl + "_"));
+                    if (matchesTerm) {
+                        activitiesList.push({ key, ...cellData });
+                    }
+                }
+            }
+
+            if (activitiesList.length === 0) {
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "بنك الإثراءات" });
+            }
+
+            renderActivityCards(activitiesList);
+            window.print();
+        }
+
+        function renderActivityCards(activitiesList) {
+            let container = document.getElementById('activityCardsListContainer');
             const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
 
             activitiesList.forEach(act => {
@@ -1685,10 +1749,10 @@
                             <td colspan="5"><div class="editable-cell-box" contenteditable="true"></div></td>
                         </tr>
                         <tr>
-                            <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ[cite: 3]:</td>
+                            <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ:</td>
                             <td colspan="5" style="text-align: right; padding: 4px 10px;">
                                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="radio" name="act_plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
+                                    ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="radio" name="act_plat_${act.key || Math.random()}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key || ''}" data-val="${p}"> ${p}</label>`).join("")}
                                 </div>
                             </td>
                         </tr>
@@ -1721,18 +1785,16 @@
                         </div>
 
                         <div class="card-bottom-note mt-2">
-                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس[cite: 3].
+                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس.
                         </div>
                     </div>
                 </div>
                 `;
                 container.appendChild(cardDiv);
             });
-
-            window.print();
         }
 
-        /* 2. بطاقة تنفيذ مسابقة نشاط (مطابقة تماماً للنموذج الرسمي المرفق)[cite: 4, 5, 7] */
+        /* بطاقة تنفيذ مسابقة نشاط */
         function executeCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1864,7 +1926,7 @@
                         </div>
 
                         <div class="card-bottom-note mt-2">
-                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس[cite: 4].
+                            * يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة لإعداد وتأهيل الطلاب للمسابقة وفق ما ورد في دليل الخطط الدراسية / الإصدار السادس.
                         </div>
                     </div>
                 </div>
