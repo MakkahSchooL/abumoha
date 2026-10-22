@@ -611,11 +611,14 @@
         }
 
         .qr-code-img {
-            max-width: 70px;
-            max-height: 70px;
+            width: 65px;
+            height: 65px;
+            max-width: 65px;
+            max-height: 65px;
             display: block;
             margin: 0 auto;
             cursor: pointer;
+            object-fit: contain;
         }
 
         #activityCardPrintArea, #competitionCardPrintArea {
@@ -896,9 +899,9 @@
                     </div>
 
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود يحفظ الملف تلقائياً:</label>
+                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود تنزيل وحفظ تلقائي:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيتم توليد باركود يقوم بتحميل وحفظ الملف مباشرة عند قراءته.</small>
+                        <small class="text-muted d-block mt-1">سيتم توليد باركود يقوم بتحميل وحفظ الملف المرفق مباشرة عند قرائته من الجوال.</small>
                     </div>
                 </div>
 
@@ -2149,32 +2152,36 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        async function generateQrCodeFromFile(file) {
-            if (!file) return null;
-            try {
-                let storageRef = storage.ref();
-                let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
-                
-                let uploadPromise = fileRef.put(file);
-                let timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("مهلة الرفع")), 5000));
-                
-                let snapshot = await Promise.race([uploadPromise, timeoutPromise]);
-                let downloadURL = await snapshot.ref.getDownloadURL();
-                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
-            } catch (error) {
-                console.warn("الرفع السحابي غير مفعل، جاري تحويل الملف لتحميله فورياً عبر الباركود:", error);
-                return new Promise((resolve) => {
-                    let reader = new FileReader();
-                    reader.onload = function(e) {
-                        let base64Data = e.target.result;
-                        let downloadDataUrl = base64Data.replace(/^data:[^;]+/, 'data:application/octet-stream');
-                        resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadDataUrl)}&ecc=M`);
-                    };
-                    reader.onerror = function() {
-                        resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(file.name)}&ecc=M`);
-                    };
-                    reader.readAsDataURL(file);
-                });
+        async function generateQrCodeFromFile(file, programName) {
+            if (file) {
+                try {
+                    let storageRef = storage.ref();
+                    let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
+                    
+                    let uploadPromise = fileRef.put(file);
+                    let timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("مهلة الرفع")), 5000));
+                    
+                    let snapshot = await Promise.race([uploadPromise, timeoutPromise]);
+                    let downloadURL = await snapshot.ref.getDownloadURL();
+                    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
+                } catch (error) {
+                    console.warn("جاري إعداد الملف للتنزيل المباشر محلّياً عند المسح:", error);
+                    return new Promise((resolve) => {
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            let base64Data = e.target.result;
+                            let downloadDataUrl = base64Data.replace(/^data:[^;]+/, 'data:application/octet-stream');
+                            resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadDataUrl)}&ecc=M`);
+                        };
+                        reader.onerror = function() {
+                            resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(programName)}&ecc=M`);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            } else {
+                // توليد باركود تلقائي بالبرنامج عند عدم إرفاق ملف
+                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent('https://makkahschool.github.io/test/?program=' + encodeURIComponent(programName))}&ecc=M`;
             }
         }
 
@@ -2223,9 +2230,9 @@
 
                         let fileInput = document.getElementById('cellBarcodeFileInput');
                         if (fileInput.files && fileInput.files[0]) {
-                            barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
+                            barcodeSrc = await generateQrCodeFromFile(fileInput.files[0], courseName);
                         } else if (!barcodeSrc) {
-                            barcodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(courseName)}&ecc=M`;
+                            barcodeSrc = await generateQrCodeFromFile(null, courseName);
                         }
                     }
 
@@ -2290,13 +2297,11 @@
 
         async function saveToCloud() {
             try {
-                // حفظ الفصول والمعلمين في مستند مستقل
                 await db.collection("schedules").doc("metadata").set({
                     classes: targetClasses,
                     teachers: teachersPool
                 });
 
-                // تجميع حصص الأسبوع الحالي فقط لحفظها في مستند خاص بهذا الأسبوع
                 let currentWeekAssignments = {};
                 for (let key in weekAssignments) {
                     if (key.startsWith(activeWeekLabel + "_")) {
@@ -2304,40 +2309,15 @@
                     }
                 }
 
-                // حفظ حصص الأسبوع الحالي في مستند مستقل باسم الأسبوع
                 await db.collection("week_schedules").doc(activeWeekLabel).set({
                     assignments: currentWeekAssignments
                 });
 
-                console.log("تم الحفظ بنجاح في السحابة بدون تجاوز الحد الأقصى!");
+                console.log("تم الحفظ بنجاح!");
             } catch (e) {
                 console.error("خطأ أثناء الحفظ بالسحابة:", e);
                 alert("تعذر الحفظ بالسحابة. التفاصيل: " + e.message);
             }
-        }
-
-        async function loadDataFromCloud() {
-            try {
-                let metaRef = await db.collection("schedules").doc("metadata").get();
-                if (metaRef.exists) {
-                    let data = metaRef.data();
-                    if (data.classes) targetClasses = data.classes;
-                    if (data.teachers) teachersPool = data.teachers;
-                }
-
-                let weeksSnap = await db.collection("week_schedules").get();
-                weeksSnap.forEach(doc => {
-                    let weekData = doc.data();
-                    if (weekData && weekData.assignments) {
-                        for (let k in weekData.assignments) {
-                            weekAssignments[k] = weekData.assignments[k];
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log("جارِ استخدام البيانات المحلية...", e);
-            }
-            updateFieldCounters();
         }
 
         function openCalendarModal() {
