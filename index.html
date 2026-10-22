@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- مكتبات Firebase SDK (تم إضافة مكتبة التخزين Storage) -->
+    <!-- مكتبات Firebase SDK (تم تضمين مكتبة التخزين Storage) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
@@ -2145,7 +2145,7 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        /* رفع الملف إلى Firebase Storage وتوليد باركود برابط الملف الحقيقي المباشر */
+        /* رفع الملف إلى Firebase Storage وتوليد باركود واضح ودقيق (300x300) يقرأه الجوال بسهولة */
         async function generateQrCodeFromFile(file) {
             try {
                 let storageRef = storage.ref();
@@ -2157,7 +2157,7 @@
                 return qrApiUrl;
             } catch (error) {
                 console.error("خطأ في رفع الملف:", error);
-                alert("حدث خطأ أثناء رفع الملف للسحابة. تحقق من اتصال الإنترنت أو إعدادات التخزين.");
+                alert("تعذر رفع الملف للسحابة. تأكد من ضبط قواعد التخزين (Storage Rules) في فايربيس واتصال الإنترنت.");
                 return null;
             }
         }
@@ -2202,7 +2202,6 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        // رفع الملف للسحابة وتوليد الباركود برابط الملف الحقيقي
                         barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
                     }
                 }
