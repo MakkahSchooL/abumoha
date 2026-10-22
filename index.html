@@ -2,517 +2,29 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>خطة ونظام النشاط الطلابي المتكامل 1448هـ</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-    <!-- مكتبات Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طباعة بطاقة تنفيذ مسابقة نشاط طلابي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --paper: #EEF3F2;
-            --surface: #FFFFFF;
-            --surface2: #F6F9F8;
-            --ink: #13302E;
-            --muted: #5A6F6C;
-            --line: #D3DEDB;
-            --brand: #0C6A64;
-            --brand-ink: #FFFFFF;
-            --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
-
-            --color-citizenship: #2a9d8f;
-            --color-culture: #e06d9f;
-            --color-science: #4a90e2;
-            --color-sports: #52b788;
-            --color-scout: #c0a02d;
-            --color-days: #e76f51;
-            --color-competitions: #9b59b6;
-        }
-
         body {
-            font-family: var(--font);
-            background-color: #f8fafc;
-            color: var(--ink);
+            font-family: 'Tajawal', sans-serif;
+            background-color: #525659;
+            margin: 0;
+            padding: 20px;
             direction: rtl;
-            text-align: right;
-            padding: 15px;
         }
-
-        .page-header-card {
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 16px 22px;
-            box-shadow: 0 1px 2px rgba(15,23,42,.04);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .header-icon-box {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--brand), #0891b2);
-            color: #fff;
-            font-size: 1.2rem;
-            box-shadow: 0 6px 18px -6px rgba(12,106,100,.45);
-        }
-
-        .cal-nav-bar {
-            background: #111827;
-            color: #fff;
-            border-radius: 16px;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-        }
-
-        .btn-open-cal {
-            background: linear-gradient(135deg, var(--brand), #0891b2);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 18px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .btn-open-cal:hover { opacity: 0.95; transform: translateY(-1px); }
-
-        .selected-date-badge {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-arrow-btn {
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            width: 28px;
-            height: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .nav-arrow-btn:hover { background: var(--brand); }
-
-        .modal-cal {
-            position: fixed;
-            inset: 0;
-            background: rgba(8,26,26,.6);
-            z-index: 1050;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(3px);
-        }
-        .modal-cal.show { display: flex; }
-
-        .mbox-cal {
-            background: #152322;
-            color: #E2ECEA;
-            width: min(580px, 95%);
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            border-radius: 16px;
-            border: 1px solid #2A3D3B;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-
-        .mhead-cal {
-            padding: 16px 20px 10px;
-            border-bottom: 1px solid #2A3D3B;
-        }
-        .mhead-cal h3 { margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff; }
-        .mhead-cal p { margin: 4px 0 0; color: #9AB0AC; font-size: 0.82rem; }
-
-        .mtabs-cal {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .mtab-btn {
-            flex: 1;
-            background: #1A2B2A;
-            border: 1px solid #2A3D3B;
-            color: #9AB0AC;
-            padding: 8px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .mtab-btn.active {
-            background: #3AAFA5;
-            color: #06201E;
-            border-color: #3AAFA5;
-        }
-
-        .mbody-cal {
-            overflow-y: auto;
-            padding: 14px 16px;
-            max-height: 60vh;
-        }
-
-        .wk-item {
-            border: 1px solid #2A3D3B;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            overflow: hidden;
-            background: #1A2B2A;
-        }
-        .wk-head-btn {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            background: #1A2B2A;
-            border: 0;
-            padding: 10px 14px;
-            cursor: pointer;
-            text-align: start;
-            color: #E2ECEA;
-            transition: background 0.2s;
-        }
-        .wk-head-btn:hover { background: #253A38; }
-        .wk-head-btn b { font-size: 0.92rem; font-weight: 700; }
-        .wk-head-btn span { font-size: 0.78rem; color: #9AB0AC; }
-
-        .days-list {
-            display: none;
-            gap: 6px;
-            padding: 8px 10px 12px;
-            background: #121E1D;
-            border-top: 1px solid #2A3D3B;
-        }
-        .wk-item.open .days-list { display: grid; }
-
-        .day-card-item {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid #2A3D3B;
-            background: #152322;
-            border-radius: 8px;
-            padding: 8px 12px;
-            cursor: pointer;
-            text-align: start;
-            color: #E2ECEA;
-            transition: all 0.15s;
-        }
-        .day-card-item:hover {
-            border-color: #3AAFA5;
-            background: rgba(58,175,165,0.15);
-        }
-        .day-card-item b { font-size: 0.88rem; font-weight: 700; }
-        .day-card-item em { font-style: normal; font-size: 0.78rem; color: #3AAFA5; font-weight: 600; }
-
-        .mfoot-cal {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 16px;
-            border-top: 1px solid #2A3D3B;
-            background: #152322;
-        }
-
-        .fields-bar-container {
-            background: #1b262c;
-            border-radius: 20px;
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            overflow-x: auto;
-            border: 1px solid #2d3748;
-        }
-        .field-pill {
-            background: #232d36;
-            color: #e2e8f0;
-            border: 1px solid #334155;
-            border-radius: 30px;
-            padding: 4px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .dot-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .control-btns-container {
-            border: 1px solid var(--line);
-            background: #fff;
-            border-radius: 16px;
-            padding: 12px 16px !important;
-            box-shadow: 0 4px 12px -4px rgba(15,23,42,.08);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .dashed-print-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .btn-dashed-print {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed #0C6A64;
-            color: #0C6A64;
-            padding: 8px 16px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            text-decoration: none;
-        }
-        .btn-dashed-print:hover { background: #f8fafc; color: #08504c; border-color: #08504c; }
-
-        .btn-dashed-reports {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed #1e40af;
-            color: #1e40af;
-            padding: 8px 16px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            text-decoration: none;
-        }
-        .btn-dashed-reports:hover { background: #f0f9ff; color: #1e3a8a; border-color: #1e3a8a; }
-
-        .print-dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 105%;
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 230px;
-            z-index: 1000;
-            padding: 6px;
-        }
-        .print-dropdown-menu.show { display: block; }
-        .print-dropdown-item {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            text-align: right;
-            background: none;
-            border: none;
-            border-radius: 6px;
-            color: #0f172a;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .print-dropdown-item:hover { background: #f1f5f9; color: #0C6A64; }
-
-        .wc-main-table {
-            box-shadow: 0 4px 24px -4px rgba(15,23,42,.10);
-            border-radius: 16px;
-            overflow: hidden;
-            font-size: 0.9rem;
-            background: #fff;
-            border: none !important;
-        }
-
-        .wc-main-table thead th {
-            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #64748b;
-            border-bottom: 2px solid var(--line) !important;
-            padding: 12px 8px !important;
-            vertical-align: middle !important;
-        }
-
-        .class-col-header {
-            width: 110px !important;
-            max-width: 110px !important;
-            background: #f8fafc;
-            vertical-align: middle !important;
-            padding: 6px 4px !important;
-        }
-        .header-class-title-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 2px 6px;
-        }
-        .header-gear-btn {
-            background: #e2e8f0;
-            border: none;
-            color: #0C6A64;
-            font-size: 0.8rem;
-            cursor: pointer;
-            padding: 3px 6px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .header-gear-btn:hover { background: #0C6A64; color: #fff; }
-
-        .class-row-header-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 8px;
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-            cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .class-row-header-box:hover { background: #f1f5f9; border-color: var(--brand); }
-        .class-title-text { font-size: 0.92rem; font-weight: 800; color: #0F172A; margin: 0 auto; }
-
-        .wc-main-table td {
-            border-color: #edf0f5 !important;
-            padding: 8px !important;
-            vertical-align: middle !important;
-            min-width: 135px;
-            cursor: pointer;
-        }
-        .wc-main-table td:hover { background-color: #f1f5f9; }
-
-        .course-cell-box {
-            background: #f8fafc;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-            min-height: 62px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .empty-cell-box {
-            background: #ffffff;
-            border: 1px dashed #e2e8f0;
-            border-radius: 10px;
-            min-height: 62px;
-        }
-
-        .course-name-large { font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
-
-        .teacher-name-badge {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #047857;
-            background: #ecfdf5;
-            padding: 2px 6px;
-            border-radius: 6px;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .activity-card-custom {
-            border-radius: 10px;
-            background: #fff;
-            border: 2px dashed #0C6A64;
-            padding: 4px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            min-height: 62px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-        .activity-header-custom { font-size: 0.8rem; font-weight: 800; margin: 2px 0; }
-        .field-tag-badge { font-size: 0.65rem; font-weight: 700; color: #fff; border-radius: 4px; padding: 1px 4px; display: inline-block; }
-
-        .activity-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.62rem; font-weight: 700; margin-top: 2px; gap: 2px; }
-        .activity-flexibility-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0px 3px; border-radius: 3px; color: #334155; line-height: 1.2; }
-        .activity-hours-box { background: #ecfdf5; border: 1px solid #10b981; color: #047857; padding: 0px 3px; border-radius: 3px; line-height: 1.2; }
-
-        #activityReportPrintArea { display: none; background: #fff; color: #000; padding: 20px; direction: rtl; }
-        .act-report-header { text-align: right; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px; }
-        .act-report-title { font-size: 1.4rem; font-weight: 800; margin-top: 10px; color: #0f172a; text-align: center; }
-        .act-report-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .act-report-table th, .act-report-table td { border: 1px solid #000; padding: 8px 6px; text-align: center; font-size: 0.85rem; vertical-align: middle; }
-        .act-report-table th { background-color: #f1f5f9; font-weight: 700; }
-
-        .approval-badge-box {
-            background-color: #f0fdf4; border: 1px solid #166534; border-radius: 8px; padding: 6px 16px;
-            display: inline-flex; align-items: center; gap: 8px; color: #14532d; font-size: 0.95rem; font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .approval-badge-box i { color: #15803d; font-size: 1.1rem; }
-        .act-names-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 35px; padding: 0 20px; font-weight: 800; font-size: 0.95rem; }
-
-        /* طبقة عرض البطاقات الرسمية باستخدام صورتك الأصلية كخلفية مطابقة تماماً[cite: 7] */
-        #competitionCardPrintArea { display: none; background: #fff; }
-        .official-card-page {
+        
+        .print-container {
             width: 210mm;
             height: 297mm;
-            max-height: 297mm;
             margin: 0 auto;
+            background: white;
             position: relative;
-            background: #fff;
-            page-break-after: always;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
             box-sizing: border-box;
-            overflow: hidden;
         }
+
+        /* الصورة الأصلية كخلفية مطابقة تماماً للنموذج الرسمي */
         .form-background-image {
             width: 100%;
             height: 100%;
@@ -522,6 +34,8 @@
             object-fit: fill;
             z-index: 1;
         }
+
+        /* طبقة الحقول النصية فوق الصورة */
         .overlay-fields-layer {
             position: absolute;
             top: 0;
@@ -530,32 +44,39 @@
             height: 100%;
             z-index: 2;
         }
+
         .editable-field {
             position: absolute;
             background: transparent;
             border: none;
             outline: none;
-            font-family: var(--font);
-            font-size: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
             font-weight: 700;
             color: #002b36;
             text-align: right;
             padding: 2px 4px;
             box-sizing: border-box;
         }
-        .editable-field:focus { background: rgba(255, 255, 0, 0.25); box-shadow: 0 0 0 2px #0c6a64; }
 
-        /* إحداثيات الحقول فوق صورتك الأصلية بدقة تامة */
+        .editable-field:focus {
+            background: rgba(255, 255, 0, 0.25);
+            box-shadow: 0 0 0 2px #0c6a64;
+        }
+
+        /* إحداثيات الحقول بدقة مطابقة للخانات الفارغة في النموذج */
         .f-school { top: 12.3%; left: 32%; width: 45%; }
         .f-competition { top: 17.5%; left: 32%; width: 45%; }
         .f-field { top: 22.5%; left: 32%; width: 45%; }
         .f-prep-classes { top: 27.2%; left: 32%; width: 45%; }
         .f-term { top: 32.2%; left: 32%; width: 45%; }
         
+        /* بداية التنفيذ */
         .f-start-day { top: 37.0%; left: 63%; width: 10%; text-align: center; }
         .f-start-week { top: 37.0%; left: 41%; width: 10%; text-align: center; }
         .f-start-date { top: 37.0%; left: 13%; width: 18%; text-align: center; }
 
+        /* نهاية التنفيذ */
         .f-end-day { top: 41.8%; left: 63%; width: 10%; text-align: center; }
         .f-end-week { top: 41.8%; left: 41%; width: 10%; text-align: center; }
         .f-end-date { top: 41.8%; left: 13%; width: 18%; text-align: center; }
@@ -563,6 +84,7 @@
         .f-class { top: 46.5%; left: 32%; width: 45%; }
         .f-teacher { top: 51.5%; left: 32%; width: 45%; }
 
+        /* خانات الأعداد والنتائج */
         .f-part-students { top: 56.5%; left: 45%; width: 25%; text-align: center; }
         .f-winners { top: 56.5%; left: 15%; width: 18%; text-align: center; }
 
@@ -578,775 +100,92 @@
         .f-results { top: 76.5%; left: 15%; width: 55%; }
         .f-notes { top: 83.0%; left: 15%; width: 55%; }
 
+        /* التوقيعات السفلية */
         .f-sig-teacher-name { top: 90.0%; left: 68%; width: 22%; }
-        .f-sig-teacher-date { top: 93.0%; left: 68%; width: 22%; font-size: 10px; }
+        .f-sig-teacher-date { top: 93.0%; left: 68%; width: 22%; font-size: 11px; }
 
         .f-sig-leader-name { top: 90.0%; left: 18%; width: 22%; }
-        .f-sig-leader-date { top: 93.0%; left: 18%; width: 22%; font-size: 10px; }
+        .f-sig-leader-date { top: 93.0%; left: 18%; width: 22%; font-size: 11px; }
+
+        .print-btn-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-print {
+            background: #0C6A64;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-print:hover { background: #08504c; }
 
         @media print {
-            body { background: #fff !important; padding: 0 !important; }
-            .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive { display: none !important; }
-            body.print-plan-mode #activityReportPrintArea { display: block !important; }
-            body.print-competition-card-mode #competitionCardPrintArea { display: block !important; }
+            body { background: none; padding: 0; }
+            .print-btn-bar { display: none; }
+            .print-container { box-shadow: none; width: 100%; height: 100vh; }
         }
     </style>
 </head>
 <body>
 
-    <div class="page-header-card">
-        <div class="d-flex align-items-center" style="gap: 12px;">
-            <div class="header-icon-box">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-            <div>
-                <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">خطة ونظام النشاط الطلابي المتكامل</div>
-                <div style="font-size: 0.8rem; color: #64748b;">الإدارة العامة للتعليم بمنطقة المدينة المنورة - مدرسة مكة المكرمة الابتدائية</div>
-                <div style="font-size: 0.8rem; color: #64748b;">رائد النشاط: عواد محمد العوفي</div>
-            </div>
-        </div>
-        <div>
-            <span class="badge badge-light border p-2" style="font-size: 0.85rem;"><i class="fas fa-school text-success ml-1"></i> العام الدراسي 1448 هـ</span>
-        </div>
+    <div class="print-btn-bar">
+        <button class="btn-print" onclick="window.print()">🖨️ طباعة النموذج المباشر فوق الصورة الرسمية</button>
     </div>
 
-    <div class="cal-nav-bar">
-        <div class="d-flex align-items-center gap-3">
-            <button class="btn-open-cal" onclick="openCalendarModal()">
-                <i class="fas fa-calendar-alt"></i> اختر التاريخ / الأسبوع
-            </button>
+    <div class="print-container">
+        <!-- الصورة الأصلية المرفقة كخلفية رسمية للبطاقة -->
+        <img src="image_e80be1.png" class="form-background-image" alt="النموذج الرسمي">
+
+        <!-- حقول الإدخال المطابقة تماماً لمواقع الفراغات في الصورة -->
+        <div class="overlay-fields-layer">
+            <input type="text" class="editable-field f-school" value="مدرسة مكة المكرمة الابتدائية">
+            <input type="text" class="editable-field f-competition" value="مسابقة القرآن الكريم والسنة النبوية">
+            <input type="text" class="editable-field f-field" value="المواطنة والحياة / المسابقات">
+            <input type="text" class="editable-field f-prep-classes" value="4 حصص">
+            <input type="text" class="editable-field f-term" value="الفصل الدراسي الأول">
             
-            <div class="selected-date-badge">
-                <button class="nav-arrow-btn" onclick="navigateDay(-1)" title="اليوم السابق"><i class="fas fa-chevron-right"></i></button>
-                <div>
-                    <i class="fas fa-clock text-warning ml-1"></i> 
-                    <span id="currentDayText">جاري جلب بيانات اليوم...</span> - <span id="currentWeekText">الموافق: —</span>
-                </div>
-                <button class="nav-arrow-btn" onclick="navigateDay(1)" title="اليوم التالي"><i class="fas fa-chevron-left"></i></button>
-            </div>
+            <!-- بداية التنفيذ -->
+            <input type="text" class="editable-field f-start-day" value="الثلاثاء">
+            <input type="text" class="editable-field f-start-week" value="الثامن">
+            <input type="text" class="editable-field f-start-date" value="1448/05/09 هـ">
+
+            <!-- نهاية التنفيذ -->
+            <input type="text" class="editable-field f-end-day" value="الخميس">
+            <input type="text" class="editable-field f-end-week" value="الثامن">
+            <input type="text" class="editable-field f-end-date" value="1448/05/11 هـ">
+
+            <input type="text" class="editable-field f-class" value="جميع صفوف المرحلة الابتدائية">
+            <input type="text" class="editable-field f-teacher" value="عصام الحازمي">
+
+            <!-- الإحصائيات -->
+            <input type="text" class="editable-field f-part-students" value="45">
+            <input type="text" class="editable-field f-winners" value="10">
+
+            <input type="text" class="editable-field f-passed-students" value="15">
+            <input type="text" class="editable-field f-prizes" value="10 جوائز عينية">
+
+            <input type="text" class="editable-field f-parents-disab" value="5 أولياء أمور">
+            <input type="text" class="editable-field f-disab-students" value="طالبان (2)">
+
+            <input type="text" class="editable-field f-partnerships-count" value="شراكة واحدة">
+            <input type="text" class="editable-field f-partnerships-names" value="لجنة التنمية الاجتماعية">
+
+            <input type="text" class="editable-field f-results" value="تأهل الطلاب للمرحلة النهائية وحفظ أجزاء من القرآن">
+            <input type="text" class="editable-field f-notes" value="تم التنفيذ بنجاح وتفاعل مميز من الطلاب وأولياء الأمور">
+
+            <!-- التوقيعات -->
+            <input type="text" class="editable-field f-sig-teacher-name" value="عصام الحازمي">
+            <input type="text" class="editable-field f-sig-teacher-date" value="09 / 05 / 1448">
+
+            <input type="text" class="editable-field f-sig-leader-name" value="عواد محمد العوفي">
+            <input type="text" class="editable-field f-sig-leader-date" value="09 / 05 / 1448">
         </div>
     </div>
 
-    <!-- نافذة التقويم الشامل -->
-    <div class="modal-cal" id="calendarModal">
-        <div class="mbox-cal">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>تقويم مكة والمدينة وجدة والطائف 1448هـ</h3>
-                    <button type="button" class="close text-white" onclick="closeCalendarModal()">&times;</button>
-                </div>
-                <p>اختر الأسبوع ثم اليوم لعرض جدول الحصص الخاص به</p>
-                <div class="mtabs-cal">
-                    <button class="mtab-btn active" id="tabTerm1" onclick="switchTerm(1)">الفصل الدراسي الأول</button>
-                    <button class="mtab-btn" id="tabTerm2" onclick="switchTerm(2)">الفصل الدراسي الثاني</button>
-                </div>
-            </div>
-            <div class="mbody-cal" id="weeksListContainer"></div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-outline-light" onclick="setTodayAutomatically()">اليوم الحالي</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCalendarModal()">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- إدارة المعلمين -->
-    <div class="modal-cal" id="teachersManagerModal">
-        <div class="mbox-cal" style="width: min(400px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة قائمة المعلمين</h3>
-                    <button type="button" class="close text-white" onclick="closeTeachersManagerModal()">&times;</button>
-                </div>
-            </div>
-            <div class="mbody-cal">
-                <div class="input-group input-group-sm mb-3">
-                    <input type="text" id="newTeacherNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المعلم الجديد">
-                    <div class="input-group-append">
-                        <button class="btn btn-success" type="button" onclick="addNewTeacher()">إضافة</button>
-                    </div>
-                </div>
-                <div id="teachersListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto;"></div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeTeachersManagerModal()">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- إدارة الفصل -->
-    <div class="modal-cal" id="classActionModal">
-        <div class="mbox-cal" style="width: min(380px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>إدارة الفصل</h3>
-                    <button type="button" class="close text-white" onclick="closeClassActionModal()">&times;</button>
-                </div>
-                <p id="actionModalClassName" class="text-info font-weight-bold mb-0"></p>
-            </div>
-            <div class="mbody-cal text-center p-3">
-                <button class="btn btn-outline-light btn-block mb-2 text-right" onclick="moveSelectedClass(-1)">
-                    <i class="fas fa-arrow-up text-success ml-2"></i> نقل الفصل للأعلى
-                </button>
-                <button class="btn btn-outline-light btn-block mb-3 text-right" onclick="moveSelectedClass(1)">
-                    <i class="fas fa-arrow-down text-info ml-2"></i> نقل الفصل للأسفل
-                </button>
-                <hr style="border-color: #2A3D3B;">
-                <button class="btn btn-danger btn-block text-right" onclick="deleteSelectedClass()">
-                    <i class="fas fa-trash-alt ml-2"></i> حذف هذا الفصل
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- تعديل الحصة -->
-    <div class="modal-cal" id="cellClickModal">
-        <div class="mbox-cal" style="width: min(520px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 id="cellModalTitle">تعديل وإسناد الحصة</h3>
-                    <button type="button" class="close text-white" onclick="closeCellClickModal()">&times;</button>
-                </div>
-                <p id="cellModalSubtitle" class="text-info font-weight-bold mb-0"></p>
-            </div>
-            <div class="mbody-cal">
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">نوع الحصة / المادة:</label>
-                    <select id="cellTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="handleCellTypeChange(this.value)">
-                        <option value="course">حصة دراسية معتادة</option>
-                        <option value="activity">حصة نشاط مدرسي 🌟</option>
-                        <option value="empty">— خالي (تفريغ الحصة) —</option>
-                    </select>
-                </div>
-
-                <div class="form-group text-right" id="courseSelectionGroup">
-                    <label class="small font-weight-bold text-light">المادة الدراسية:</label>
-                    <select id="cellCourseSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-
-                <div id="activityFieldsGroup" style="display: none; background: #121E1D; border: 1px dashed #0C6A64; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                    <div class="form-group text-right mb-2">
-                        <label class="small font-weight-bold text-success">المجال / الفعالية:</label>
-                        <select id="cellActFieldSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="onFieldChange(this.value)">
-                            <option value="citizenship">المواطنة والحياة</option>
-                            <option value="culture">الثقافة والفنون</option>
-                            <option value="science">العلوم والتقنية</option>
-                            <option value="sports">الرياضة والصحة</option>
-                            <option value="scout">المجال الكشفي</option>
-                            <option value="days">الأيام والمناسبات</option>
-                            <option value="competitions">المسابقات المدرسية</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group text-right mb-2">
-                        <label class="small font-weight-bold text-success">اختر برنامج النشاط:</label>
-                        <select id="cellActPresetSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="onPresetProgramSelect(this.value)"></select>
-                    </div>
-
-                    <div class="form-group text-right mb-2" id="customProgramNameBox" style="display:none;">
-                        <label class="small font-weight-bold text-warning">اسم البرنامج / المسابقة الجديدة:</label>
-                        <input type="text" id="cellActNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم النشاط">
-                    </div>
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">طبيعة الحصة:</label>
-                                <select id="cellActFlexSelect" class="form-control form-control-sm bg-dark text-white border-secondary">
-                                    <option value="ثابتة">ثابتة</option>
-                                    <option value="مرنة">مرنة</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group text-right mb-2">
-                                <label class="small font-weight-bold text-success">عدد حصص البرنامج:</label>
-                                <input type="number" id="cellActHoursInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" min="1" max="30">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group text-right" id="teacherSelectionGroup">
-                    <label class="small font-weight-bold text-light">المعلم المسؤول: 
-                        <button type="button" class="btn btn-xs btn-outline-info p-0 px-1 ml-1" onclick="openTeachersManagerModal()"><i class="fas fa-pen"></i> إضافة/حذف معلم</button>
-                    </label>
-                    <select id="cellTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellAssignment()">حفظ الحصة ☁️</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellClickModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- شريط التحكم والطباعة -->
-    <div class="control-btns-container">
-        <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <div class="dashed-print-dropdown">
-                <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
-                    <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
-                </button>
-                <div class="print-dropdown-menu" id="printDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeDailyPrint()"><i class="fas fa-calendar-day ml-1 text-success"></i> طباعة الخطة اليومية</button>
-                    <button class="print-dropdown-item" onclick="executeWeeklyPrint()"><i class="fas fa-calendar-week ml-1 text-primary"></i> طباعة الخطة الأسبوعية</button>
-                    <button class="print-dropdown-item" onclick="executeMonthlyPrint()"><i class="fas fa-calendar-alt ml-1 text-warning"></i> طباعة الخطة الشهرية</button>
-                    <button class="print-dropdown-item" onclick="executeTermPrint()"><i class="fas fa-graduation-cap ml-1 text-info"></i> طباعة الخطة الفصلية</button>
-                </div>
-            </div>
-
-            <div class="dashed-print-dropdown">
-                <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
-                    <i class="fas fa-file-alt"></i> طباعة البطاقات الرسمية <i class="fas fa-chevron-down mr-1"></i>
-                </button>
-                <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> طباعة بطاقة المسابقة (على النموذج الأصلي)</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="fields-bar-container">
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة (<span id="cnt_citizenship">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة (<span id="cnt_culture">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-science);"></span> العلوم (<span id="cnt_science">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-sports);"></span> الرياضة (<span id="cnt_sports">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-scout);"></span> الكشفي (<span id="cnt_scout">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-days);"></span> المناسبات (<span id="cnt_days">0</span>)</span>
-            <span class="field-pill"><span class="dot-indicator" style="background: var(--color-competitions);"></span> المسابقات (<span id="cnt_competitions">0</span>)</span>
-        </div>
-    </div>
-
-    <!-- الجدول الرئيسي -->
-    <div class="table-responsive">
-        <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
-            <thead>
-                <tr>
-                    <th class="class-col-header">
-                        <div class="header-class-title-box">
-                            <span>الفصل</span>
-                            <button class="header-gear-btn" onclick="openModalForAdd()" title="إضافة فصل جديد"><i class="fas fa-plus-circle"></i></button>
-                        </div>
-                    </th>
-                    <th>الحصة 1</th>
-                    <th>الحصة 2</th>
-                    <th>الحصة 3</th>
-                    <th>الحصة 4</th>
-                    <th>الحصة 5</th>
-                    <th>الحصة 6</th>
-                    <th>الحصة 7</th>
-                </tr>
-            </thead>
-            <tbody id="scheduleTableBody"></tbody>
-        </table>
-    </div>
-
-    <!-- تقرير طباعة الخطة العام -->
-    <div id="activityReportPrintArea">
-        <div class="act-report-header">
-            <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
-                <div>الإدارة العامة للتعليم بمنطقة المدينة المنورة</div>
-                <div>مدرسة مكة المكرمة الابتدائية</div>
-                <div>النشاط الطلابي</div>
-            </div>
-            <div class="act-report-title">خطة تنفيذ البرامج والأنشطة الطلابية</div>
-            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 4px; text-align: center;" id="actReportSubTitle">العام الدراسي 1448هـ</div>
-        </div>
-
-        <table class="act-report-table">
-            <thead>
-                <tr>
-                    <th style="width: 35px;">م</th>
-                    <th>اسم البرنامج / النشاط</th>
-                    <th>المجال</th>
-                    <th>الصفوف المستهدفة</th>
-                    <th>فترة التنفيذ / الحصة</th>
-                    <th>طبيعة الحصة</th>
-                    <th>عدد حصص البرنامج</th>
-                    <th>المعلم المنفذ</th>
-                </tr>
-            </thead>
-            <tbody id="actReportTableBody"></tbody>
-        </table>
-
-        <div class="act-names-footer">
-            <div>رائد النشاط: عواد محمد العوفي</div>
-            <div class="approval-badge-box">
-                <i class="fas fa-check-circle"></i> معتمد إلكترونياً لعام 1448هـ
-            </div>
-            <div>مدير المدرسة: متعب حسن السحيمي</div>
-        </div>
-    </div>
-
-    <!-- بطاقة تنفيذ مسابقة نشاط (مدمجة مع صورتك الأصلية كخلفية رسمية)[cite: 7] -->
-    <div id="competitionCardPrintArea">
-        <div id="compCardsListContainer"></div>
-    </div>
-
-    <!-- نافذة إضافة فصل -->
-    <div class="modal-cal" id="addClassModal" style="display: none;">
-        <div class="mbox-cal" style="width: min(450px, 95%);">
-            <div class="mhead-cal">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>إضافة فصل دراسي جديد</h3>
-                    <button type="button" class="close text-white" onclick="closeAddModal()">&times;</button>
-                </div>
-            </div>
-            <div class="mbody-cal">
-                <div class="form-group text-right">
-                    <label class="small font-weight-bold text-light">اسم الفصل (مثال: 4/ج):</label>
-                    <input type="text" id="newClassNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="أدخل اسم الفصل">
-                </div>
-            </div>
-            <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4" onclick="addNewClassRow()">إضافة وحفظ</button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeAddModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
-            authDomain: "makkahschool-32961.firebaseapp.com",
-            projectId: "makkahschool-32961",
-            storageBucket: "makkahschool-32961.firebasestorage.app",
-            messagingSenderId: "502489720942",
-            appId: "1:502489720942:web:9738bda6457aec5904de7f",
-            measurementId: "G-HMQSMFF391"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
-        let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
-        let coursesPool = ["الرياضيات", "الإنجليزية", "العلوم", "العربية", "الإسلامية", "البدنية", "الفنية", "الحياتية", "الاجتماعيات"];
-
-        const FIELDS_CONFIG = {
-            "citizenship": { title: "المواطنة والحياة", color: "#2a9d8f" },
-            "culture": { title: "الثقافة والفنون", color: "#e06d9f" },
-            "science": { title: "العلوم والتقنية", color: "#4a90e2" },
-            "sports": { title: "الرياضة والصحة", color: "#52b788" },
-            "scout": { title: "المجال الكشفي", color: "#c0a02d" },
-            "days": { title: "الأيام والمناسبات", color: "#e76f51" },
-            "competitions": { title: "المسابقات", color: "#9b59b6" }
-        };
-
-        const PRESET_PROGRAMS = {
-            "citizenship": [{ name: "التطوع الطلابي", hours: 4 }, { name: "مهارات طموحة", hours: 6 }],
-            "culture": [{ name: "الفنون البصرية", hours: 6 }, { name: "الخط العربي", hours: 4 }],
-            "science": [{ name: "الذكاء الاصطناعي", hours: 10 }, { name: "الأمن السيبراني", hours: 4 }],
-            "sports": [{ name: "الأولمبياد الرياضي", hours: 6 }, { name: "اللياقة البدنية", hours: 2 }],
-            "scout": [{ name: "بصمتي الكشفية", hours: 2 }, { name: "خيمة التجارب", hours: 2 }],
-            "days": [{ name: "اليوم الوطني", hours: 4 }, { name: "يوم المعلم", hours: 2 }],
-            "competitions": [{ name: "مسابقة القرآن الكريم", hours: 4 }, { name: "مسابقة تحدي القراءة", hours: 4 }, { name: "مسابقة الابتكار والعلوم", hours: 6 }]
-        };
-
-        let weekAssignments = {};
-        let activeDayName = "الثلاثاء";
-        let activeWeekLabel = "الأسبوع الثامن";
-        let currentTerm = 1;
-        let selectedCellInfo = null;
-
-        const CAL_1448 = [
-            { t: 1, w: 8, label: "الأسبوع الثامن", days: [{name:"الأحد",h:"1448/05/07 هـ",m:"2026/10/18 م"},{name:"الإثنين",h:"1448/05/08 هـ",m:"2026/10/19 م"},{name:"الثلاثاء",h:"1448/05/09 هـ",m:"2026/10/20 م"},{name:"الأربعاء",h:"1448/05/10 هـ",m:"2026/10/21 م"},{name:"الخميس",h:"1448/05/11 هـ",m:"2026/10/22 م"}]}
-        ];
-        let ALL_DAYS_FLAT = [{ term: 1, weekLabel: "الأسبوع الثامن", dayName: "الثلاثاء", hDate: "1448/05/09 هـ", mDate: "2026/10/20 م" }];
-        let currentFlatIndex = 0;
-
-        document.addEventListener("DOMContentLoaded", async () => {
-            await loadDataFromCloud();
-            setTodayAutomatically();
-            window.addEventListener('click', function(e) {
-                if (!e.target.closest('.dashed-print-dropdown')) {
-                    document.querySelectorAll('.print-dropdown-menu').forEach(menu => menu.classList.remove('show'));
-                }
-            });
-        });
-
-        function togglePrintDropdown(event, menuId) {
-            event.stopPropagation();
-            let targetMenu = document.getElementById(menuId);
-            let isShown = targetMenu.classList.contains('show');
-            document.querySelectorAll('.print-dropdown-menu').forEach(menu => menu.classList.remove('show'));
-            if (!isShown) targetMenu.classList.add('show');
-        }
-
-        async function loadDataFromCloud() {
-            try {
-                let docRef = await db.collection("schedules").doc("main_schedule").get();
-                if (docRef.exists) {
-                    let data = docRef.data();
-                    if (data.weekAssignments) weekAssignments = data.weekAssignments;
-                    if (data.classes) targetClasses = data.classes;
-                    if (data.teachers) teachersPool = data.teachers;
-                }
-            } catch (e) { console.log("جارِ استخدام البيانات المحلية..."); }
-            updateFieldCounters();
-        }
-
-        function setTodayAutomatically() {
-            updateViewFromFlatIndex();
-        }
-
-        function updateViewFromFlatIndex() {
-            let cur = ALL_DAYS_FLAT[currentFlatIndex] || ALL_DAYS_FLAT[0];
-            activeWeekLabel = cur.weekLabel;
-            activeDayName = cur.dayName;
-            currentTerm = cur.term;
-
-            document.getElementById('currentDayText').innerText = `${cur.weekLabel} - ${cur.dayName}`;
-            document.getElementById('currentWeekText').innerText = `الموافق: ${cur.hDate} (${cur.mDate})`;
-
-            renderScheduleTableForDay(cur.dayName);
-        }
-
-        function navigateDay(direction) {
-            let newIndex = currentFlatIndex + direction;
-            if (newIndex >= 0 && newIndex < ALL_DAYS_FLAT.length) {
-                currentFlatIndex = newIndex;
-                updateViewFromFlatIndex();
-            }
-        }
-
-        function updateFieldCounters() {
-            let counts = { citizenship: 0, culture: 0, science: 0, sports: 0, scout: 0, days: 0, competitions: 0 };
-            for (let key in weekAssignments) {
-                let cellData = weekAssignments[key];
-                if (cellData && cellData.isActivity && cellData.fieldKey) {
-                    if (counts[cellData.fieldKey] !== undefined) counts[cellData.fieldKey]++;
-                }
-            }
-            for (let fk in counts) {
-                let el = document.getElementById(`cnt_${fk}`);
-                if (el) el.innerText = counts[fk];
-            }
-        }
-
-        function renderScheduleTableForDay(dayStr) {
-            let cleanDay = dayStr;
-            const tbody = document.getElementById('scheduleTableBody');
-            tbody.innerHTML = '';
-
-            targetClasses.forEach((cls, index) => {
-                let tr = document.createElement('tr');
-                let html = `<th class="class-col-header">
-                    <div class="class-row-header-box" onclick="openClassActionModal(${index}, '${cls}')" title="إدارة الفصل">
-                        <span class="class-title-text">${cls}</span>
-                    </div>
-                </th>`;
-                
-                for(let i = 1; i <= 7; i++) {
-                    let weekKey = `${activeWeekLabel}_${cleanDay}_${cls}_${i}`;
-                    let cellData = weekAssignments[weekKey] || null;
-
-                    if (cellData && cellData.isActivity) {
-                        let fKey = cellData.fieldKey || "citizenship";
-                        let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                        let flexibility = cellData.flexibility || "ثابتة";
-                        let hoursCount = cellData.hours || 1;
-
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
-                            <div class="activity-card-custom" style="border-color: ${fConf.color};">
-                                <span class="field-tag-badge" style="background: ${fConf.color};">${fConf.title}</span>
-                                <div class="activity-meta-row px-1">
-                                    <span class="activity-flexibility-box">${flexibility}</span>
-                                    <span class="activity-hours-box">${hoursCount} حصص</span>
-                                </div>
-                                <div class="activity-header-custom" style="color: ${fConf.color};">${cellData.course}</div>
-                                <div class="teacher-name-badge">${cellData.teacher || "نشاط مدرسي"}</div>
-                            </div>
-                        </td>`;
-                    } else if (cellData && cellData.course) {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
-                            <div class="course-cell-box">
-                                <div class="course-name-large">${cellData.course}</div>
-                                <div class="teacher-name-badge">${cellData.teacher || "—"}</div>
-                            </div>
-                        </td>`;
-                    } else {
-                        html += `<td onclick="openCellClickModal('${cleanDay}', '${cls}', ${i})">
-                            <div class="empty-cell-box"></div>
-                        </td>`;
-                    }
-                }
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-            updateFieldCounters();
-        }
-
-        function onFieldChange(fieldKey) {
-            let sel = document.getElementById('cellActPresetSelect');
-            sel.innerHTML = '';
-            let list = PRESET_PROGRAMS[fieldKey] || [];
-            list.forEach(p => {
-                sel.innerHTML += `<option value="${p.name}" data-hours="${p.hours}">${p.name} (${p.hours} حصص)</option>`;
-            });
-            sel.innerHTML += `<option value="NEW_CUSTOM">+ إضافة برنامج / مسابقة جديدة...</option>`;
-            if (list.length > 0) { sel.value = list[0].name; onPresetProgramSelect(list[0].name); }
-            else { onPresetProgramSelect('NEW_CUSTOM'); }
-        }
-
-        function onPresetProgramSelect(val) {
-            let customBox = document.getElementById('customProgramNameBox');
-            let hoursInput = document.getElementById('cellActHoursInput');
-            if (val === 'NEW_CUSTOM') {
-                customBox.style.display = 'block';
-                document.getElementById('cellActNameInput').value = '';
-            } else {
-                customBox.style.display = 'none';
-                document.getElementById('cellActNameInput').value = val;
-                let fieldKey = document.getElementById('cellActFieldSelect').value;
-                let list = PRESET_PROGRAMS[fieldKey] || [];
-                let found = list.find(p => p.name === val);
-                if (found) { hoursInput.value = found.hours; }
-            }
-        }
-
-        function executeDailyPrint() {
-            document.body.className = "print-plan-mode";
-            document.getElementById('printDropdownMenu').classList.remove('show');
-            let tbody = document.getElementById('actReportTableBody');
-            tbody.innerHTML = '';
-            let count = 0;
-            targetClasses.forEach(cls => {
-                for(let i = 1; i <= 7; i++) {
-                    let weekKey = `${activeWeekLabel}_${activeDayName}_${cls}_${i}`;
-                    let cellData = weekAssignments[weekKey] || null;
-                    if (cellData && cellData.isActivity) {
-                        count++;
-                        let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
-                        tbody.innerHTML += `<tr><td>${count}</td><td style="font-weight:700;">${cellData.course}</td><td style="background:${fConf.color};color:#fff;">${fConf.title}</td><td>فصل ${cls}</td><td>الحصة ${i}</td><td>${cellData.flexibility}</td><td>${cellData.hours} حصص</td><td>${cellData.teacher || "—"}</td></tr>`;
-                    }
-                }
-            });
-            window.print();
-        }
-
-        function executeWeeklyPrint() { executeDailyPrint(); }
-        function executeMonthlyPrint() { executeDailyPrint(); }
-        function executeTermPrint() { executeDailyPrint(); }
-
-        /* طباعة بطاقة المسابقة باستخدام صورتك الأصلية (`image_e80be1.png`) كخلفية دقيقة[cite: 7] */
-        function executeCompetitionCardPrint() {
-            document.body.className = "print-competition-card-mode";
-            document.getElementById('reportsDropdownMenu').classList.remove('show');
-
-            let container = document.getElementById('compCardsListContainer');
-            container.innerHTML = '';
-
-            let competitionsList = [];
-            for (let key in weekAssignments) {
-                let cellData = weekAssignments[key];
-                if (cellData && cellData.isActivity && cellData.fieldKey === "competitions") {
-                    competitionsList.push({ key, ...cellData });
-                }
-            }
-
-            if (competitionsList.length === 0) {
-                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم والسنة النبوية", fieldKey: "competitions", teacher: "عصام الحازمي", hours: 4 });
-            }
-
-            competitionsList.forEach(act => {
-                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
-
-                let cardDiv = document.createElement('div');
-                cardDiv.className = 'official-card-page';
-                cardDiv.innerHTML = `
-                    <img src="image_e80be1.png" class="form-background-image" alt="النموذج الرسمي">
-                    <div class="overlay-fields-layer">
-                        <input type="text" class="editable-field f-school" value="مدرسة مكة المكرمة الابتدائية">
-                        <input type="text" class="editable-field f-competition" value="${act.course}">
-                        <input type="text" class="editable-field f-field" value="${fConf.title}">
-                        <input type="text" class="editable-field f-prep-classes" value="${act.hours || 4} حصص">
-                        <input type="text" class="editable-field f-term" value="${currentTerm === 1 ? 'الفصل الدراسي الأول' : 'الفصل الدراسي الثاني'}">
-                        
-                        <input type="text" class="editable-field f-start-day" value="${activeDayName}">
-                        <input type="text" class="editable-field f-start-week" value="${activeWeekLabel}">
-                        <input type="text" class="editable-field f-start-date" value="1448/05/09 هـ">
-
-                        <input type="text" class="editable-field f-end-day" value="الخميس">
-                        <input type="text" class="editable-field f-end-week" value="${activeWeekLabel}">
-                        <input type="text" class="editable-field f-end-date" value="1448/05/11 هـ">
-
-                        <input type="text" class="editable-field f-class" value="جميع صفوف المرحلة الابتدائية">
-                        <input type="text" class="editable-field f-teacher" value="${act.teacher || 'عصام الحازمي'}">
-
-                        <input type="text" class="editable-field f-part-students" value="45">
-                        <input type="text" class="editable-field f-winners" value="10">
-
-                        <input type="text" class="editable-field f-passed-students" value="15">
-                        <input type="text" class="editable-field f-prizes" value="10 جوائز عينية">
-
-                        <input type="text" class="editable-field f-parents-disab" value="5 أولياء أمور">
-                        <input type="text" class="editable-field f-disab-students" value="طالبان (2)">
-
-                        <input type="text" class="editable-field f-partnerships-count" value="شراكة واحدة">
-                        <input type="text" class="editable-field f-partnerships-names" value="لجنة التنمية الاجتماعية">
-
-                        <input type="text" class="editable-field f-results" value="تأهل الطلاب للمرحلة النهائية وحفظ أجزاء من القرآن">
-                        <input type="text" class="editable-field f-notes" value="تم التنفيذ بنجاح وتفاعل مميز من الطلاب وأولياء الأمور">
-
-                        <input type="text" class="editable-field f-sig-teacher-name" value="${act.teacher || 'عصام الحازمي'}">
-                        <input type="text" class="editable-field f-sig-teacher-date" value="09 / 05 / 1448">
-
-                        <input type="text" class="editable-field f-sig-leader-name" value="عواد محمد العوفي">
-                        <input type="text" class="editable-field f-sig-leader-date" value="09 / 05 / 1448">
-                    </div>
-                `;
-                container.appendChild(cardDiv);
-            });
-
-            window.print();
-        }
-
-        function openCellClickModal(day, cls, period) {
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-            let cellData = weekAssignments[weekKey] || {};
-            selectedCellInfo = { day, cls, period };
-            document.getElementById('cellModalSubtitle').innerText = `${activeWeekLabel} - ${day} - فصل ${cls} - الحصة ${period}`;
-            
-            updateTeacherDropdowns();
-            const courseSel = document.getElementById('cellCourseSelect');
-            courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === cellData.course ? 'selected' : ''}>${co}</option>`).join('');
-
-            const cellTypeSel = document.getElementById('cellTypeSelect');
-            if (cellData.isActivity) {
-                cellTypeSel.value = "activity";
-                let fKey = cellData.fieldKey || "citizenship";
-                document.getElementById('cellActFieldSelect').value = fKey;
-                onFieldChange(fKey);
-                document.getElementById('cellActPresetSelect').value = cellData.course;
-                document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
-                document.getElementById('cellActHoursInput').value = cellData.hours || 1;
-            } else if (cellData.course) {
-                cellTypeSel.value = "course";
-            } else {
-                cellTypeSel.value = "empty";
-                onFieldChange("citizenship");
-            }
-
-            document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
-            handleCellTypeChange(cellTypeSel.value);
-            document.getElementById('cellClickModal').classList.add('show');
-        }
-
-        function closeCellClickModal() { document.getElementById('cellClickModal').classList.remove('show'); selectedCellInfo = null; }
-
-        function handleCellTypeChange(typeVal) {
-            document.getElementById('courseSelectionGroup').style.display = (typeVal === 'course') ? 'block' : 'none';
-            document.getElementById('activityFieldsGroup').style.display = (typeVal === 'activity') ? 'block' : 'none';
-            document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
-        }
-
-        async function saveCellAssignment() {
-            if (!selectedCellInfo) return;
-            const { day, cls, period } = selectedCellInfo;
-            const typeVal = document.getElementById('cellTypeSelect').value;
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-
-            if (typeVal === 'empty') {
-                delete weekAssignments[weekKey];
-            } else {
-                let courseName = "";
-                let teacherName = "";
-                let isAct = false;
-                let fieldKey = "";
-                let flexibility = "ثابتة";
-                let hours = 1;
-
-                if (typeVal === 'course') {
-                    courseName = document.getElementById('cellCourseSelect').value;
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                } else if (typeVal === 'activity') {
-                    let presetVal = document.getElementById('cellActPresetSelect').value;
-                    courseName = (presetVal === 'NEW_CUSTOM') ? document.getElementById('cellActNameInput').value.trim() : presetVal;
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                    isAct = true;
-                    fieldKey = document.getElementById('cellActFieldSelect').value;
-                    flexibility = document.getElementById('cellActFlexSelect').value;
-                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-                }
-
-                weekAssignments[weekKey] = { course: courseName, teacher: teacherName, isActivity: isAct, fieldKey: fieldKey, flexibility: flexibility, hours: hours };
-            }
-
-            await saveToCloud();
-            closeCellClickModal();
-            renderScheduleTableForDay(activeDayName);
-        }
-
-        function updateTeacherDropdowns() {
-            const teacherSel = document.getElementById('cellTeacherSelect');
-            teacherSel.innerHTML = `<option value="">— تفريغ المعلم —</option>` + teachersPool.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
-
-        function openTeachersManagerModal() { renderTeachersListInManager(); document.getElementById('teachersManagerModal').classList.add('show'); }
-        function closeTeachersManagerModal() { document.getElementById('teachersManagerModal').classList.remove('show'); updateTeacherDropdowns(); }
-        function renderTeachersListInManager() {
-            const box = document.getElementById('teachersListContainer');
-            box.innerHTML = teachersPool.map((t, idx) => `<div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary"><span class="text-white small">${t}</span><button class="btn btn-sm btn-outline-danger py-0" onclick="deleteTeacher(${idx})"><i class="fas fa-trash"></i></button></div>`).join('');
-        }
-        async function addNewTeacher() {
-            let name = document.getElementById('newTeacherNameInput').value.trim();
-            if(!name) return;
-            teachersPool.push(name);
-            document.getElementById('newTeacherNameInput').value = '';
-            renderTeachersListInManager();
-            await saveToCloud();
-        }
-        async function deleteTeacher(idx) { teachersPool.splice(idx, 1); renderTeachersListInManager(); await saveToCloud(); }
-
-        async function saveToCloud() {
-            try {
-                await db.collection("schedules").doc("main_schedule").set({
-                    weekAssignments: weekAssignments,
-                    classes: targetClasses,
-                    teachers: teachersPool
-                });
-            } catch (e) { console.log("خطأ أثناء الحفظ بالسحابة."); }
-        }
-
-        function openCalendarModal() { document.getElementById('calendarModal').classList.add('show'); }
-        function closeCalendarModal() { document.getElementById('calendarModal').classList.remove('show'); }
-        function switchTerm(term) { currentTerm = term; document.getElementById('tabTerm1').classList.toggle('active', term === 1); document.getElementById('tabTerm2').classList.toggle('active', term === 2); }
-
-        let selectedClassIndexForAction = null;
-        function openClassActionModal(index, className) {
-            selectedClassIndexForAction = index;
-            document.getElementById('actionModalClassName').innerText = `الفصل: ${className}`;
-            document.getElementById('classActionModal').classList.add('show');
-        }
-        function closeClassActionModal() { document.getElementById('classActionModal').classList.remove('show'); selectedClassIndexForAction = null; }
-        async function moveSelectedClass(direction) {
-            if (selectedClassIndexForAction === null) return;
-            let targetIndex = selectedClassIndexForAction + direction;
-            if (targetIndex < 0 || targetIndex >= targetClasses.length) return;
-            let temp = targetClasses[selectedClassIndexForAction];
-            targetClasses[selectedClassIndexForAction] = targetClasses[targetIndex];
-            targetClasses[targetIndex] = temp;
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        async function deleteSelectedClass() {
-            if (selectedClassIndexForAction === null) return;
-            targetClasses.splice(selectedClassIndexForAction, 1);
-            closeClassActionModal();
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-        }
-        function openModalForAdd() { document.getElementById('addClassModal').style.display = 'flex'; }
-        function closeAddModal() { document.getElementById('addClassModal').style.display = 'none'; }
-        async function addNewClassRow() {
-            let className = document.getElementById('newClassNameInput').value.trim();
-            if(!className) return;
-            targetClasses.push(className);
-            await saveToCloud();
-            renderScheduleTableForDay(activeDayName);
-            closeAddModal();
-        }
-    </script>
 </body>
 </html>
