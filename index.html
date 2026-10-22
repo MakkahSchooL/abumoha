@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- مكتبات Firebase SDK -->
+    <!-- مكتبات Firebase SDK (تم إضافة مكتبة التخزين Storage) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         :root {
@@ -896,9 +897,9 @@
                     </div>
 
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود فريد يحتوي على الملف:</label>
+                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود يفتح الملف من السحابة:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص ببيانات الملف المرفق فوراً ودون أي تأخير.</small>
+                        <small class="text-muted d-block mt-1">سيتم رفع الملف المرفق إلى السحابة فوراً وتوليد باركود خاص به.</small>
                     </div>
                 </div>
 
@@ -1064,6 +1065,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage();
 
         let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
@@ -2143,39 +2145,21 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        /* قراءة الملف المرفوع وتضمين بياناته مباشرة داخل رابط الباركود */
-        function generateQrCodeFromFile(file) {
-            return new Promise((resolve) => {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let fileDataUrl = e.target.result;
-                    // إذا كان الملف صورة، نقوم بتحسينه وضبطه ليتناسب تماماً مع سعة الباركود
-                    if (file.type.startsWith('image/')) {
-                        let img = new Image();
-                        img.onload = function() {
-                            let canvas = document.createElement('canvas');
-                            let ctx = canvas.getContext('2d');
-                            let maxDim = 120;
-                            let w = img.width, h = img.height;
-                            if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
-                            else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
-                            canvas.width = w;
-                            canvas.height = h;
-                            ctx.drawImage(img, 0, 0, w, h);
-                            let compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(compressedDataUrl)}`;
-                            resolve(qrApiUrl);
-                        };
-                        img.src = fileDataUrl;
-                    } else {
-                        // للملفات الأخرى، نمرر بيانات الملف وندرجه كمرجع مباشر
-                        let compactData = `data:${file.type};name=${encodeURIComponent(file.name)};base64,${fileDataUrl.split(',')[1]?.substring(0, 1500) || ''}`;
-                        let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(compactData)}`;
-                        resolve(qrApiUrl);
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
+        /* رفع الملف إلى Firebase Storage وتوليد باركود برابط الملف الحقيقي المباشر */
+        async function generateQrCodeFromFile(file) {
+            try {
+                let storageRef = storage.ref();
+                let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
+                let snapshot = await fileRef.put(file);
+                let downloadURL = await snapshot.ref.getDownloadURL();
+                
+                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(downloadURL)}`;
+                return qrApiUrl;
+            } catch (error) {
+                console.error("خطأ في رفع الملف:", error);
+                alert("حدث خطأ أثناء رفع الملف للسحابة. تحقق من اتصال الإنترنت أو إعدادات التخزين.");
+                return null;
+            }
         }
 
         async function saveCellAssignment() {
@@ -2218,7 +2202,7 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        // توليد الباركود بناءً على الملف المرفوع فوريّاً
+                        // رفع الملف للسحابة وتوليد الباركود برابط الملف الحقيقي
                         barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
                     }
                 }
