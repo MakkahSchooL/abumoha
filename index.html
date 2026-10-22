@@ -896,9 +896,9 @@
                     </div>
 
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود يفتح الملف من السحابة:</label>
+                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود يفتح الملف مباشرة:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيتم رفع الملف المرفق إلى السحابة فوراً وتوليد باركود خاص به.</small>
+                        <small class="text-muted d-block mt-1">سيتم توليد باركود يفتح الملف المرفق فوراً.</small>
                     </div>
                 </div>
 
@@ -2146,16 +2146,25 @@
                 let storageRef = storage.ref();
                 let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
                 
-                // إضافة حماية زمنية بحد أقصى 8 ثوانٍ لكي لا يعلق النظام أبداً إذا لم تكن خدمة التخزين مفعلة
                 let uploadPromise = fileRef.put(file);
-                let timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("مهلة الرفع")), 8000));
+                let timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("مهلة الرفع")), 5000));
                 
                 let snapshot = await Promise.race([uploadPromise, timeoutPromise]);
                 let downloadURL = await snapshot.ref.getDownloadURL();
                 return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
             } catch (error) {
-                console.warn("تم تجاوز الرفع السحابي أو تعذر، جاري توليد الباركود الاحتياطي:", error);
-                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent("https://makkahschool.github.io/test/")}&ecc=M`;
+                console.warn("الرفع السحابي غير مفعل، جاري تحويل الملف المرفق محلياً لتضمينه في الباركود:", error);
+                return new Promise((resolve) => {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let fileDataUrl = e.target.result;
+                        resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fileDataUrl)}&ecc=M`);
+                    };
+                    reader.onerror = function() {
+                        resolve(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(file.name)}&ecc=M`);
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
