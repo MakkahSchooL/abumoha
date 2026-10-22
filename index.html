@@ -25,7 +25,7 @@
             --line: #D3DEDB;
             --brand: #0C6A64;
             --brand-ink: #FFFFFF;
-            --font: "IBM Plex Sans Arabic", "Sakkal Majalla", Tahoma, sans-serif;
+            --font: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
 
             /* ألوان المجالات */
             --color-citizenship: #2a9d8f;
@@ -354,7 +354,7 @@
             border: 1px solid var(--line);
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 220px;
+            min-width: 210px;
             z-index: 1000;
             padding: 6px;
         }
@@ -544,7 +544,6 @@
             line-height: 1.2;
         }
 
-        /* منطقة التقرير التنفيذي للأنشطة */
         #activityReportPrintArea {
             display: none;
             background: #fff;
@@ -618,7 +617,6 @@
             margin: 0 auto;
         }
 
-        /* تنسيقات بطاقة تنفيذ مسابقة نشاط طلابي */
         #competitionCardPrintArea {
             display: none;
             background: #fff;
@@ -626,130 +624,93 @@
             padding: 0;
             direction: rtl;
         }
-
-        /* تنسيقات بطاقة تنفيذ برنامج نشاط طلابي (مطابقة تماماً للنموذج المستقل الأصلي والأبعاد الدقيقة) */
-        #programCardPrintArea {
-            display: none;
-            background: #fff;
-            color: #003845;
-            padding: 0;
-            direction: rtl;
-        }
-
         .card-page {
             width: 210mm;
-            height: 297mm;
-            background: #fff;
-            color: #003845;
-            margin: 0 auto 18px;
-            position: relative;
-            padding: 7.7mm 10.8mm 6mm 9.8mm;
+            min-height: 290mm;
+            margin: 0 auto;
+            padding: 10mm 12mm;
             box-sizing: border-box;
-            box-shadow: 0 2px 14px rgba(0,40,50,.16);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            font-family: var(--font);
+            position: relative;
+            background: #fff;
             page-break-after: always;
         }
-
-        .cd-logo-gov {
-            position: absolute;
-            top: 7.7mm;
-            left: 8.8mm;
-            width: 30mm;
-            text-align: center;
-            line-height: 1.25;
-            color: #003845;
+        .card-header-gov {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 12px;
         }
-        .cd-logo-gov b { display: block; font-size: 12pt; }
-        .cd-logo-gov span { font-size: 7pt; letter-spacing: .2px; }
-
-        .cd-title-gov {
-            margin: 13mm 0 2mm;
+        .card-header-gov img {
+            max-width: 140px;
+            height: auto;
+        }
+        .card-main-title {
             text-align: center;
-            font-size: 18pt;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             color: #003744;
+            margin: 15px 0 20px 0;
         }
-
-        table.prog-card-table {
+        table.comp-card-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            border: 2px solid #003845;
+            margin-bottom: 25px;
         }
-        table.prog-card-table td {
+        table.comp-card-table td, table.comp-card-table th {
             border: 1px solid #003845;
-            padding: .5mm 1.5mm;
-            text-align: center;
+            padding: 7px 10px;
+            font-size: 0.9rem;
             vertical-align: middle;
-            font-size: 10.5pt;
-            line-height: 1.3;
+            text-align: center;
         }
-        table.prog-card-table tr:nth-child(even) td { background: #D2E2E8; }
-        table.prog-card-table td.lb {
+        table.comp-card-table tr:nth-child(even) td {
+            background-color: #D2E2E8;
+        }
+        .td-label {
+            font-weight: 800;
+            color: #003744;
+            background-color: #ffffff !important;
+            width: 28%;
+            font-size: 0.92rem;
+        }
+        .td-sub-label {
             font-weight: 700;
-            font-size: 11.5pt;
+            color: #003744;
+            background-color: #e6eff2;
+            font-size: 0.85rem;
         }
-
-        .platform-options-box {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            text-align: right;
-            padding-right: 8px;
-            font-weight: 600;
-            font-size: 10pt;
-        }
-
         .card-footer-signatures {
             display: flex;
             justify-content: space-between;
-            margin-top: 2mm;
-            font-size: 11pt;
-            line-height: 1.8;
+            align-items: flex-start;
+            margin-top: 35px;
+            padding: 0 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
         }
-        .card-footer-signatures div { min-width: 62mm; }
-        .card-footer-signatures b { display: block; font-weight: 700; }
-
+        .card-footer-signatures div {
+            line-height: 2.2;
+        }
         .card-bottom-note {
-            margin-top: 2mm;
-            padding-inline-start: 4mm;
-            font-size: 9.5pt;
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #4b5563;
             line-height: 1.5;
-            position: relative;
-        }
-        .card-bottom-note::before { content: "•"; position: absolute; inset-inline-start: 0; }
-
-        .card-bottom-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 6mm;
-            background: linear-gradient(90deg, #2E8B57 0%, #20B2AA 50%, #4682B4 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 8pt;
-            letter-spacing: 1px;
+            padding-right: 10px;
         }
 
-        @page cardp { size: A4 portrait; margin: 0; }
         @media print {
             body { background: #fff !important; padding: 0 !important; }
             .page-header-card, .cal-nav-bar, .control-btns-container, .modal-cal, .table-responsive, .header-gear-btn { display: none !important; }
             body.print-plan-mode #activityReportPrintArea { display: block !important; }
             body.print-card-mode #competitionCardPrintArea { display: block !important; }
-            body.print-prog-mode #programCardPrintArea { display: block !important; }
-            .card-page { page: cardp; zoom: 1 !important; margin: 0; box-shadow: none; break-after: page; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
     <div class="page-header-card">
         <div class="d-flex align-items-center" style="gap: 12px;">
             <div class="header-icon-box">
@@ -766,7 +727,6 @@
         </div>
     </div>
 
-    <!-- شريط اختيار اليوم والتقويم -->
     <div class="cal-nav-bar">
         <div class="d-flex align-items-center gap-3">
             <button class="btn-open-cal" onclick="openCalendarModal()">
@@ -784,7 +744,6 @@
         </div>
     </div>
 
-    <!-- نافذة التقويم الشامل -->
     <div class="modal-cal" id="calendarModal">
         <div class="mbox-cal">
             <div class="mhead-cal">
@@ -806,7 +765,6 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة المعلمين -->
     <div class="modal-cal" id="teachersManagerModal">
         <div class="mbox-cal" style="width: min(400px, 95%);">
             <div class="mhead-cal">
@@ -817,7 +775,7 @@
             </div>
             <div class="mbody-cal">
                 <div class="input-group input-group-sm mb-3">
-                    <input type="text" id="newTeacherNameInput" class="form-control bg-dark text-white border-secondary" placeholder="اسم المعلم الجديد">
+                    <input type="text" id="newTeacherNameInput" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="اسم المعلم الجديد">
                     <div class="input-group-append">
                         <button class="btn btn-success" type="button" onclick="addNewTeacher()">إضافة</button>
                     </div>
@@ -830,7 +788,6 @@
         </div>
     </div>
 
-    <!-- نافذة خيارات إدارة الفصل -->
     <div class="modal-cal" id="classActionModal">
         <div class="mbox-cal" style="width: min(380px, 95%);">
             <div class="mhead-cal">
@@ -855,7 +812,6 @@
         </div>
     </div>
 
-    <!-- النافذة التفاعلية لإسناد وتعديل الحصة -->
     <div class="modal-cal" id="cellClickModal">
         <div class="mbox-cal" style="width: min(520px, 95%);">
             <div class="mhead-cal">
@@ -943,10 +899,8 @@
         </div>
     </div>
 
-    <!-- شريط التحكم والأزرار فوق الجدول -->
     <div class="control-btns-container">
         <div class="d-flex align-items-center gap-2" style="gap: 8px;">
-            <!-- زر طباعة الخطط -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-print" onclick="togglePrintDropdown(event, 'printDropdownMenu')">
                     <i class="fas fa-print"></i> خيارات الطباعة <i class="fas fa-chevron-down mr-1"></i>
@@ -959,14 +913,12 @@
                 </div>
             </div>
 
-            <!-- زر طباعة التقارير وبطاقات الأنشطة -->
             <div class="dashed-print-dropdown">
                 <button class="btn-dashed-reports" onclick="togglePrintDropdown(event, 'reportsDropdownMenu')">
                     <i class="fas fa-file-alt"></i> طباعة التقارير <i class="fas fa-chevron-down mr-1"></i>
                 </button>
                 <div class="print-dropdown-menu" id="reportsDropdownMenu">
-                    <button class="print-dropdown-item" onclick="executeProgramCardPrint()"><i class="fas fa-id-card ml-1 text-success"></i> بطاقة تنفيذ برنامج نشاط طلابي *</button>
-                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-award ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط طلابي *</button>
+                    <button class="print-dropdown-item" onclick="executeCompetitionCardPrint()"><i class="fas fa-id-card ml-1 text-danger"></i> بطاقة تنفيذ مسابقة نشاط طلابي *</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير اليومي...')"><i class="fas fa-file-invoice ml-1 text-primary"></i> التقرير اليومي</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الأسبوعي...')"><i class="fas fa-file-signature ml-1 text-info"></i> التقرير الأسبوعي</button>
                     <button class="print-dropdown-item" onclick="alert('في انتظار شكل التقرير الشهري...')"><i class="fas fa-file-contract ml-1 text-warning"></i> التقرير الشهري</button>
@@ -975,7 +927,6 @@
             </div>
         </div>
         
-        <!-- العدادات الإجمالية -->
         <div class="fields-bar-container">
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-citizenship);"></span> المواطنة والحياة (<span id="cnt_citizenship">0</span>)</span>
             <span class="field-pill"><span class="dot-indicator" style="background: var(--color-culture);"></span> الثقافة والفنون (<span id="cnt_culture">0</span>)</span>
@@ -987,7 +938,6 @@
         </div>
     </div>
 
-    <!-- الجدول الرئيسي -->
     <div class="table-responsive">
         <table class="table wc-main-table table-bordered text-center" id="mainScheduleTable">
             <thead>
@@ -1011,7 +961,6 @@
         </table>
     </div>
 
-    <!-- تقرير طباعة الأنشطة الطلابية التنفيذي -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
@@ -1049,17 +998,10 @@
         </div>
     </div>
 
-    <!-- بطاعة تنفيذ مسابقة نشاط طلابي -->
     <div id="competitionCardPrintArea">
         <div id="compCardsListContainer"></div>
     </div>
 
-    <!-- بطاقة تنفيذ برنامج نشاط طلابي * (المطابقة تماماً للأبعاد والخطوط الأصلية) -->
-    <div id="programCardPrintArea">
-        <div id="progCardsListContainer"></div>
-    </div>
-
-    <!-- نافذة إضافة فصل جديد -->
     <div class="modal-cal" id="addClassModal" style="display: none;">
         <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
@@ -1195,13 +1137,13 @@
         };
 
         let weekAssignments = {};
+        
         let activeDayName = "الثلاثاء";
         let activeWeekLabel = "الأسبوع الثامن";
         let currentTerm = 1;
         let selectedCellInfo = null;
 
         const CAL_1448 = [
-            // --- الفصل الدراسي الأول ---
             { t: 1, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/02/10 هـ",m:"2026/08/16 م"},{name:"الإثنين",h:"1448/02/11 هـ",m:"2026/08/17 م"},{name:"الثلاثاء",h:"1448/02/12 هـ",m:"2026/08/18 م"},{name:"الأربعاء",h:"1448/02/13 هـ",m:"2026/08/19 م"},{name:"الخميس",h:"1448/02/14 هـ",m:"2026/08/20 م"}]},
             { t: 1, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/02/17 هـ",m:"2026/08/23 م"},{name:"الإثنين",h:"1448/02/18 هـ",m:"2026/08/24 م"},{name:"الثلاثاء",h:"1448/02/19 هـ",m:"2026/08/25 م"},{name:"الأربعاء",h:"1448/02/20 هـ",m:"2026/08/26 م"},{name:"الخميس",h:"1448/02/21 هـ",m:"2026/08/27 م"}]},
             { t: 1, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/02/24 هـ",m:"2026/08/30 م"},{name:"الإثنين",h:"1448/02/25 هـ",m:"2026/08/31 م"},{name:"الثلاثاء",h:"1448/02/26 هـ",m:"2026/09/01 م"},{name:"الأربعاء",h:"1448/02/27 هـ",m:"2026/09/02 م"},{name:"الخميس",h:"1448/02/28 هـ",m:"2026/09/03 م"}]},
@@ -1222,7 +1164,6 @@
             { t: 1, w: 18, label: "الأسبوع الثامن عشر", days: [{name:"الأحد",h:"1448/07/22 هـ",m:"2026/12/27 م"},{name:"الإثنين",h:"1448/07/23 هـ",m:"2026/12/28 م"},{name:"الثلاثاء",h:"1448/07/24 هـ",m:"2026/12/29 م"},{name:"الأربعاء",h:"1448/07/25 هـ",m:"2026/12/30 م"},{name:"الخميس",h:"1448/07/26 هـ",m:"2026/12/31 م"}]},
             { t: 1, w: 19, label: "الأسبوع التاسع عشر", days: [{name:"الأحد",h:"1448/07/29 هـ",m:"2027/01/03 م"},{name:"الإثنين",h:"1448/08/01 هـ",m:"2027/01/04 م"},{name:"الثلاثاء",h:"1448/08/02 هـ",m:"2027/01/05 م"},{name:"الأربعاء",h:"1448/08/03 هـ",m:"2027/01/06 م"},{name:"الخميس",h:"1448/08/04 هـ",m:"2027/01/07 م"}]},
 
-            // --- الفصل الدراسي الثاني ---
             { t: 2, w: 1, label: "الأسبوع الأول", days: [{name:"الأحد",h:"1448/08/14 هـ",m:"2027/01/17 م"},{name:"الإثنين",h:"1448/08/15 هـ",m:"2027/01/18 م"},{name:"الثلاثاء",h:"1448/08/16 هـ",m:"2027/01/19 م"},{name:"الأربعاء",h:"1448/08/17 هـ",m:"2027/01/20 م"},{name:"الخميس",h:"1448/08/18 هـ",m:"2027/01/21 م"}]},
             { t: 2, w: 2, label: "الأسبوع الثاني", days: [{name:"الأحد",h:"1448/08/21 هـ",m:"2027/01/24 م"},{name:"الإثنين",h:"1448/08/22 هـ",m:"2027/01/25 م"},{name:"الثلاثاء",h:"1448/08/23 هـ",m:"2027/01/26 م"},{name:"الأربعاء",h:"1448/08/24 هـ",m:"2027/01/27 م"},{name:"الخميس",h:"1448/08/25 هـ",m:"2027/01/28 م"}]},
             { t: 2, w: 3, label: "الأسبوع الثالث", days: [{name:"الأحد",h:"1448/08/28 هـ",m:"2027/01/31 م"},{name:"الإثنين",h:"1448/08/29 هـ",m:"2027/02/01 م"},{name:"الثلاثاء",h:"1448/09/01 هـ",m:"2027/02/02 م"},{name:"الأربعاء",h:"1448/09/02 هـ",m:"2027/02/03 م"},{name:"الخميس",h:"1448/09/03 هـ",m:"2027/02/04 م"}]},
@@ -1688,147 +1629,7 @@
             window.print();
         }
 
-        /* دالة طباعة بطاقة تنفيذ برنامج نشاط طلابي * المطابقة تماماً للنموذج الأصلي المستقل */
-        function executeProgramCardPrint() {
-            document.body.className = "print-prog-mode";
-            let menu = document.getElementById('reportsDropdownMenu');
-            if (menu) menu.classList.remove('show');
-
-            let container = document.getElementById('progCardsListContainer');
-            container.innerHTML = '';
-
-            let activitiesList = [];
-            for (let key in weekAssignments) {
-                let cellData = weekAssignments[key];
-                if (cellData && cellData.isActivity) {
-                    activitiesList.push({ key, ...cellData });
-                }
-            }
-
-            if (activitiesList.length === 0) {
-                activitiesList.push({
-                    course: "أدخل اسم البرنامج هنا",
-                    fieldKey: "citizenship",
-                    teacher: "اسم المعلم",
-                    hours: 4
-                });
-            }
-
-            let curDateObj = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "1448/03/17" };
-
-            activitiesList.forEach(act => {
-                let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
-
-                let cardDiv = document.createElement('div');
-                cardDiv.className = 'card-page';
-                cardDiv.innerHTML = `
-                    <div class="cd-logo-gov">
-                        <b>وزارة التعليم</b>
-                        <span>Ministry of Education</span>
-                    </div>
-                    <div class="cd-title-gov">بطاقة تنفيذ برنامج نشاط طلابي *</div>
-                    
-                    <table class="prog-card-table">
-                        <colgroup>
-                            <col style="width:33%">
-                            <col style="width:22%">
-                            <col style="width:22%">
-                            <col style="width:23%">
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <td class="lb">اسم البرنامج</td>
-                                <td colspan="3"><span style="font-weight:700;">${act.course}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="lb">المجال</td>
-                                <td colspan="3"><span style="font-weight:700; color:${fConf.color};">${fConf.title}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="lb">عدد حصص البرنامج</td>
-                                <td colspan="3"><span style="font-weight:700;">${act.hours || 4}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="lb">الفصل الدراسي</td>
-                                <td colspan="3"><span style="font-weight:700;">${currentTerm === 1 ? 'الأول' : 'الثاني'}</span></td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">بداية التنفيذ</td>
-                                <td>اليوم: <span style="font-weight:600;">${activeDayName}</span></td>
-                                <td>الأسبوع: <span style="font-weight:600;">${activeWeekLabel}</span></td>
-                                <td>التاريخ: <span style="font-weight:600;">${curDateObj.hDate}</span></td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">نهاية التنفيذ</td>
-                                <td>اليوم: <span style="font-weight:600;">الخميس</span></td>
-                                <td>الأسبوع: <span style="font-weight:600;">${activeWeekLabel}</span></td>
-                                <td>التاريخ: <span style="font-weight:600;">____/____/1448</span></td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">الصف</td>
-                                <td colspan="3"><span style="font-weight:700;">جميع الصفوف</span></td>
-                            </tr>
-                            <tr>
-                                <td class="lb">المعلم/ة المنفذ/ة</td>
-                                <td colspan="3"><span style="font-weight:700;">${act.teacher || 'اسم المعلم'}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="lb">عدد الطلبة المشاركين</td>
-                                <td colspan="3">0</td>
-                            </tr>
-                            <tr>
-                                <td class="lb">عدد الطلبة المشاركين من ذوي الإعاقة</td>
-                                <td colspan="3">0</td>
-                            </tr>
-                            <tr>
-                                <td class="lb">عدد أولياء الأمور المشاركين في البرنامج</td>
-                                <td colspan="3">0</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ:</td>
-                                <td colspan="3" style="text-align:right; padding:4px 10px;">
-                                    <div class="platform-options-box">
-                                        <div><input type="checkbox"> بنك الإثراءات</div>
-                                        <div><input type="checkbox"> التطوير الذاتي</div>
-                                        <div><input type="checkbox"> قيمنا الغالية</div>
-                                        <div><input type="checkbox"> نادي القراءة</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">عدد الشراكات المجتمعية</td>
-                                <td>0</td>
-                                <td class="lb">أسماء الشراكات المجتمعية</td>
-                                <td>—</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="lb">ملاحظات</td>
-                                <td colspan="3">—</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="card-footer-signatures">
-                        <div><b>المعلم/ة المنفذ/ة</b>الاسم: <span style="font-weight:normal;">${act.teacher || '.................'}</span><br>التاريخ: ____/____/1448<br>التوقيع:</div>
-                        <div><b>رائد/ة النشاط</b>الاسم: <span style="font-weight:normal;">عواد محمد العوفي</span><br>التاريخ: ____/____/1448<br>التوقيع:</div>
-                    </div>
-                    
-                    <div class="card-bottom-note">يتم تعبئة هذه البطاقة عند استكمال الحصص المخصصة للبرنامج وفق ما ورد للبرنامج من حصص في دليل الخطط الدراسية / الإصدار السادس.</div>
-                    <div class="card-bottom-bar">WWW.MOE.GOV.SA</div>
-                </div>
-                `;
-                container.appendChild(cardDiv);
-            });
-
-            window.print();
-        }
-
+        /* دالة طباعة بطاقة تنفيذ مسابقة نشاط طلابي متضمنة أيقونة التنفيذ من منصة مدرستي */
         function executeCompetitionCardPrint() {
             document.body.className = "print-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1847,103 +1648,116 @@
 
             if (activitiesList.length === 0) {
                 activitiesList.push({
+                    key: "default_act",
                     course: "مسابقة القرآن الكريم",
                     fieldKey: "citizenship",
                     teacher: "",
-                    hours: 4
+                    hours: 4,
+                    platform: "بنك الإثراءات"
                 });
             }
 
+            const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
+
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
+                let curPlat = act.platform || platforms[0];
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
                 cardDiv.innerHTML = `
-                    <div style="display:flex; justify-content: flex-start; align-items: center; margin-bottom: 12px;">
-                        <div style="font-size: 1rem; font-weight: 800; color: #003845;">
+                    <div class="card-header-gov">
+                        <div style="font-size: 1rem; font-weight: 800; color: #003744;">
                             <div>وزارة التعليم</div>
                             <div style="font-size: 0.75rem; font-weight: 600; color: #5A6F6C;">Ministry of Education</div>
                         </div>
                     </div>
 
-                    <div style="text-align: center; font-size: 1.5rem; font-weight: 800; color: #003744; margin: 15px 0 20px 0;">بطاقة تنفيذ مسابقة نشاط طلابي *</div>
+                    <div class="card-main-title">بطاقة تنفيذ مسابقة نشاط طلابي *</div>
 
-                    <table class="prog-card-table" style="margin-bottom: 25px;">
+                    <table class="comp-card-table">
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff; width: 28%;">اسم المدرسة</td>
+                            <td class="td-label">اسم المدرسة</td>
                             <td colspan="5" style="text-align: right; font-weight: 700;">مدرسة مكة المكرمة الابتدائية</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">اسم المسابقة</td>
+                            <td class="td-label">اسم المسابقة</td>
                             <td colspan="5" style="text-align: right; font-weight: 700; color: #003744;">${act.course}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">المجال</td>
+                            <td class="td-label">المجال</td>
                             <td colspan="5" style="text-align: right; font-weight: 700; color: ${fConf.color};">${fConf.title}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">عدد الحصص للإعداد والتأهيل</td>
+                            <td class="td-label">عدد الحصص للإعداد والتأهيل للمسابقة</td>
                             <td colspan="5" style="text-align: right; font-weight: 700;">${act.hours || 1} حصص</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">الفصل الدراسي</td>
-                            <td colspan="5" style="text-align: right; font-weight: 700;">${currentTerm === 1 ? 'الأول' : 'الثاني'}</td>
+                            <td class="td-label">الفصل الدراسي</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700;">${currentTerm === 1 ? 'الفصل الدراسي الأول' : 'الفصل الدراسي الثاني'}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">بداية التنفيذ</td>
-                            <td style="background-color: #e6eff2; width: 10%;">اليوم:</td>
+                            <td class="td-label">بداية التنفيذ</td>
+                            <td class="td-sub-label" style="width: 10%;">اليوم:</td>
                             <td style="width: 15%;">${activeDayName}</td>
-                            <td style="background-color: #e6eff2; width: 10%;">الأسبوع:</td>
+                            <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span style="background-color: #e6eff2;">التاريخ:</span></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> </td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">نهاية التنفيذ</td>
-                            <td style="background-color: #e6eff2;">اليوم:</td>
+                            <td class="td-label">نهاية التنفيذ</td>
+                            <td class="td-sub-label">اليوم:</td>
                             <td></td>
-                            <td style="background-color: #e6eff2;">الأسبوع:</td>
+                            <td class="td-sub-label">الأسبوع:</td>
                             <td></td>
-                            <td style="text-align: right;"><span style="background-color: #e6eff2;">التاريخ:</span></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> </td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">الصف</td>
+                            <td class="td-label">الصف</td>
                             <td colspan="5" style="text-align: right; font-weight: 700;">جميع الصفوف</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">المعلم/ة المنفذ/ة</td>
+                            <td class="td-label">المعلم/ة المنفذ/ة</td>
                             <td colspan="5" style="text-align: right; font-weight: 700;">${act.teacher || '—'}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">عدد الطلبة المشاركين</td>
+                            <td class="td-label">عدد الطلبة المشاركين في المسابقة</td>
                             <td colspan="3"></td>
-                            <td style="background-color: #e6eff2; width: 15%;">عدد الفائزين</td>
+                            <td class="td-sub-label" style="width: 15%;">عدد الفائزين</td>
                             <td style="width: 15%;"></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">عدد الطلبة المتأهلين</td>
+                            <td class="td-label">عدد الطلبة المتأهلين للمرحلة المقبلة</td>
                             <td colspan="3"></td>
-                            <td style="background-color: #e6eff2;">عدد الجوائز</td>
+                            <td class="td-sub-label">عدد الجوائز</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">عدد أولياء الأمور المشاركين</td>
+                            <td class="td-label">عدد أولياء الأمور المشاركين في المسابقة</td>
                             <td colspan="3"></td>
-                            <td style="background-color: #e6eff2; font-size: 0.75rem;">ذوي الإعاقة</td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">عدد الطلبة المشاركين من ذوي الإعاقة</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">عدد الشراكات المجتمعية</td>
+                            <td class="td-label">عند تنفيذ المشاركة عبر منصة مدرستي ماهي أيقونة التنفيذ:</td>
+                            <td colspan="5" style="text-align: right; padding: 5px 12px;">
+                                <div style="display: flex; flex-direction: column; gap: 5px;">
+                                    ${platforms.map(p => `<label style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><input type="radio" name="plat_${act.key}" value="${p}" ${curPlat === p ? 'checked' : ''} data-radio-plat="${act.key}" data-val="${p}"> ${p}</label>`).join("")}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-label">عدد الشراكات المجتمعية</td>
                             <td colspan="3"></td>
-                            <td style="background-color: #e6eff2; font-size: 0.75rem;">أسماء الشراكات</td>
+                            <td class="td-sub-label" style="font-size: 0.75rem;">أسماء الشراكات المجتمعية</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">نواتج المسابقة</td>
+                            <td class="td-label">نواتج المسابقة</td>
                             <td colspan="5" style="height: 45px;"></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 800; background-color: #fff;">ملاحظات</td>
+                            <td class="td-label">ملاحظات</td>
                             <td colspan="5" style="height: 40px;"></td>
                         </tr>
                     </table>
@@ -1973,6 +1787,19 @@
 
             window.print();
         }
+
+        // مستمع حدث لتحديث أيقونة المنصة المختارة في بطاقة التنفيذ
+        document.addEventListener('change', function(e) {
+            let r = e.target.closest('[data-radio-plat]');
+            if (r) {
+                let key = r.dataset.radioPlat;
+                let val = r.dataset.val;
+                if (weekAssignments[key]) {
+                    weekAssignments[key].platform = val;
+                    saveToCloud();
+                }
+            }
+        });
 
         function openCellClickModal(day, cls, period) {
             let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
@@ -2085,6 +1912,7 @@
                 let flexibility = "ثابتة";
                 let hours = 1;
                 let barcodeSrc = existingData.barcodeSrc || null;
+                let platform = existingData.platform || "بنك الإثراءات";
 
                 if (typeVal === 'course') {
                     courseName = document.getElementById('cellCourseSelect').value;
@@ -2116,7 +1944,8 @@
                     fieldKey: fieldKey,
                     flexibility: flexibility,
                     hours: hours,
-                    barcodeSrc: barcodeSrc
+                    barcodeSrc: barcodeSrc,
+                    platform: platform
                 };
             }
 
