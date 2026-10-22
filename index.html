@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- مكتبات Firebase SDK (تم تضمين مكتبة التخزين Storage) -->
+    <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
@@ -618,7 +618,6 @@
             cursor: pointer;
         }
 
-        /* تنسيق قالب البطاقات المطبوعة بمقاسات وأبعاد مطابقة للنموذج الرسمي تماماً */
         #activityCardPrintArea, #competitionCardPrintArea {
             display: none;
             background: #fff;
@@ -1604,7 +1603,6 @@
             window.print();
         }
 
-        /* دالة جلب تواريخ التنفيذ */
         function getAssignmentDateInfo(key, cardScope = 'daily') {
             let parts = key ? key.split("_") : [];
             let weekLabel = parts.length >= 1 && !key.startsWith("def_") ? parts[0] : activeWeekLabel;
@@ -1619,7 +1617,6 @@
             };
         }
 
-        /* دالة لفرز وتنسيق القوائم زمنياً */
         sortListChronologically = function(list) {
             list.sort((a, b) => {
                 if (a.key.startsWith("def_") || b.key.startsWith("def_")) return 0;
@@ -1640,7 +1637,6 @@
             });
         };
 
-        /* دوال طباعة بطاقات برامج النشاط */
         function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1855,7 +1851,6 @@
             });
         }
 
-        /* دوال طباعة بطاقات مسابقات النشاط */
         function executeDailyCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -2145,7 +2140,6 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        /* رفع الملف إلى Firebase Storage وتوليد باركود واضح ودقيق (300x300) يقرأه الجوال بسهولة */
         async function generateQrCodeFromFile(file) {
             try {
                 let storageRef = storage.ref();
@@ -2259,6 +2253,7 @@
             await saveToCloud();
         }
 
+        /* دالة الحفظ المحدثة مع تنبيه تفصيلي عند وجود أي خلل */
         async function saveToCloud() {
             try {
                 await db.collection("schedules").doc("main_schedule").set({
@@ -2266,8 +2261,10 @@
                     classes: targetClasses,
                     teachers: teachersPool
                 });
+                console.log("تم الحفظ بنجاح في السحابة!");
             } catch (e) {
-                console.log("خطأ أثناء الحفظ بالسحابة.");
+                console.error("خطأ تفصيلي أثناء الحفظ بالسحابة:", e);
+                alert("تعذر الحفظ في السحابة. السبب: " + e.message + "\nتأكد من ضبط قواعد أمان قاعدة البيانات (Firestore Rules) في فايربيس.");
             }
         }
 
