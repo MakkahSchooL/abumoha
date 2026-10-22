@@ -1600,45 +1600,43 @@
             window.print();
         }
 
-        /* دالة ذكية لاستخراج استعلام وتاريخ الحصة الفعلية وحساب تاريخ بداية ونهاية التنفيذ تلقائياً */
-        function getAssignmentDateInfo(key, hours = 1) {
-            let startIdx = -1;
-
-            if (key && !key.startsWith("def_")) {
-                let parts = key.split("_");
-                if (parts.length >= 2) {
-                    let wLabel = parts[0];
-                    let dName = parts[1];
-                    startIdx = ALL_DAYS_FLAT.findIndex(d => d.weekLabel === wLabel && d.dayName === dName);
-                }
-            }
-
-            if (startIdx === -1) {
-                startIdx = currentFlatIndex;
-            }
-
-            let startDayInfo = ALL_DAYS_FLAT[startIdx] || { hDate: "", mDate: "", dayName: activeDayName, weekLabel: activeWeekLabel };
+        /* دالة ذكية لحساب تواريخ بداية ونهاية التنفيذ بحسب نطاق البطاقة (يومي، أسبوعي، فصلي) */
+        function getAssignmentDateInfo(key, cardScope = 'daily') {
+            let parts = key ? key.split("_") : [];
+            let weekLabel = parts.length >= 1 && !key.startsWith("def_") ? parts[0] : activeWeekLabel;
             
-            // حساب تاريخ النهاية بناءً على عدد الحصص/الأيام (بفرض حصة يومياً)
-            let daysSpan = Math.max(0, parseInt(hours) - 1);
-            let endIdx = Math.min(ALL_DAYS_FLAT.length - 1, startIdx + daysSpan);
-            let endDayInfo = ALL_DAYS_FLAT[endIdx] || startDayInfo;
-
+            let wkObj = CAL_1448.find(w => w.label === weekLabel) || CAL_1448.find(w => w.label === activeWeekLabel) || CAL_1448[0];
+            
+            if (cardScope === 'daily') {
+                let dayName = parts.length >= 2 ? parts[1] : activeDayName;
+                let dayObj = wkObj.days.find(d => d.name === dayName) || wkObj.days[0];
+                return {
+                    start: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` },
+                    end: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` }
+                };
+            } else if (cardScope === 'weekly') {
+                let firstDay = wkObj.days[0];
+                let lastDay = wkObj.days[wkObj.days.length - 1];
+                return {
+                    start: { dayName: firstDay.name, weekLabel: wkObj.label, fullStr: `${firstDay.h} (${firstDay.m})` },
+                    end: { dayName: lastDay.name, weekLabel: wkObj.label, fullStr: `${lastDay.h} (${lastDay.m})` }
+                };
+            } else if (cardScope === 'term') {
+                let termWeeks = CAL_1448.filter(w => w.t === currentTerm);
+                let firstWk = termWeeks[0] || wkObj;
+                let lastWk = termWeeks[termWeeks.length - 1] || wkObj;
+                let firstDay = firstWk.days[0];
+                let lastDay = lastWk.days[lastWk.days.length - 1];
+                return {
+                    start: { dayName: firstDay.name, weekLabel: firstWk.label, fullStr: `${firstDay.h} (${firstDay.m})` },
+                    end: { dayName: lastDay.name, weekLabel: lastWk.label, fullStr: `${lastDay.h} (${lastDay.m})` }
+                };
+            }
+            
+            let dayObj = wkObj.days[0];
             return {
-                start: {
-                    hDate: startDayInfo.hDate,
-                    mDate: startDayInfo.mDate,
-                    dayName: startDayInfo.dayName,
-                    weekLabel: startDayInfo.weekLabel,
-                    fullStr: startDayInfo.hDate ? `${startDayInfo.hDate} (${startDayInfo.mDate})` : ""
-                },
-                end: {
-                    hDate: endDayInfo.hDate,
-                    mDate: endDayInfo.mDate,
-                    dayName: endDayInfo.dayName,
-                    weekLabel: endDayInfo.weekLabel,
-                    fullStr: endDayInfo.hDate ? `${endDayInfo.hDate} (${endDayInfo.mDate})` : ""
-                }
+                start: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` },
+                end: { dayName: dayObj.name, weekLabel: wkObj.label, fullStr: `${dayObj.h} (${dayObj.m})` }
             };
         }
 
@@ -1688,7 +1686,7 @@
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "" });
             }
 
-            renderActivityCards(activitiesList);
+            renderActivityCards(activitiesList, 'daily');
             window.print();
         }
 
@@ -1716,7 +1714,7 @@
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "" });
             }
 
-            renderActivityCards(activitiesList);
+            renderActivityCards(activitiesList, 'weekly');
             window.print();
         }
 
@@ -1746,11 +1744,11 @@
                 activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "" });
             }
 
-            renderActivityCards(activitiesList);
+            renderActivityCards(activitiesList, 'term');
             window.print();
         }
 
-        function renderActivityCards(activitiesList) {
+        function renderActivityCards(activitiesList, cardScope = 'daily') {
             let container = document.getElementById('activityCardsListContainer');
             container.innerHTML = '';
             const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
@@ -1758,7 +1756,7 @@
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
-                let dateInfo = getAssignmentDateInfo(act.key, act.hours || 1);
+                let dateInfo = getAssignmentDateInfo(act.key, cardScope);
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1792,9 +1790,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${dateInfo.start.dayName}</td>
+                            <td style="width: 15%;"><div class="editable-cell-box" contenteditable="true">${dateInfo.start.dayName}</div></td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${dateInfo.start.weekLabel}</td>
+                            <td style="width: 15%;"><div class="editable-cell-box" contenteditable="true">${dateInfo.start.weekLabel}</div></td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.start.fullStr}</div></td>
                         </tr>
                         <tr>
@@ -1894,7 +1892,7 @@
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (يومي)", fieldKey: "competitions", teacher: "", hours: 1 });
             }
 
-            renderCompetitionCards(competitionsList);
+            renderCompetitionCards(competitionsList, 'daily');
             window.print();
         }
 
@@ -1922,7 +1920,7 @@
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (أسبوعي)", fieldKey: "competitions", teacher: "", hours: 2 });
             }
 
-            renderCompetitionCards(competitionsList);
+            renderCompetitionCards(competitionsList, 'weekly');
             window.print();
         }
 
@@ -1952,17 +1950,17 @@
                 competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (فصلي)", fieldKey: "competitions", teacher: "", hours: 4 });
             }
 
-            renderCompetitionCards(competitionsList);
+            renderCompetitionCards(competitionsList, 'term');
             window.print();
         }
 
-        function renderCompetitionCards(competitionsList) {
+        function renderCompetitionCards(competitionsList, cardScope = 'daily') {
             let container = document.getElementById('compCardsListContainer');
             container.innerHTML = '';
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
-                let dateInfo = getAssignmentDateInfo(act.key, act.hours || 1);
+                let dateInfo = getAssignmentDateInfo(act.key, cardScope);
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -2000,9 +1998,9 @@
                         <tr>
                             <td class="td-label">بداية التنفيذ</td>
                             <td class="td-sub-label" style="width: 10%;">اليوم:</td>
-                            <td style="width: 15%;">${dateInfo.start.dayName}</td>
+                            <td style="width: 15%;"><div class="editable-cell-box" contenteditable="true">${dateInfo.start.dayName}</div></td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
-                            <td style="width: 15%;">${dateInfo.start.weekLabel}</td>
+                            <td style="width: 15%;"><div class="editable-cell-box" contenteditable="true">${dateInfo.start.weekLabel}</div></td>
                             <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${dateInfo.start.fullStr}</div></td>
                         </tr>
                         <tr>
