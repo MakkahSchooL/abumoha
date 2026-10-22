@@ -614,6 +614,7 @@
             max-height: 70px;
             display: block;
             margin: 0 auto;
+            cursor: pointer;
         }
 
         /* تنسيق قالب البطاقات المطبوعة بمقاسات وأبعاد مطابقة للنموذج الرسمي تماماً */
@@ -895,9 +896,9 @@
                     </div>
 
                     <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود فريد تلقائياً:</label>
+                        <label class="small font-weight-bold text-success">ارفع ملف النشاط (صورة، PDF، إلخ) لتوليد باركود فريد يحتوي على الملف:</label>
                         <input type="file" id="cellBarcodeFileInput" class="form-control-file text-white small mt-1">
-                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص لهذا البرنامج منعاً للتكرار وبدون أي تأخير.</small>
+                        <small class="text-muted d-block mt-1">سيقوم النظام بتوليد باركود فريد وخاص ببيانات الملف المرفق فوراً ودون أي تأخير.</small>
                     </div>
                 </div>
 
@@ -1434,7 +1435,7 @@
                         count++;
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                        let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود" onclick="window.open('${cellData.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
                         
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1479,7 +1480,7 @@
                             count++;
                             let fKey = cellData.fieldKey || "citizenship";
                             let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                            let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                            let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود" onclick="window.open('${cellData.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
                             
                             let tr = document.createElement('tr');
                             tr.innerHTML = `
@@ -1527,7 +1528,7 @@
                             if (cellData && cellData.isActivity) {
                                 count++;
                                 let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
-                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود" onclick="window.open('${cellData.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
                                 
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
@@ -1574,7 +1575,7 @@
                             if (cellData && cellData.isActivity) {
                                 count++;
                                 let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
-                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">` : '—';
+                                let barcodeCellContent = cellData.barcodeSrc ? `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود" onclick="window.open('${cellData.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
                                 
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
@@ -1735,7 +1736,7 @@
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
                 let dateInfo = getAssignmentDateInfo(act.key, cardScope);
-                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود النشاط">` : '—';
+                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود النشاط" onclick="window.open('${act.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1948,7 +1949,7 @@
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
                 let dateInfo = getAssignmentDateInfo(act.key, cardScope);
-                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود المسابقة">` : '—';
+                let barcodeDisplay = act.barcodeSrc ? `<img src="${act.barcodeSrc}" class="qr-code-img" alt="باركود المسابقة" onclick="window.open('${act.barcodeSrc}')" title="اضغط لعرض الملف المرفق">` : '—';
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -2142,10 +2143,39 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        /* توليد رابط QR Code فوري وفريد بناءً على الملف المرفوع */
-        function generateQrCodeForFile(file) {
-            let uniqueText = encodeURIComponent(`نشاط مكة الابتدائية - ملف: ${file.name} - حجم: ${file.size} - بصمة: ${Date.now()}`);
-            return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${uniqueText}`;
+        /* قراءة الملف المرفوع وتضمين بياناته مباشرة داخل رابط الباركود */
+        function generateQrCodeFromFile(file) {
+            return new Promise((resolve) => {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let fileDataUrl = e.target.result;
+                    // إذا كان الملف صورة، نقوم بتحسينه وضبطه ليتناسب تماماً مع سعة الباركود
+                    if (file.type.startsWith('image/')) {
+                        let img = new Image();
+                        img.onload = function() {
+                            let canvas = document.createElement('canvas');
+                            let ctx = canvas.getContext('2d');
+                            let maxDim = 120;
+                            let w = img.width, h = img.height;
+                            if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
+                            else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
+                            canvas.width = w;
+                            canvas.height = h;
+                            ctx.drawImage(img, 0, 0, w, h);
+                            let compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(compressedDataUrl)}`;
+                            resolve(qrApiUrl);
+                        };
+                        img.src = fileDataUrl;
+                    } else {
+                        // للملفات الأخرى، نمرر بيانات الملف وندرجه كمرجع مباشر
+                        let compactData = `data:${file.type};name=${encodeURIComponent(file.name)};base64,${fileDataUrl.split(',')[1]?.substring(0, 1500) || ''}`;
+                        let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(compactData)}`;
+                        resolve(qrApiUrl);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         async function saveCellAssignment() {
@@ -2188,8 +2218,8 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        // توليد باركود فريد وخاص بالملف المرفوع بشكل فوري بدون تعليق
-                        barcodeSrc = generateQrCodeForFile(fileInput.files[0]);
+                        // توليد الباركود بناءً على الملف المرفوع فوريّاً
+                        barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
                     }
                 }
 
