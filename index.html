@@ -1145,7 +1145,7 @@
                 { name: "يوم التسامح", hours: 2 },
                 { name: "اليوم العالمي للطفل", hours: 2 },
                 { name: "اليوم العالمي لذوي الإعاقة", hours: 2 },
-                { name: "يوم اللغة العربية العالمي", hours: 2 },
+                { name: "اليوم العالمي للغة العربية", hours: 2 },
                 { name: "اليوم العالمي للتعليم", hours: 2 },
                 { name: "يوم التأسيس", hours: 4 },
                 { name: "يوم العلم السعودي", hours: 3 },
@@ -1682,10 +1682,12 @@
         function renderActivityCards(activitiesList) {
             let container = document.getElementById('activityCardsListContainer');
             const platforms = ["بنك الإثراءات", "التطوير الذاتي", "قيمنا الغالية", "نادي القراءة"];
+            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
 
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
                 let curPlat = act.platform || "";
+                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1722,7 +1724,7 @@
                             <td style="width: 15%;">${activeDayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
@@ -1879,9 +1881,11 @@
 
         function renderCompetitionCards(competitionsList) {
             let container = document.getElementById('compCardsListContainer');
+            let curDayInfo = ALL_DAYS_FLAT[currentFlatIndex] || { hDate: "", mDate: "" };
 
             competitionsList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["competitions"];
+                let startDateStr = curDayInfo.hDate ? `${curDayInfo.hDate} (${curDayInfo.mDate})` : "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -1922,7 +1926,7 @@
                             <td style="width: 15%;">${activeDayName}</td>
                             <td class="td-sub-label" style="width: 10%;">الأسبوع:</td>
                             <td style="width: 15%;">${activeWeekLabel}</td>
-                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; width:90px;"></div></td>
+                            <td style="text-align: right;"><span class="td-sub-label">التاريخ:</span> <div class="editable-cell-box" contenteditable="true" style="display:inline-block; font-size: 0.78rem;">${startDateStr}</div></td>
                         </tr>
                         <tr>
                             <td class="td-label">نهاية التنفيذ</td>
@@ -1998,6 +2002,8 @@
                 `;
                 container.appendChild(cardDiv);
             });
+
+            window.print();
         }
 
         document.addEventListener('change', function(e) {
