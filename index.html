@@ -2141,14 +2141,20 @@
         }
 
         async function generateQrCodeFromFile(file) {
+            if (!file) return null;
             try {
                 let storageRef = storage.ref();
                 let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
-                let snapshot = await fileRef.put(file);
+                
+                // إضافة حماية زمنية بحد أقصى 8 ثوانٍ لكي لا يعلق النظام أبداً إذا لم تكن خدمة التخزين مفعلة
+                let uploadPromise = fileRef.put(file);
+                let timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("مهلة الرفع")), 8000));
+                
+                let snapshot = await Promise.race([uploadPromise, timeoutPromise]);
                 let downloadURL = await snapshot.ref.getDownloadURL();
                 return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
             } catch (error) {
-                console.error("خطأ في رفع الملف:", error);
+                console.warn("تم تجاوز الرفع السحابي أو تعذر، جاري توليد الباركود الاحتياطي:", error);
                 return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent("https://makkahschool.github.io/test/")}&ecc=M`;
             }
         }
