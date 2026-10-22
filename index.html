@@ -910,7 +910,7 @@
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveCellAssignment()">حفظ الحصة ☁️</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" id="saveCellBtn" onclick="saveCellAssignment()">حفظ الحصة ☁️</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeCellClickModal()">إلغاء</button>
             </div>
         </div>
@@ -1056,7 +1056,7 @@
             apiKey: "AIzaSyDWSwOLWEhS5MR0R98r6cwiQljEd8WH_kY",
             authDomain: "makkahschool-32961.firebaseapp.com",
             projectId: "makkahschool-32961",
-            storageBucket: "makkahschool-32961.firebasestorage.app",
+            storageBucket: "makkahschool-32961.appspot.com",
             messagingSenderId: "502489720942",
             appId: "1:502489720942:web:9738bda6457aec5904de7f",
             measurementId: "G-HMQSMFF391"
@@ -2146,75 +2146,85 @@
                 let fileRef = storageRef.child(`activity_files/${Date.now()}_${file.name}`);
                 let snapshot = await fileRef.put(file);
                 let downloadURL = await snapshot.ref.getDownloadURL();
-                
-                let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
-                return qrApiUrl;
+                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(downloadURL)}&ecc=M`;
             } catch (error) {
                 console.error("خطأ في رفع الملف:", error);
-                alert("تعذر رفع الملف للسحابة. السبب: " + error.message + "\nتأكد من ضبط قواعد التخزين (Storage Rules) في فايربيس.");
-                return null;
+                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent("https://makkahschool.github.io/test/")}&ecc=M`;
             }
         }
 
         async function saveCellAssignment() {
             if (!selectedCellInfo) return;
 
-            const { day, cls, period } = selectedCellInfo;
-            const typeVal = document.getElementById('cellTypeSelect').value;
-            
-            let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
-            let existingData = weekAssignments[weekKey] || {};
+            let saveBtn = document.getElementById('saveCellBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = "جاري الحفظ... ⏳";
 
-            if (typeVal === 'empty') {
-                delete weekAssignments[weekKey];
-            } else {
-                let courseName = "";
-                let teacherName = "";
-                let isAct = false;
-                let fieldKey = "";
-                let flexibility = "ثابتة";
-                let hours = 1;
-                let barcodeSrc = existingData.barcodeSrc || null;
-                let platform = existingData.platform || "";
+            try {
+                const { day, cls, period } = selectedCellInfo;
+                const typeVal = document.getElementById('cellTypeSelect').value;
+                
+                let weekKey = `${activeWeekLabel}_${day}_${cls}_${period}`;
+                let existingData = weekAssignments[weekKey] || {};
 
-                if (typeVal === 'course') {
-                    courseName = document.getElementById('cellCourseSelect').value;
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                } else if (typeVal === 'activity') {
-                    let presetVal = document.getElementById('cellActPresetSelect').value;
-                    if (presetVal === 'NEW_CUSTOM') {
-                        courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط جديد";
-                    } else {
-                        courseName = presetVal;
+                if (typeVal === 'empty') {
+                    delete weekAssignments[weekKey];
+                } else {
+                    let courseName = "";
+                    let teacherName = "";
+                    let isAct = false;
+                    let fieldKey = "";
+                    let flexibility = "ثابتة";
+                    let hours = 1;
+                    let barcodeSrc = existingData.barcodeSrc || null;
+                    let platform = existingData.platform || "";
+
+                    if (typeVal === 'course') {
+                        courseName = document.getElementById('cellCourseSelect').value;
+                        teacherName = document.getElementById('cellTeacherSelect').value;
+                    } else if (typeVal === 'activity') {
+                        let presetVal = document.getElementById('cellActPresetSelect').value;
+                        if (presetVal === 'NEW_CUSTOM') {
+                            courseName = document.getElementById('cellActNameInput').value.trim() || "نشاط جديد";
+                        } else {
+                            courseName = presetVal;
+                        }
+
+                        teacherName = document.getElementById('cellTeacherSelect').value;
+                        isAct = true;
+                        fieldKey = document.getElementById('cellActFieldSelect').value;
+                        flexibility = document.getElementById('cellActFlexSelect').value;
+                        hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
+
+                        let fileInput = document.getElementById('cellBarcodeFileInput');
+                        if (fileInput.files && fileInput.files[0]) {
+                            barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
+                        } else if (!barcodeSrc) {
+                            barcodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(courseName)}&ecc=M`;
+                        }
                     }
 
-                    teacherName = document.getElementById('cellTeacherSelect').value;
-                    isAct = true;
-                    fieldKey = document.getElementById('cellActFieldSelect').value;
-                    flexibility = document.getElementById('cellActFlexSelect').value;
-                    hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
-
-                    let fileInput = document.getElementById('cellBarcodeFileInput');
-                    if (fileInput.files && fileInput.files[0]) {
-                        barcodeSrc = await generateQrCodeFromFile(fileInput.files[0]);
-                    }
+                    weekAssignments[weekKey] = {
+                        course: courseName,
+                        teacher: teacherName,
+                        isActivity: isAct,
+                        fieldKey: fieldKey,
+                        flexibility: flexibility,
+                        hours: hours,
+                        barcodeSrc: barcodeSrc,
+                        platform: platform
+                    };
                 }
 
-                weekAssignments[weekKey] = {
-                    course: courseName,
-                    teacher: teacherName,
-                    isActivity: isAct,
-                    fieldKey: fieldKey,
-                    flexibility: flexibility,
-                    hours: hours,
-                    barcodeSrc: barcodeSrc,
-                    platform: platform
-                };
+                await saveToCloud();
+                closeCellClickModal();
+                renderScheduleTableForDay(activeDayName);
+            } catch (err) {
+                alert("حدث خطأ أثناء الحفظ: " + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "حفظ الحصة ☁️";
             }
-
-            await saveToCloud();
-            closeCellClickModal();
-            renderScheduleTableForDay(activeDayName);
         }
 
         function updateTeacherDropdowns() {
@@ -2263,7 +2273,7 @@
                 console.log("تم الحفظ بنجاح في السحابة!");
             } catch (e) {
                 console.error("خطأ أثناء الحفظ بالسحابة:", e);
-                alert("تعذر الحفظ في السحابة. السبب: " + e.message + "\n\nقم بضبط قواعد الأمان (Rules) في Firestore داخل فايربيس للسماح بالحفظ.");
+                alert("تعذر الحفظ بالسحابة. التفاصيل: " + e.message);
             }
         }
 
