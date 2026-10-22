@@ -1020,7 +1020,7 @@
         <div id="activityCardsListContainer"></div>
     </div>
 
-    <!-- بطاقة تنفيذ مسابقة نشاط (للمسابقات فقط مطابقة للنموذج الرسمي المرفق) -->
+    <!-- بطاقة تنفيذ مسابقة نشاط -->
     <div id="competitionCardPrintArea">
         <div id="compCardsListContainer"></div>
     </div>
@@ -1616,7 +1616,7 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "بنك الإثراءات" });
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "" });
             }
 
             renderActivityCards(activitiesList);
@@ -1642,7 +1642,7 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "بنك الإثراءات" });
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "" });
             }
 
             renderActivityCards(activitiesList);
@@ -1670,7 +1670,7 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "بنك الإثراءات" });
+                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "" });
             }
 
             renderActivityCards(activitiesList);
@@ -1683,7 +1683,7 @@
 
             activitiesList.forEach(act => {
                 let fConf = FIELDS_CONFIG[act.fieldKey] || FIELDS_CONFIG["citizenship"];
-                let curPlat = act.platform || platforms[0];
+                let curPlat = act.platform || "";
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'card-page';
@@ -2059,7 +2059,7 @@
                 let flexibility = "ثابتة";
                 let hours = 1;
                 let barcodeSrc = existingData.barcodeSrc || null;
-                let platform = existingData.platform || "بنك الإثراءات";
+                let platform = existingData.platform || "";
 
                 if (typeVal === 'course') {
                     courseName = document.getElementById('cellCourseSelect').value;
