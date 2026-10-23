@@ -655,8 +655,8 @@
         }
 
         .qr-code-img {
-            max-width: 60px;
-            max-height: 60px;
+            max-width: 50px;
+            max-height: 50px;
             display: block;
             margin: 0 auto;
         }
@@ -1132,11 +1132,10 @@
             <thead>
                 <tr>
                     <th style="width: 35px;">م</th>
-                    <th style="width: 15%;">اليوم</th>
                     <th>وقت التنفيذ</th>
                     <th>اسم البرنامج</th>
                     <th>مدة التنفيذ</th>
-                    <th>باركود / صورة النشاط</th>
+                    <th>آلية التنفيذ</th>
                     <th>المعلم المنفذ</th>
                 </tr>
             </thead>
@@ -1531,7 +1530,6 @@
             updateFieldCounters();
         }
 
-        /* دالة عرض الأنشطة اللاصفية مع خط بارز لوقت التنفيذ */
         function renderNonClassSchedule() {
             const tbody = document.getElementById('nonClassTableBody');
             tbody.innerHTML = '';
@@ -1657,11 +1655,13 @@
         function generateBarcodeCellContent(cellData) {
             if (cellData && cellData.barcodeSrc) {
                 return `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">`;
+            } else if (cellData && cellData.linkUrl) {
+                return `<a href="${cellData.linkUrl}" target="_blank" style="font-size:0.75rem;">رابط آلي</a>`;
             }
             return '—';
         }
 
-        /* الطباعة المدمجة والمخصصة لليوم، الأسبوع، الشهر، والفصل */
+        /* الطباعة اليومية */
         function executeDailyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1706,7 +1706,7 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا اليوم.</td></tr>`;
             }
 
-            // 2. اللاصفية اليومية (ليوم المحدد فقط)
+            // 2. اللاصفية اليومية (لليوم المحدد فقط)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
@@ -1721,7 +1721,6 @@
                     ncTbody.innerHTML += `
                         <tr>
                             <td>${ncCount}</td>
-                            <td style="font-weight: 700;">${activeDayName}</td>
                             <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                             <td style="font-weight: 700;">${item.name}</td>
                             <td>${item.duration || 'أسبوع'}</td>
@@ -1733,12 +1732,13 @@
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا اليوم.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا اليوم.</td></tr>`;
             }
 
             window.print();
         }
 
+        /* الطباعة الأسبوعية (بدون تكرار الأيام يوم يوم، وتجميع حسب المعلم والبرنامج) */
         function executeWeeklyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1784,41 +1784,58 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الأسبوع.</td></tr>`;
             }
 
-            // 2. اللاصفية الأسبوعية (مرتبة بجدول الأيام للأسبوع)
+            // 2. اللاصفية الأسبوعية (مجمعة بمدة أسبوع بدون تكرار الأيام)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
+            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+            let weekMap = {};
 
-            ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(dayName => {
+            daysArr.forEach(day => {
                 defaultTimeSlots.forEach((slot, slotIndex) => {
-                    let key = `${activeWeekLabel}_${dayName}_${slotIndex}`;
+                    let key = `${activeWeekLabel}_${day}_${slotIndex}`;
                     let item = nonClassAssignments[key];
                     if (item && item.name) {
-                        ncCount++;
-                        let barcodeContent = generateBarcodeCellContent(item);
-                        ncTbody.innerHTML += `
-                            <tr>
-                                <td>${ncCount}</td>
-                                <td style="font-weight: 700;">${dayName}</td>
-                                <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
-                                <td style="font-weight: 700;">${item.name}</td>
-                                <td>${item.duration || 'أسبوع'}</td>
-                                <td>${barcodeContent}</td>
-                                <td>${item.teacher || 'غير محدد'}</td>
-                            </tr>
-                        `;
+                        let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
+                        if (!weekMap[groupKey]) {
+                            weekMap[groupKey] = {
+                                time: item.time || slot,
+                                name: item.name,
+                                duration: item.duration || 'أسبوع',
+                                teacher: item.teacher || 'غير محدد',
+                                barcodeSrc: item.barcodeSrc,
+                                linkUrl: item.linkUrl
+                            };
+                        }
                     }
                 });
             });
 
-            if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الأسبوع.</td></tr>`;
+            let groupedItems = Object.values(weekMap);
+            if (groupedItems.length > 0) {
+                groupedItems.forEach(item => {
+                    ncCount++;
+                    let barcodeContent = generateBarcodeCellContent(item);
+                    ncTbody.innerHTML += `
+                        <tr>
+                            <td>${ncCount}</td>
+                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time}</td>
+                            <td style="font-weight: 700;">${item.name}</td>
+                            <td>${item.duration}</td>
+                            <td>${barcodeContent}</td>
+                            <td>${item.teacher}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الأسبوع.</td></tr>`;
             }
 
             window.print();
         }
 
+        /* الطباعة الشهرية */
         function executeMonthlyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1867,43 +1884,60 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية خلال هذا الشهر.</td></tr>`;
             }
 
-            // 2. اللاصفية الشهرية (تتضمن أسابيع الشهر)
+            // 2. اللاصفية الشهرية (بأسلوب الجدول الأسبوعي لكل أسبوع في الشهر)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
+            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
             selectedWeeks.forEach(wk => {
-                wk.days.forEach(d => {
+                let weekMap = {};
+                daysArr.forEach(day => {
                     defaultTimeSlots.forEach((slot, slotIndex) => {
-                        let key = `${wk.label}_${d.name}_${slotIndex}`;
+                        let key = `${wk.label}_${day}_${slotIndex}`;
                         let item = nonClassAssignments[key];
                         if (item && item.name) {
-                            ncCount++;
-                            let barcodeContent = generateBarcodeCellContent(item);
-                            ncTbody.innerHTML += `
-                                <tr>
-                                    <td>${ncCount}</td>
-                                    <td style="font-weight: 700; font-size: 0.8rem;">${wk.label}<br>${d.name}</td>
-                                    <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
-                                    <td style="font-weight: 700;">${item.name}</td>
-                                    <td>${item.duration || 'أسبوع'}</td>
-                                    <td>${barcodeContent}</td>
-                                    <td>${item.teacher || 'غير محدد'}</td>
-                                </tr>
-                            `;
+                            let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
+                            if (!weekMap[groupKey]) {
+                                weekMap[groupKey] = {
+                                    time: item.time || slot,
+                                    name: item.name,
+                                    duration: item.duration || 'أسبوع',
+                                    teacher: item.teacher || 'غير محدد',
+                                    barcodeSrc: item.barcodeSrc,
+                                    linkUrl: item.linkUrl,
+                                    weekLabel: wk.label
+                                };
+                            }
                         }
                     });
+                });
+
+                Object.values(weekMap).forEach(item => {
+                    ncCount++;
+                    let barcodeContent = generateBarcodeCellContent(item);
+                    ncTbody.innerHTML += `
+                        <tr>
+                            <td>${ncCount}</td>
+                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.weekLabel} - ${item.time}</td>
+                            <td style="font-weight: 700;">${item.name}</td>
+                            <td>${item.duration}</td>
+                            <td>${barcodeContent}</td>
+                            <td>${item.teacher}</td>
+                        </tr>
+                    `;
                 });
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة خلال هذا الشهر.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة خلال هذا الشهر.</td></tr>`;
             }
 
             window.print();
         }
 
+        /* الطباعة الفصلية */
         function executeTermPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1950,38 +1984,54 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الفصل.</td></tr>`;
             }
 
-            // 2. اللاصفية الفصلية (تتضمن أسابيع الفصل)
+            // 2. اللاصفية الفصلية (بأسلوب الجدول الأسبوعي لكل أسابيع الفصل)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
+            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
             termWeeks.forEach(wk => {
-                wk.days.forEach(d => {
+                let weekMap = {};
+                daysArr.forEach(day => {
                     defaultTimeSlots.forEach((slot, slotIndex) => {
-                        let key = `${wk.label}_${d.name}_${slotIndex}`;
+                        let key = `${wk.label}_${day}_${slotIndex}`;
                         let item = nonClassAssignments[key];
                         if (item && item.name) {
-                            ncCount++;
-                            let barcodeContent = generateBarcodeCellContent(item);
-                            ncTbody.innerHTML += `
-                                <tr>
-                                    <td>${ncCount}</td>
-                                    <td style="font-weight: 700; font-size: 0.8rem;">${wk.label}<br>${d.name}</td>
-                                    <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
-                                    <td style="font-weight: 700;">${item.name}</td>
-                                    <td>${item.duration || 'أسبوع'}</td>
-                                    <td>${barcodeContent}</td>
-                                    <td>${item.teacher || 'غير محدد'}</td>
-                                </tr>
-                            `;
+                            let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
+                            if (!weekMap[groupKey]) {
+                                weekMap[groupKey] = {
+                                    time: item.time || slot,
+                                    name: item.name,
+                                    duration: item.duration || 'أسبوع',
+                                    teacher: item.teacher || 'غير محدد',
+                                    barcodeSrc: item.barcodeSrc,
+                                    linkUrl: item.linkUrl,
+                                    weekLabel: wk.label
+                                };
+                            }
                         }
                     });
+                });
+
+                Object.values(weekMap).forEach(item => {
+                    ncCount++;
+                    let barcodeContent = generateBarcodeCellContent(item);
+                    ncTbody.innerHTML += `
+                        <tr>
+                            <td>${ncCount}</td>
+                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.weekLabel} - ${item.time}</td>
+                            <td style="font-weight: 700;">${item.name}</td>
+                            <td>${item.duration}</td>
+                            <td>${barcodeContent}</td>
+                            <td>${item.teacher}</td>
+                        </tr>
+                    `;
                 });
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الفصل.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الفصل.</td></tr>`;
             }
 
             window.print();
