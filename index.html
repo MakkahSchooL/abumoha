@@ -596,16 +596,17 @@
             direction: rtl;
         }
 
+        /* تعديل الترويسة ببدون خط أفقِي */
         .act-report-header {
             text-align: right;
-            border-bottom: 2px solid #000;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+            border-bottom: none !important;
+            padding-bottom: 4px;
+            margin-bottom: 12px;
         }
         .act-report-title {
             font-size: 1.4rem;
             font-weight: 800;
-            margin-top: 10px;
+            margin-top: 6px;
             color: #0f172a;
             text-align: center;
         }
@@ -971,12 +972,12 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل إضافة خيارات النشاط اللاصفي -->
+    <!-- نافذة تعديل إضافة خيارات النشاط اللاصفي للأسبوع كاملاً -->
     <div class="modal-cal" id="nonClassModal">
         <div class="mbox-cal" style="width: min(450px, 95%);">
             <div class="mhead-cal">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>إسناد برنامج نشاط لاصفي</h3>
+                    <h3>إسناد برنامج نشاط لاصفي (للأسبوع)</h3>
                     <button type="button" class="close text-white" onclick="closeNonClassModal()">&times;</button>
                 </div>
                 <p id="nonClassModalSubtitle" class="text-info font-weight-bold mb-0"></p>
@@ -1009,7 +1010,7 @@
                 </div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveNonClassItem()">حفظ ☁️</button>
+                <button type="button" class="btn btn-sm btn-success px-4 font-weight-bold" onclick="saveNonClassItem()">حفظ الأسبوع ☁️</button>
                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteNonClassItem()">حذف</button>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="closeNonClassModal()">إلغاء</button>
             </div>
@@ -1086,7 +1087,7 @@
         <table class="non-class-table">
             <thead>
                 <tr>
-                    <th style="width: 15%;">اليوم</th>
+                    <th style="width: 15%;">الأسبوع</th>
                     <th style="width: 25%;">وقت التنفيذ</th>
                     <th style="width: 25%;">اسم البرنامج</th>
                     <th style="width: 15%;">مدة التنفيذ</th>
@@ -1530,38 +1531,36 @@
             updateFieldCounters();
         }
 
+        /* عرض الأنشطة اللاصفية بناءً على الأسبوع الحكالي */
         function renderNonClassSchedule() {
             const tbody = document.getElementById('nonClassTableBody');
             tbody.innerHTML = '';
 
-            const daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
 
-            daysArr.forEach(day => {
-                defaultTimeSlots.forEach((slot, slotIndex) => {
-                    let key = `${activeWeekLabel}_${day}_${slotIndex}`;
-                    let item = nonClassAssignments[key] || {};
+            defaultTimeSlots.forEach((slot, slotIndex) => {
+                let key = `${activeWeekLabel}_${slotIndex}`;
+                let item = nonClassAssignments[key] || {};
 
-                    let tr = document.createElement('tr');
-                    let dayTd = slotIndex === 0 ? `<td rowspan="3" style="font-weight: 800; background-color: #f1f5f9; vertical-align: middle;">${day}</td>` : '';
+                let tr = document.createElement('tr');
+                let weekTd = slotIndex === 0 ? `<td rowspan="3" style="font-weight: 800; background-color: #f1f5f9; vertical-align: middle;">${activeWeekLabel}</td>` : '';
 
-                    tr.innerHTML = `
-                        ${dayTd}
-                        <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.time || slot}</td>
-                        <td style="font-weight: 700; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.name || '—'}</td>
-                        <td style="cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.duration || 'أسبوع'}</td>
-                        <td style="font-weight: 700; color: #047857; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.teacher || '—'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                tr.innerHTML = `
+                    ${weekTd}
+                    <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a; cursor: pointer;" onclick="openNonClassModal('${slot}', ${slotIndex})">${item.time || slot}</td>
+                    <td style="font-weight: 700; cursor: pointer;" onclick="openNonClassModal('${slot}', ${slotIndex})">${item.name || '—'}</td>
+                    <td style="cursor: pointer;" onclick="openNonClassModal('${slot}', ${slotIndex})">${item.duration || 'أسبوع'}</td>
+                    <td style="font-weight: 700; color: #047857; cursor: pointer;" onclick="openNonClassModal('${slot}', ${slotIndex})">${item.teacher || '—'}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
-        function openNonClassModal(day, defaultSlot, slotIndex) {
-            selectedNonClassKey = `${activeWeekLabel}_${day}_${slotIndex}`;
+        function openNonClassModal(defaultSlot, slotIndex) {
+            selectedNonClassKey = `${activeWeekLabel}_${slotIndex}`;
             let item = nonClassAssignments[selectedNonClassKey] || {};
 
-            document.getElementById('nonClassModalSubtitle').innerText = `${activeWeekLabel} - ${day}`;
+            document.getElementById('nonClassModalSubtitle').innerText = `${activeWeekLabel}`;
             document.getElementById('ncTimeInput').value = item.time || defaultSlot;
             document.getElementById('ncNameInput').value = item.name || '';
             document.getElementById('ncDurationInput').value = item.duration || 'أسبوع';
@@ -1706,14 +1705,14 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا اليوم.</td></tr>`;
             }
 
-            // 2. اللاصفية اليومية (لليوم المحدد فقط)
+            // 2. اللاصفية اليومية (عرض الأسبوع التابع لهذا اليوم)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
 
             defaultTimeSlots.forEach((slot, slotIndex) => {
-                let key = `${activeWeekLabel}_${activeDayName}_${slotIndex}`;
+                let key = `${activeWeekLabel}_${slotIndex}`;
                 let item = nonClassAssignments[key];
                 if (item && item.name) {
                     ncCount++;
@@ -1723,7 +1722,7 @@
                             <td>${ncCount}</td>
                             <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                             <td style="font-weight: 700;">${item.name}</td>
-                            <td>${item.duration || 'أسبوع'}</td>
+                            <td>${item.duration || 'يومي'}</td>
                             <td>${barcodeContent}</td>
                             <td>${item.teacher || 'غير محدد'}</td>
                         </tr>
@@ -1738,7 +1737,7 @@
             window.print();
         }
 
-        /* الطباعة الأسبوعية (بدون تكرار الأيام يوم يوم، وتجميع حسب المعلم والبرنامج) */
+        /* الطباعة الأسبوعية */
         function executeWeeklyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1784,51 +1783,32 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الأسبوع.</td></tr>`;
             }
 
-            // 2. اللاصفية الأسبوعية (مجمعة بمدة أسبوع بدون تكرار الأيام)
+            // 2. اللاصفية الأسبوعية
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
-            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-            let weekMap = {};
 
-            daysArr.forEach(day => {
-                defaultTimeSlots.forEach((slot, slotIndex) => {
-                    let key = `${activeWeekLabel}_${day}_${slotIndex}`;
-                    let item = nonClassAssignments[key];
-                    if (item && item.name) {
-                        let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
-                        if (!weekMap[groupKey]) {
-                            weekMap[groupKey] = {
-                                time: item.time || slot,
-                                name: item.name,
-                                duration: item.duration || 'أسبوع',
-                                teacher: item.teacher || 'غير محدد',
-                                barcodeSrc: item.barcodeSrc,
-                                linkUrl: item.linkUrl
-                            };
-                        }
-                    }
-                });
-            });
-
-            let groupedItems = Object.values(weekMap);
-            if (groupedItems.length > 0) {
-                groupedItems.forEach(item => {
+            defaultTimeSlots.forEach((slot, slotIndex) => {
+                let key = `${activeWeekLabel}_${slotIndex}`;
+                let item = nonClassAssignments[key];
+                if (item && item.name) {
                     ncCount++;
                     let barcodeContent = generateBarcodeCellContent(item);
                     ncTbody.innerHTML += `
                         <tr>
                             <td>${ncCount}</td>
-                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time}</td>
+                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                             <td style="font-weight: 700;">${item.name}</td>
-                            <td>${item.duration}</td>
+                            <td>${item.duration || 'أسبوع'}</td>
                             <td>${barcodeContent}</td>
-                            <td>${item.teacher}</td>
+                            <td>${item.teacher || 'غير محدد'}</td>
                         </tr>
                     `;
-                });
-            } else {
+                }
+            });
+
+            if (ncCount === 0) {
                 ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الأسبوع.</td></tr>`;
             }
 
@@ -1884,49 +1864,30 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية خلال هذا الشهر.</td></tr>`;
             }
 
-            // 2. اللاصفية الشهرية (بأسلوب الجدول الأسبوعي لكل أسبوع في الشهر)
+            // 2. اللاصفية الشهرية
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
-            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
             selectedWeeks.forEach(wk => {
-                let weekMap = {};
-                daysArr.forEach(day => {
-                    defaultTimeSlots.forEach((slot, slotIndex) => {
-                        let key = `${wk.label}_${day}_${slotIndex}`;
-                        let item = nonClassAssignments[key];
-                        if (item && item.name) {
-                            let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
-                            if (!weekMap[groupKey]) {
-                                weekMap[groupKey] = {
-                                    time: item.time || slot,
-                                    name: item.name,
-                                    duration: item.duration || 'أسبوع',
-                                    teacher: item.teacher || 'غير محدد',
-                                    barcodeSrc: item.barcodeSrc,
-                                    linkUrl: item.linkUrl,
-                                    weekLabel: wk.label
-                                };
-                            }
-                        }
-                    });
-                });
-
-                Object.values(weekMap).forEach(item => {
-                    ncCount++;
-                    let barcodeContent = generateBarcodeCellContent(item);
-                    ncTbody.innerHTML += `
-                        <tr>
-                            <td>${ncCount}</td>
-                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.weekLabel} - ${item.time}</td>
-                            <td style="font-weight: 700;">${item.name}</td>
-                            <td>${item.duration}</td>
-                            <td>${barcodeContent}</td>
-                            <td>${item.teacher}</td>
-                        </tr>
-                    `;
+                defaultTimeSlots.forEach((slot, slotIndex) => {
+                    let key = `${wk.label}_${slotIndex}`;
+                    let item = nonClassAssignments[key];
+                    if (item && item.name) {
+                        ncCount++;
+                        let barcodeContent = generateBarcodeCellContent(item);
+                        ncTbody.innerHTML += `
+                            <tr>
+                                <td>${ncCount}</td>
+                                <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${wk.label} - ${item.time || slot}</td>
+                                <td style="font-weight: 700;">${item.name}</td>
+                                <td>${item.duration || 'أسبوع'}</td>
+                                <td>${barcodeContent}</td>
+                                <td>${item.teacher || 'غير محدد'}</td>
+                            </tr>
+                        `;
+                    }
                 });
             });
 
@@ -1984,49 +1945,30 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الفصل.</td></tr>`;
             }
 
-            // 2. اللاصفية الفصلية (بأسلوب الجدول الأسبوعي لكل أسابيع الفصل)
+            // 2. اللاصفية الفصلية
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
             const defaultTimeSlots = ["الحضور والاصطفاف الصباحي", "الروتين اليومي", "صلاة الظهر والمناوبة"];
-            let daysArr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
             termWeeks.forEach(wk => {
-                let weekMap = {};
-                daysArr.forEach(day => {
-                    defaultTimeSlots.forEach((slot, slotIndex) => {
-                        let key = `${wk.label}_${day}_${slotIndex}`;
-                        let item = nonClassAssignments[key];
-                        if (item && item.name) {
-                            let groupKey = `${item.time || slot}_${item.name}_${item.teacher || 'غير محدد'}`;
-                            if (!weekMap[groupKey]) {
-                                weekMap[groupKey] = {
-                                    time: item.time || slot,
-                                    name: item.name,
-                                    duration: item.duration || 'أسبوع',
-                                    teacher: item.teacher || 'غير محدد',
-                                    barcodeSrc: item.barcodeSrc,
-                                    linkUrl: item.linkUrl,
-                                    weekLabel: wk.label
-                                };
-                            }
-                        }
-                    });
-                });
-
-                Object.values(weekMap).forEach(item => {
-                    ncCount++;
-                    let barcodeContent = generateBarcodeCellContent(item);
-                    ncTbody.innerHTML += `
-                        <tr>
-                            <td>${ncCount}</td>
-                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.weekLabel} - ${item.time}</td>
-                            <td style="font-weight: 700;">${item.name}</td>
-                            <td>${item.duration}</td>
-                            <td>${barcodeContent}</td>
-                            <td>${item.teacher}</td>
-                        </tr>
-                    `;
+                defaultTimeSlots.forEach((slot, slotIndex) => {
+                    let key = `${wk.label}_${slotIndex}`;
+                    let item = nonClassAssignments[key];
+                    if (item && item.name) {
+                        ncCount++;
+                        let barcodeContent = generateBarcodeCellContent(item);
+                        ncTbody.innerHTML += `
+                            <tr>
+                                <td>${ncCount}</td>
+                                <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${wk.label} - ${item.time || slot}</td>
+                                <td style="font-weight: 700;">${item.name}</td>
+                                <td>${item.duration || 'أسبوع'}</td>
+                                <td>${barcodeContent}</td>
+                                <td>${item.teacher || 'غير محدد'}</td>
+                            </tr>
+                        `;
+                    }
                 });
             });
 
