@@ -1612,7 +1612,7 @@
             window.print();
         }
 
-        /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) */
+        /* دوال طباعة بطاقات برامج النشاط (يومي، أسبوعي، فصلي) - المعدلة */
         function executeDailyActivityCardPrint() {
             document.body.className = "print-activity-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1632,7 +1632,8 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (يومي)", fieldKey: "citizenship", teacher: "", hours: 1, platform: "" });
+                alert("لا توجد برامج نشاط مسجلة في هذا اليوم للطباعة.");
+                return;
             }
 
             renderActivityCards(activitiesList);
@@ -1658,7 +1659,8 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (أسبوعي)", fieldKey: "citizenship", teacher: "", hours: 4, platform: "" });
+                alert("لا توجد برامج نشاط مسجلة في هذا الأسبوع للطباعة.");
+                return;
             }
 
             renderActivityCards(activitiesList);
@@ -1686,7 +1688,8 @@
             }
 
             if (activitiesList.length === 0) {
-                activitiesList.push({ key: "def_act", course: "برنامج تعزيز القيم (فصلي)", fieldKey: "citizenship", teacher: "", hours: 8, platform: "" });
+                alert("لا توجد برامج نشاط مسجلة في هذا الفصل للطباعة.");
+                return;
             }
 
             renderActivityCards(activitiesList);
@@ -1812,7 +1815,7 @@
             });
         }
 
-        /* دوال طباعة بطاقات مسابقات النشاط (يومي، أسبوعي، فصلي) */
+        /* دوال طباعة بطاقات مسابقات النشاط (يومي، أسبوعي، فصلي) - المعدلة */
         function executeDailyCompetitionCardPrint() {
             document.body.className = "print-competition-card-mode";
             let menu = document.getElementById('reportsDropdownMenu');
@@ -1832,7 +1835,8 @@
             }
 
             if (competitionsList.length === 0) {
-                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (يومي)", fieldKey: "competitions", teacher: "", hours: 1 });
+                alert("لا توجد مسابقات نشاط مسجلة في هذا اليوم للطباعة.");
+                return;
             }
 
             renderCompetitionCards(competitionsList);
@@ -1858,7 +1862,8 @@
             }
 
             if (competitionsList.length === 0) {
-                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (أسبوعي)", fieldKey: "competitions", teacher: "", hours: 2 });
+                alert("لا توجد مسابقات نشاط مسجلة في هذا الأسبوع للطباعة.");
+                return;
             }
 
             renderCompetitionCards(competitionsList);
@@ -1886,7 +1891,8 @@
             }
 
             if (competitionsList.length === 0) {
-                competitionsList.push({ key: "def_comp", course: "مسابقة القرآن الكريم (فصلي)", fieldKey: "competitions", teacher: "", hours: 4 });
+                alert("لا توجد مسابقات نشاط مسجلة في هذا الفصل للطباعة.");
+                return;
             }
 
             renderCompetitionCards(competitionsList);
@@ -2172,7 +2178,6 @@
                         linkUrl = "";
                     } else if (linkInput) {
                         linkUrl = linkInput;
-                        // توليد رابط باركود QR تلقائياً من الرابط المدخل
                         barcodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(linkInput)}`;
                     }
                 }
