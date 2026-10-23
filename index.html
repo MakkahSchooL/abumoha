@@ -11,10 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- مكتبات Firebase SDK (تمت إضافة مكتبة التخزين Storage لدعم الملفات الكبيرة المفتوحة) -->
+    <!-- مكتبات Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         :root {
@@ -611,28 +610,10 @@
         }
 
         .qr-code-img {
-            max-width: 70px;
-            max-height: 70px;
+            max-width: 60px;
+            max-height: 60px;
             display: block;
             margin: 0 auto;
-        }
-
-        .mech-file-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-decoration: none;
-        }
-        .mech-file-btn:hover {
-            background: #bae6fd;
-            color: #0284c7;
         }
 
         /* تنسيق قالب البطاقات المطبوعة */
@@ -913,17 +894,10 @@
                         </div>
                     </div>
 
-                    <!-- إرفاق باركود -->
-                    <div class="form-group text-right mb-2">
-                        <label class="small font-weight-bold text-success">إرفاق صورة باركود خاص بالنشاط:</label>
+                    <!-- إرفاق باركود / صورة برنامج النشاط -->
+                    <div class="form-group text-right mb-0">
+                        <label class="small font-weight-bold text-success"><i class="fas fa-image ml-1"></i> إرفاق باركود / صورة برنامج النشاط:</label>
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
-                    </div>
-
-                    <!-- إرفاق ملف آلية النشاط (حجم مفتوح عبر السحابة) -->
-                    <div class="form-group text-right mb-0 mt-2 border-top border-secondary pt-2">
-                        <label class="small font-weight-bold text-info"><i class="fas fa-cloud-upload-alt ml-1"></i> إرفاق ملف آلية تنفيذ النشاط (حجم مفتوح PDF / صور / مستندات):</label>
-                        <input type="file" id="cellMechanismFileInput" class="form-control-file text-white small mt-1">
-                        <div id="currentMechFileStatus" class="small text-warning mt-1" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -1028,7 +1002,7 @@
                     <th>فترة التنفيذ / الحصة</th>
                     <th>طبيعة الحصة</th>
                     <th>عدد حصص البرنامج</th>
-                    <th>آلية تقديم النشاط</th>
+                    <th>باركود / صورة النشاط</th>
                     <th>المعلم المنفذ</th>
                 </tr>
             </thead>
@@ -1089,7 +1063,6 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const storage = firebase.storage(); // تهيئة التخزين السحابي للملفات ذات الحجم المفتوح
 
         let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
@@ -1439,16 +1412,11 @@
             }
         }
 
-        function generateMechanismCellContent(cellData) {
-            let html = '';
+        function generateBarcodeCellContent(cellData) {
             if (cellData.barcodeSrc) {
-                html += `<img src="${cellData.barcodeSrc}" class="qr-code-img mb-1" alt="باركود">`;
+                return `<img src="${cellData.barcodeSrc}" class="qr-code-img" alt="باركود">`;
             }
-            if (cellData.mechanismFileSrc) {
-                let fileName = cellData.mechanismFileName || "ملف الآلية";
-                html += `<div><a href="${cellData.mechanismFileSrc}" target="_blank" class="mech-file-btn"><i class="fas fa-file-download"></i> ${fileName}</a></div>`;
-            }
-            return html || '—';
+            return '—';
         }
 
         function executeDailyPrint() {
@@ -1471,7 +1439,7 @@
                         count++;
                         let fKey = cellData.fieldKey || "citizenship";
                         let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                        let mechanismContent = generateMechanismCellContent(cellData);
+                        let barcodeContent = generateBarcodeCellContent(cellData);
                         
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1482,7 +1450,7 @@
                             <td>الحصة ${i}</td>
                             <td>${cellData.flexibility || "ثابتة"}</td>
                             <td>${cellData.hours || 1} حصص</td>
-                            <td>${mechanismContent}</td>
+                            <td>${barcodeContent}</td>
                             <td>${cellData.teacher || "غير محدد"}</td>
                         `;
                         tbody.appendChild(tr);
@@ -1516,7 +1484,7 @@
                             count++;
                             let fKey = cellData.fieldKey || "citizenship";
                             let fConf = FIELDS_CONFIG[fKey] || FIELDS_CONFIG["citizenship"];
-                            let mechanismContent = generateMechanismCellContent(cellData);
+                            let barcodeContent = generateBarcodeCellContent(cellData);
                             
                             let tr = document.createElement('tr');
                             tr.innerHTML = `
@@ -1527,7 +1495,7 @@
                                 <td>يوم ${dayName} (ح ${i})</td>
                                 <td>${cellData.flexibility || "ثابتة"}</td>
                                 <td>${cellData.hours || 1} حصص</td>
-                                <td>${mechanismContent}</td>
+                                <td>${barcodeContent}</td>
                                 <td>${cellData.teacher || "غير محدد"}</td>
                             `;
                             tbody.appendChild(tr);
@@ -1564,7 +1532,7 @@
                             if (cellData && cellData.isActivity) {
                                 count++;
                                 let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
-                                let mechanismContent = generateMechanismCellContent(cellData);
+                                let barcodeContent = generateBarcodeCellContent(cellData);
                                 
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
@@ -1575,7 +1543,7 @@
                                     <td>${wk.label} - ${d.name} (ح ${i})</td>
                                     <td>${cellData.flexibility || "ثابتة"}</td>
                                     <td>${cellData.hours || 1} حصص</td>
-                                    <td>${mechanismContent}</td>
+                                    <td>${barcodeContent}</td>
                                     <td>${cellData.teacher || "غير محدد"}</td>
                                 `;
                                 tbody.appendChild(tr);
@@ -1611,7 +1579,7 @@
                             if (cellData && cellData.isActivity) {
                                 count++;
                                 let fConf = FIELDS_CONFIG[cellData.fieldKey || "citizenship"];
-                                let mechanismContent = generateMechanismCellContent(cellData);
+                                let barcodeContent = generateBarcodeCellContent(cellData);
                                 
                                 let tr = document.createElement('tr');
                                 tr.innerHTML = `
@@ -1622,7 +1590,7 @@
                                     <td>${wk.label} - ${d.name} (ح ${i})</td>
                                     <td>${cellData.flexibility || "ثابتة"}</td>
                                     <td>${cellData.hours || 1} حصص</td>
-                                    <td>${mechanismContent}</td>
+                                    <td>${barcodeContent}</td>
                                     <td>${cellData.teacher || "غير محدد"}</td>
                                 `;
                                 tbody.appendChild(tr);
@@ -2070,7 +2038,6 @@
             courseSel.innerHTML = coursesPool.map(co => `<option value="${co}" ${co === cellData.course ? 'selected' : ''}>${co}</option>`).join('');
 
             const cellTypeSel = document.getElementById('cellTypeSelect');
-            const mechStatusDiv = document.getElementById('currentMechFileStatus');
 
             if (cellData.isActivity) {
                 cellTypeSel.value = "activity";
@@ -2092,25 +2059,15 @@
 
                 document.getElementById('cellActFlexSelect').value = cellData.flexibility || "ثابتة";
                 document.getElementById('cellActHoursInput').value = cellData.hours || 1;
-
-                if (cellData.mechanismFileName) {
-                    mechStatusDiv.style.display = 'block';
-                    mechStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> الملف المرفق حالياً: <a href="${cellData.mechanismFileSrc}" target="_blank" class="text-info">${cellData.mechanismFileName}</a>`;
-                } else {
-                    mechStatusDiv.style.display = 'none';
-                }
             } else if (cellData.course) {
                 cellTypeSel.value = "course";
-                mechStatusDiv.style.display = 'none';
             } else {
                 cellTypeSel.value = "empty";
                 onFieldChange("citizenship");
-                mechStatusDiv.style.display = 'none';
             }
 
             document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
             document.getElementById('cellBarcodeFileInput').value = '';
-            document.getElementById('cellMechanismFileInput').value = '';
             handleCellTypeChange(cellTypeSel.value);
 
             document.getElementById('cellClickModal').classList.add('show');
@@ -2127,7 +2084,7 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        function compressImage(file, maxWidth = 300, maxHeight = 300, quality = 0.5) {
+        function compressImage(file, maxWidth = 250, maxHeight = 250, quality = 0.5) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
                 reader.onload = function(e) {
@@ -2180,8 +2137,6 @@
                 let flexibility = "ثابتة";
                 let hours = 1;
                 let barcodeSrc = existingData.barcodeSrc || null;
-                let mechanismFileSrc = existingData.mechanismFileSrc || null;
-                let mechanismFileName = existingData.mechanismFileName || null;
                 let platform = existingData.platform || "";
 
                 if (typeVal === 'course') {
@@ -2203,24 +2158,7 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        barcodeSrc = await compressImage(fileInput.files[0], 150, 150, 0.5);
-                    }
-
-                    // رفع ملف الآلية (حجم مفتوح عبر سحابة فايربيز Storage)
-                    let mechFileInput = document.getElementById('cellMechanismFileInput');
-                    if (mechFileInput.files && mechFileInput.files[0]) {
-                        let selectedFile = mechFileInput.files[0];
-                        mechanismFileName = selectedFile.name;
-                        
-                        try {
-                            let storageRef = storage.ref().child(`mechanisms/${Date.now()}_${selectedFile.name}`);
-                            let snapshot = await storageRef.put(selectedFile);
-                            mechanismFileSrc = await snapshot.ref.getDownloadURL();
-                        } catch (err) {
-                            console.error("خطأ أثناء رفع الملف للسحابة:", err);
-                            alert("تعذر رفع الملف للسحابة. تأكد من اتصال الإنترنت.");
-                            return;
-                        }
+                        barcodeSrc = await compressImage(fileInput.files[0], 250, 250, 0.5);
                     }
                 }
 
@@ -2232,8 +2170,6 @@
                     flexibility: flexibility,
                     hours: hours,
                     barcodeSrc: barcodeSrc,
-                    mechanismFileSrc: mechanismFileSrc,
-                    mechanismFileName: mechanismFileName,
                     platform: platform
                 };
             }
