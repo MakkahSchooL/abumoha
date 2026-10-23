@@ -559,7 +559,7 @@
             line-height: 1.2;
         }
 
-        /* تنسيقات الأنشطة اللاصفية */
+        /* تنسيقات الأنشطة اللاصفية المحدثة باللون الداكن المتناسق */
         .non-class-table {
             width: 100%;
             border-collapse: collapse;
@@ -569,19 +569,19 @@
             overflow: hidden;
         }
         .non-class-table th {
-            background: #3b82f6;
+            background: #111827;
             color: #fff;
             text-align: center;
-            padding: 10px;
+            padding: 12px 10px;
             font-size: 0.9rem;
             font-weight: 700;
-            border: 1px solid #2563eb;
+            border: 1px solid #1f2937;
         }
         .non-class-table td {
             text-align: center;
-            padding: 8px;
+            padding: 10px 8px;
             font-size: 0.88rem;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
         .non-class-table tr:nth-child(even) td {
@@ -596,7 +596,7 @@
             direction: rtl;
         }
 
-        /* تعديل الترويسة ببدون خط أفقِي */
+        /* ترويسة التقارير المحدثة بدون خط فاصل */
         .act-report-header {
             text-align: right;
             border-bottom: none !important;
@@ -803,7 +803,7 @@
         <div>
             <select id="mainActivityTypeSelect" class="activity-type-selector" onchange="toggleActivityTypeView(this.value)">
                 <option value="class">برامج النشاط الصفية</option>
-                <option value="nonclass">برامج النشاط اللاصفية 🌟</option>
+                <option value="nonclass">برامج النشاط اللاصفية</option>
             </select>
         </div>
     </div>
@@ -894,7 +894,7 @@
                     <label class="small font-weight-bold text-light">نوع الحصة / المادة:</label>
                     <select id="cellTypeSelect" class="form-control form-control-sm bg-dark text-white border-secondary" onchange="handleCellTypeChange(this.value)">
                         <option value="course">حصة دراسية معتادة</option>
-                        <option value="activity">حصة نشاط مدرسي 🌟</option>
+                        <option value="activity">حصة نشاط مدرسي</option>
                         <option value="empty">— خالي (تفريغ الحصة) —</option>
                     </select>
                 </div>
@@ -1531,7 +1531,7 @@
             updateFieldCounters();
         }
 
-        /* عرض الأنشطة اللاصفية بناءً على الأسبوع الحكالي */
+        /* عرض الأنشطة اللاصفية بناءً على الأسبوع الحالي */
         function renderNonClassSchedule() {
             const tbody = document.getElementById('nonClassTableBody');
             tbody.innerHTML = '';
