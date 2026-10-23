@@ -814,7 +814,7 @@
                 <div id="teachersListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto;"></div>
             </div>
             <div class="mfoot-cal">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="closeTeachersManagerModal()">إغلاق</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="closeTeachersManagerModal()">إلغاء</button>
             </div>
         </div>
     </div>
@@ -912,14 +912,15 @@
                         </div>
                     </div>
 
-                    <!-- الخيارات الخاصة بآلية النشاط والمرفقات -->
+                    <!-- إرفاق باركود -->
                     <div class="form-group text-right mb-2">
                         <label class="small font-weight-bold text-success">إرفاق صورة باركود خاص بالنشاط:</label>
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
                     </div>
 
+                    <!-- إرفاق ملف آلية النشاط (PDF أو مستندات أو صور) -->
                     <div class="form-group text-right mb-0 mt-2 border-top border-secondary pt-2">
-                        <label class="small font-weight-bold text-info"><i class="fas fa-file-upload ml-1"></i> إرفاق ملف آلية تنفيذ النشاط (PDF أو مستندات أو صور):</label>
+                        <label class="small font-weight-bold text-info"><i class="fas fa-file-upload ml-1"></i> إرفاق ملف آلية تنفيذ النشاط (أقل من 500 كيلوبايت):</label>
                         <input type="file" id="cellMechanismFileInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" class="form-control-file text-white small mt-1">
                         <div id="currentMechFileStatus" class="small text-warning mt-1" style="display:none;"></div>
                     </div>
@@ -2124,7 +2125,7 @@
             document.getElementById('teacherSelectionGroup').style.display = (typeVal === 'empty') ? 'none' : 'block';
         }
 
-        function compressImage(file, maxWidth = 180, maxHeight = 180, quality = 0.6) {
+        function compressImage(file, maxWidth = 300, maxHeight = 300, quality = 0.5) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
                 reader.onload = function(e) {
@@ -2160,6 +2161,11 @@
 
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
+                if (file.size > 500 * 1024) {
+                    alert("حجم الملف كبير جداً! يرجى اختيار ملف أقل من 500 كيلوبايت لكي يتم قبوله في سحابة فايرستور.");
+                    resolve(null);
+                    return;
+                }
                 let reader = new FileReader();
                 reader.onload = (e) => resolve(e.target.result);
                 reader.onerror = (err) => reject(err);
@@ -2209,18 +2215,22 @@
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
                     if (fileInput.files && fileInput.files[0]) {
-                        barcodeSrc = await compressImage(fileInput.files[0]);
+                        barcodeSrc = await compressImage(fileInput.files[0], 150, 150, 0.5);
                     }
 
                     let mechFileInput = document.getElementById('cellMechanismFileInput');
                     if (mechFileInput.files && mechFileInput.files[0]) {
                         let selectedFile = mechFileInput.files[0];
-                        mechanismFileName = selectedFile.name;
                         
                         if (selectedFile.type.startsWith('image/')) {
-                            mechanismFileSrc = await compressImage(selectedFile, 800, 800, 0.7);
+                            mechanismFileSrc = await compressImage(selectedFile, 600, 600, 0.6);
+                            mechanismFileName = selectedFile.name;
                         } else {
-                            mechanismFileSrc = await readFileAsBase64(selectedFile);
+                            let base64Result = await readFileAsBase64(selectedFile);
+                            if (base64Result) {
+                                mechanismFileSrc = base64Result;
+                                mechanismFileName = selectedFile.name;
+                            }
                         }
                     }
                 }
@@ -2289,6 +2299,7 @@
                 });
             } catch (e) {
                 console.log("خطأ أثناء الحفظ بالسحابة.");
+                alert("تعذر الحفظ بالسحابة. قد يكون حجم البيانات المرفقة كبيراً جداً.");
             }
         }
 
