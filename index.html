@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <!-- مكتبات Firebase SDK -->
+    <!-- مكتبات Firebase SDK (تمت إضافة مكتبة التخزين Storage لدعم الملفات الكبيرة المفتوحة) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         :root {
@@ -918,10 +919,10 @@
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
                     </div>
 
-                    <!-- إرفاق ملف آلية النشاط (PDF أو مستندات أو صور) -->
+                    <!-- إرفاق ملف آلية النشاط (حجم مفتوح عبر السحابة) -->
                     <div class="form-group text-right mb-0 mt-2 border-top border-secondary pt-2">
-                        <label class="small font-weight-bold text-info"><i class="fas fa-file-upload ml-1"></i> إرفاق ملف آلية تنفيذ النشاط (أقل من 500 كيلوبايت):</label>
-                        <input type="file" id="cellMechanismFileInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" class="form-control-file text-white small mt-1">
+                        <label class="small font-weight-bold text-info"><i class="fas fa-cloud-upload-alt ml-1"></i> إرفاق ملف آلية تنفيذ النشاط (حجم مفتوح PDF / صور / مستندات):</label>
+                        <input type="file" id="cellMechanismFileInput" class="form-control-file text-white small mt-1">
                         <div id="currentMechFileStatus" class="small text-warning mt-1" style="display:none;"></div>
                     </div>
                 </div>
@@ -1088,6 +1089,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage(); // تهيئة التخزين السحابي للملفات ذات الحجم المفتوح
 
         let targetClasses = ["1/أ", "1/ب", "1/ج", "1/د", "2/أ", "2/ب", "2/ج", "2/د", "3/أ", "3/ب", "3/ج", "3/د", "4/أ", "4/ب", "4/ج", "5/أ", "5/ب", "5/ج", "6/أ", "6/ب", "6/ج"];
         let teachersPool = ["عصام الحازمي", "محمد العمري", "حسين الرحيلي", "ناصر المزيني", "عائض الجابري", "خالد العوفي", "معتز دردير", "رائد الصاعدي"];
@@ -2093,7 +2095,7 @@
 
                 if (cellData.mechanismFileName) {
                     mechStatusDiv.style.display = 'block';
-                    mechStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> الملف المرفق حالياً: ${cellData.mechanismFileName}`;
+                    mechStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> الملف المرفق حالياً: <a href="${cellData.mechanismFileSrc}" target="_blank" class="text-info">${cellData.mechanismFileName}</a>`;
                 } else {
                     mechStatusDiv.style.display = 'none';
                 }
@@ -2159,20 +2161,6 @@
             });
         }
 
-        function readFileAsBase64(file) {
-            return new Promise((resolve, reject) => {
-                if (file.size > 500 * 1024) {
-                    alert("حجم الملف كبير جداً! يرجى اختيار ملف أقل من 500 كيلوبايت لكي يتم قبوله في سحابة فايرستور.");
-                    resolve(null);
-                    return;
-                }
-                let reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (err) => reject(err);
-                reader.readAsDataURL(file);
-            });
-        }
-
         async function saveCellAssignment() {
             if (!selectedCellInfo) return;
 
@@ -2218,19 +2206,20 @@
                         barcodeSrc = await compressImage(fileInput.files[0], 150, 150, 0.5);
                     }
 
+                    // رفع ملف الآلية (حجم مفتوح عبر سحابة فايربيز Storage)
                     let mechFileInput = document.getElementById('cellMechanismFileInput');
                     if (mechFileInput.files && mechFileInput.files[0]) {
                         let selectedFile = mechFileInput.files[0];
+                        mechanismFileName = selectedFile.name;
                         
-                        if (selectedFile.type.startsWith('image/')) {
-                            mechanismFileSrc = await compressImage(selectedFile, 600, 600, 0.6);
-                            mechanismFileName = selectedFile.name;
-                        } else {
-                            let base64Result = await readFileAsBase64(selectedFile);
-                            if (base64Result) {
-                                mechanismFileSrc = base64Result;
-                                mechanismFileName = selectedFile.name;
-                            }
+                        try {
+                            let storageRef = storage.ref().child(`mechanisms/${Date.now()}_${selectedFile.name}`);
+                            let snapshot = await storageRef.put(selectedFile);
+                            mechanismFileSrc = await snapshot.ref.getDownloadURL();
+                        } catch (err) {
+                            console.error("خطأ أثناء رفع الملف للسحابة:", err);
+                            alert("تعذر رفع الملف للسحابة. تأكد من اتصال الإنترنت.");
+                            return;
                         }
                     }
                 }
@@ -2299,7 +2288,7 @@
                 });
             } catch (e) {
                 console.log("خطأ أثناء الحفظ بالسحابة.");
-                alert("تعذر الحفظ بالسحابة. قد يكون حجم البيانات المرفقة كبيراً جداً.");
+                alert("تعذر الحفظ بالسحابة.");
             }
         }
 
