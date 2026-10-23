@@ -799,7 +799,6 @@
             </div>
         </div>
 
-        <!-- اختيار نوع النشاط (صفية / لاصفية) بالطرف الأيسر -->
         <div>
             <select id="mainActivityTypeSelect" class="activity-type-selector" onchange="toggleActivityTypeView(this.value)">
                 <option value="class">برامج النشاط الصفية</option>
@@ -947,13 +946,11 @@
                         </div>
                     </div>
 
-                    <!-- إرفاق صورة باركود -->
                     <div class="form-group text-right mb-2">
                         <label class="small font-weight-bold text-success"><i class="fas fa-image ml-1"></i> إرفاق صورة باركود (اختياري):</label>
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
                     </div>
 
-                    <!-- إدخال رابط لتحويله تلقائياً لباركود -->
                     <div class="form-group text-right mb-0">
                         <label class="small font-weight-bold text-info"><i class="fas fa-link ml-1"></i> أو أدخل رابط إلكتروني (URL) لتحويله لباركود تلقائياً:</label>
                         <input type="text" id="cellLinkInput" class="form-control form-control-sm bg-dark text-white border-secondary mt-1" placeholder="https://example.com">
@@ -1002,7 +999,6 @@
                     <select id="ncTeacherSelect" class="form-control form-control-sm bg-dark text-white border-secondary"></select>
                 </div>
 
-                <!-- إرفاق باركود أو رابط للأنشطة اللاصفية -->
                 <div class="form-group text-right mb-2 mt-2">
                     <label class="small font-weight-bold text-success"><i class="fas fa-image ml-1"></i> إرفاق صورة باركود (اختياري):</label>
                     <input type="file" id="ncBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
@@ -1101,7 +1097,7 @@
         </table>
     </div>
 
-    <!-- تقرير طباعة الخطة العام (يشمل الصفية وتحتها اللاصفية) -->
+    <!-- تقرير طباعة الخطة العام -->
     <div id="activityReportPrintArea">
         <div class="act-report-header">
             <div style="font-size: 1rem; font-weight: 700; line-height: 1.6;">
@@ -1136,6 +1132,7 @@
             <thead>
                 <tr>
                     <th style="width: 35px;">م</th>
+                    <th style="width: 15%;">اليوم</th>
                     <th>وقت التنفيذ</th>
                     <th>اسم البرنامج</th>
                     <th>مدة التنفيذ</th>
@@ -1534,7 +1531,7 @@
             updateFieldCounters();
         }
 
-        /* دالة عرض الأنشطة اللاصفية */
+        /* دالة عرض الأنشطة اللاصفية مع خط بارز لوقت التنفيذ */
         function renderNonClassSchedule() {
             const tbody = document.getElementById('nonClassTableBody');
             tbody.innerHTML = '';
@@ -1552,7 +1549,7 @@
 
                     tr.innerHTML = `
                         ${dayTd}
-                        <td style="font-weight: 700; color: #1e3a8a; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.time || slot}</td>
+                        <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.time || slot}</td>
                         <td style="font-weight: 700; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.name || '—'}</td>
                         <td style="cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.duration || 'أسبوع'}</td>
                         <td style="font-weight: 700; color: #047857; cursor: pointer;" onclick="openNonClassModal('${day}', '${slot}', ${slotIndex})">${item.teacher || '—'}</td>
@@ -1664,7 +1661,7 @@
             return '—';
         }
 
-        /* الطباعة المدمجة (صفية + لاصفية) */
+        /* الطباعة المدمجة والمخصصة لليوم، الأسبوع، الشهر، والفصل */
         function executeDailyPrint() {
             document.body.className = "print-plan-mode";
             let menu = document.getElementById('printDropdownMenu');
@@ -1672,7 +1669,7 @@
             let cur = ALL_DAYS_FLAT[currentFlatIndex];
             document.getElementById('actReportSubTitle').innerText = `${cur.weekLabel} - يوم ${cur.dayName} | الفترة: ${cur.hDate} هـ (${cur.mDate} م)`;
 
-            // 1. تعبئة الجدول الصفّي اليومي
+            // 1. الصفية اليومية
             let tbody = document.getElementById('actReportTableBody');
             tbody.innerHTML = '';
             let count = 0;
@@ -1709,7 +1706,7 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا اليوم.</td></tr>`;
             }
 
-            // 2. تعبئة جدول الأنشطة اللاصفية اليومي
+            // 2. اللاصفية اليومية (ليوم المحدد فقط)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
@@ -1724,7 +1721,8 @@
                     ncTbody.innerHTML += `
                         <tr>
                             <td>${ncCount}</td>
-                            <td>${item.time || slot}</td>
+                            <td style="font-weight: 700;">${activeDayName}</td>
+                            <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                             <td style="font-weight: 700;">${item.name}</td>
                             <td>${item.duration || 'أسبوع'}</td>
                             <td>${barcodeContent}</td>
@@ -1735,7 +1733,7 @@
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا اليوم.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا اليوم.</td></tr>`;
             }
 
             window.print();
@@ -1786,7 +1784,7 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الأسبوع.</td></tr>`;
             }
 
-            // 2. اللاصفية الأسبوعية
+            // 2. اللاصفية الأسبوعية (مرتبة بجدول الأيام للأسبوع)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
@@ -1802,7 +1800,8 @@
                         ncTbody.innerHTML += `
                             <tr>
                                 <td>${ncCount}</td>
-                                <td>يوم ${dayName} - ${item.time || slot}</td>
+                                <td style="font-weight: 700;">${dayName}</td>
+                                <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                                 <td style="font-weight: 700;">${item.name}</td>
                                 <td>${item.duration || 'أسبوع'}</td>
                                 <td>${barcodeContent}</td>
@@ -1814,7 +1813,7 @@
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الأسبوع.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الأسبوع.</td></tr>`;
             }
 
             window.print();
@@ -1868,7 +1867,7 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية خلال هذا الشهر.</td></tr>`;
             }
 
-            // 2. اللاصفية الشهرية
+            // 2. اللاصفية الشهرية (تتضمن أسابيع الشهر)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
@@ -1885,7 +1884,8 @@
                             ncTbody.innerHTML += `
                                 <tr>
                                     <td>${ncCount}</td>
-                                    <td>${wk.label} - ${d.name} (${item.time || slot})</td>
+                                    <td style="font-weight: 700; font-size: 0.8rem;">${wk.label}<br>${d.name}</td>
+                                    <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                                     <td style="font-weight: 700;">${item.name}</td>
                                     <td>${item.duration || 'أسبوع'}</td>
                                     <td>${barcodeContent}</td>
@@ -1898,7 +1898,7 @@
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة خلال هذا الشهر.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة خلال هذا الشهر.</td></tr>`;
             }
 
             window.print();
@@ -1950,7 +1950,7 @@
                 tbody.innerHTML = `<tr><td colspan="9" style="padding: 15px; text-align: center; color: #777;">لا توجد حصص نشاط صفية مخصصة في هذا الفصل.</td></tr>`;
             }
 
-            // 2. اللاصفية الفصلية
+            // 2. اللاصفية الفصلية (تتضمن أسابيع الفصل)
             let ncTbody = document.getElementById('actReportNonClassTableBody');
             ncTbody.innerHTML = '';
             let ncCount = 0;
@@ -1967,7 +1967,8 @@
                             ncTbody.innerHTML += `
                                 <tr>
                                     <td>${ncCount}</td>
-                                    <td>${wk.label} - ${d.name} (${item.time || slot})</td>
+                                    <td style="font-weight: 700; font-size: 0.8rem;">${wk.label}<br>${d.name}</td>
+                                    <td style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">${item.time || slot}</td>
                                     <td style="font-weight: 700;">${item.name}</td>
                                     <td>${item.duration || 'أسبوع'}</td>
                                     <td>${barcodeContent}</td>
@@ -1980,7 +1981,7 @@
             });
 
             if (ncCount === 0) {
-                ncTbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الفصل.</td></tr>`;
+                ncTbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #777;">لا توجد برامج لاصفية مسجلة في هذا الفصل.</td></tr>`;
             }
 
             window.print();
