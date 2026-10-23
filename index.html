@@ -894,10 +894,16 @@
                         </div>
                     </div>
 
-                    <!-- إرفاق باركود / صورة برنامج النشاط -->
-                    <div class="form-group text-right mb-0">
-                        <label class="small font-weight-bold text-success"><i class="fas fa-image ml-1"></i> إرفاق باركود / صورة برنامج النشاط:</label>
+                    <!-- إرفاق صورة باركود -->
+                    <div class="form-group text-right mb-2">
+                        <label class="small font-weight-bold text-success"><i class="fas fa-image ml-1"></i> إرفاق صورة باركود (اختياري):</label>
                         <input type="file" id="cellBarcodeFileInput" accept="image/*" class="form-control-file text-white small mt-1">
+                    </div>
+
+                    <!-- إدخال رابط لتحويله تلقائياً لباركود -->
+                    <div class="form-group text-right mb-0">
+                        <label class="small font-weight-bold text-info"><i class="fas fa-link ml-1"></i> أو أدخل رابط إلكتروني (URL) لتحويله لباركود تلقائياً:</label>
+                        <input type="text" id="cellLinkInput" class="form-control form-control-sm bg-dark text-white border-secondary mt-1" placeholder="https://example.com">
                     </div>
                 </div>
 
@@ -2068,6 +2074,7 @@
 
             document.getElementById('cellTeacherSelect').value = cellData.teacher || "";
             document.getElementById('cellBarcodeFileInput').value = '';
+            document.getElementById('cellLinkInput').value = cellData.linkUrl || "";
             handleCellTypeChange(cellTypeSel.value);
 
             document.getElementById('cellClickModal').classList.add('show');
@@ -2137,6 +2144,7 @@
                 let flexibility = "ثابتة";
                 let hours = 1;
                 let barcodeSrc = existingData.barcodeSrc || null;
+                let linkUrl = existingData.linkUrl || "";
                 let platform = existingData.platform || "";
 
                 if (typeVal === 'course') {
@@ -2157,8 +2165,15 @@
                     hours = parseInt(document.getElementById('cellActHoursInput').value) || 1;
 
                     let fileInput = document.getElementById('cellBarcodeFileInput');
+                    let linkInput = document.getElementById('cellLinkInput').value.trim();
+
                     if (fileInput.files && fileInput.files[0]) {
                         barcodeSrc = await compressImage(fileInput.files[0], 250, 250, 0.5);
+                        linkUrl = "";
+                    } else if (linkInput) {
+                        linkUrl = linkInput;
+                        // توليد رابط باركود QR تلقائياً من الرابط المدخل
+                        barcodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(linkInput)}`;
                     }
                 }
 
@@ -2170,6 +2185,7 @@
                     flexibility: flexibility,
                     hours: hours,
                     barcodeSrc: barcodeSrc,
+                    linkUrl: linkUrl,
                     platform: platform
                 };
             }
